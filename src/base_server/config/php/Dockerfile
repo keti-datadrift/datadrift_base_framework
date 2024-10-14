@@ -7,6 +7,10 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     && docker-php-ext-install pdo pdo_mysql
 
+# PHP 설정 파일 수정 (업로드 크기 제한 설정)
+RUN echo "upload_max_filesize = 100M\npost_max_size = 100M" > /usr/local/etc/php/conf.d/uploads.ini
+
+
 # Set working directory
 WORKDIR /var/www/html
 

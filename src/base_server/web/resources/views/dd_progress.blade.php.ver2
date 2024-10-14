@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Bar Chart - D3.js</title>
+    <style>
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 10px 0;
+            position: relative;
+            height: 30px;
+        }
+        .progress-fill {
+            height: 100%;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Goal Achievement Progress Bars</h1>
+<div id="chart"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<script>
+    const data = [
+        { title: 'Task 1', goal: 100, current: 80 },
+        { title: 'Task 2', goal: 200, current: 220 },  // 100% 이상
+        { title: 'Task 3', goal: 300, current: 250 }
+    ];
+
+    const container = d3.select("#chart");
+
+    data.forEach(d => {
+        // 진행률 바를 생성
+        const progressBar = container.append("div").attr("class", "progress-bar");
+
+        // 현재 달성율을 계산하고 100% 이상이면 100%로 제한
+        let percentage = (d.current / d.goal) * 100;
+        if (percentage > 100) {
+            percentage = 100;
+        }
+
+        // 진행률을 채우는 요소
+        progressBar.append("div")
+            .attr("class", "progress-fill")
+            .style("width", percentage + "%")
+            .style("background-color", d.current >= d.goal ? "green" : "steelblue")
+            .text(d.title + ": " + Math.round((d.current / d.goal) * 100) + "%");
+    });
+</script>
+
+</body>
+</html>

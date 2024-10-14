@@ -27,8 +27,6 @@ Route::get('/helloview', function () {
 
 Route::get('/hello', function () {     return 'Hello World (JPark)'; });
 
-
-
 use App\Http\Controllers\HelloWorldController;
 Route::get('/hellocontrol', [HelloWorldController::class, 'showHello']);
 
@@ -90,3 +88,22 @@ Route::get('/d3chart', function () {
 Route::get('/dd_progress', function () {
     return view('dd_progress');
 })->middleware(PasswordProtected::class);
+
+Route::get('/dd_embeddingvis', function () {
+    return view('dd_embeddingvis');
+})->middleware(PasswordProtected::class);
+
+
+// upload
+use App\Http\Controllers\UploadController;
+//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
+Route::post('/upload', [UploadController::class, 'upload'])->name('upload')->middleware('auth');
+
+Route::get('/upload', function () {
+    return view('upload');
+});
+
+
+
+
+
