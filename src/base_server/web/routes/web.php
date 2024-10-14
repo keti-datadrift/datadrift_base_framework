@@ -39,6 +39,10 @@ Route::get('/chart', function () {
     return view('chart');
 });
 
+use App\Http\Controllers\BarChartRaceController;
+
+Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
+Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
 
 //-------------------------------------------
 // 암호 입력
@@ -77,4 +81,12 @@ Route::get('/protected', [ProtectedController::class, 'index'])->middleware(Pass
 
 Route::get('/chart', function () {
     return view('chart');
+})->middleware(PasswordProtected::class);
+
+Route::get('/d3chart', function () {
+    return view('d3chart');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_progress', function () {
+    return view('dd_progress');
 })->middleware(PasswordProtected::class);
