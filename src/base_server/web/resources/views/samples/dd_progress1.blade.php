@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DD 정량목표 진행율</title>
+    <title>DD 정량목표 진행율 (D3.JS 사용)</title>
     <style>
         .progress-container {
             display: flex;
@@ -51,7 +51,7 @@
 <script>
     // config.json에서 스프레드시트 ID를 읽어오는 함수
     function loadConfig() {
-        return fetch('config.json')
+        return fetch('config/config.json')
             .then(response => response.json());
     }
 

@@ -12,40 +12,25 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    return view('hello');
-});
-
-Route::get('/welcome', function () {
-    return view('welcome');
-});
-
-Route::get('/helloview', function () {
-    return view('hello');
-});
-
-Route::get('/hello', function () {     return 'Hello World (JPark)'; });
-
-use App\Http\Controllers\HelloWorldController;
-Route::get('/hellocontrol', [HelloWorldController::class, 'showHello']);
-
+use Illuminate\Http\Request;
+use App\Http\Controllers\IntroController;
 use App\Http\Controllers\TimeSeriesController;
-Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
-
-Route::get('/chart', function () {
-    return view('chart');
-});
-
 use App\Http\Controllers\BarChartRaceController;
+use App\Http\Controllers\AnalysisController;
 
+
+Route::get('/intro_controller', [IntroController::class, 'showIntro']);
+Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
 Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
 Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
 
 //-------------------------------------------
 // 암호 입력
 //-------------------------------------------
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\ProtectedController;
+use App\Http\Middleware\PasswordProtected;
+Route::get('/protected', [ProtectedController::class, 'index'])->middleware(PasswordProtected::class);
 
 Route::get('/password', function () {
     return view('password');  // 암호 입력 폼을 표시
@@ -67,42 +52,134 @@ Route::post('/password', function (Request $request) {
 })->name('password.check');
 
 
+//-------------------------------------------
+// 업로드 테스트
+//-------------------------------------------
+
+
+// upload
+//use App\Http\Controllers\UploadController;
+//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
+//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
+//Route::get('/dd_upload', function () {
+//    return view('dd_upload');
+//});
+
+use App\Http\Controllers\ZipController;
+Route::get('/zipupload', [ZipController::class, 'index']);
+Route::post('/upload', [ZipController::class, 'upload']);
 
 //-------------------------------------------
 // 암호로 보호할 페이지
 //-------------------------------------------
 
-use App\Http\Controllers\ProtectedController;
-use App\Http\Middleware\PasswordProtected;
-
-Route::get('/protected', [ProtectedController::class, 'index'])->middleware(PasswordProtected::class);
-
-Route::get('/chart', function () {
-    return view('chart');
+Route::get('/', function () {
+    return view('intro');
 })->middleware(PasswordProtected::class);
 
-Route::get('/d3chart', function () {
-    return view('d3chart');
+Route::get('/docs', function () {
+    return view('docs');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_progress', function () {
-    return view('dd_progress');
+Route::get('/introview', function () {
+    return view('intro');
+})->middleware(PasswordProtected::class);
+
+Route::get('/intro', function () {     
+    return 'Data Drift 시연 페이지'; 
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_progress1', function () {
+    return view('/samples/dd_progress1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_progress2', function () {
+    return view('/samples/dd_progress2');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_timeseries1', function () {
+    return view('/samples/dd_timeseries1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_timeseries2', function () {
+    return view('/samples/dd_timeseries2');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_timeseries3', function () {
+    return view('/samples/dd_timeseries3');
 })->middleware(PasswordProtected::class);
 
 Route::get('/dd_embeddingvis', function () {
-    return view('dd_embeddingvis');
+    return view('/samples/dd_embeddingvis');
 })->middleware(PasswordProtected::class);
 
+Route::get('/dd_double_histogram', function () {
+    return view('/samples/dd_double_histogram');
+})->middleware(PasswordProtected::class);
 
-// upload
-use App\Http\Controllers\UploadController;
-//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
-Route::post('/upload', [UploadController::class, 'upload'])->name('upload')->middleware('auth');
+Route::get('/dd_ridgeline', function () {
+    return view('/samples/dd_ridgeline');
+})->middleware(PasswordProtected::class);
 
-Route::get('/upload', function () {
-    return view('upload');
-});
+Route::get('/dd_histogram1', function () {
+    return view('/samples/dd_histogram1');
+})->middleware(PasswordProtected::class);
 
+Route::get('/dd_histogram2', function () {
+    return view('/samples/dd_histogram2');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_confusion1', function () {
+    return view('/samples/dd_confusion1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_sankey', function () {
+    return view('/samples/dd_sankey');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_sankey_jpark1', function () {
+    return view('/samples/dd_sankey_jpark1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_flare', function () {
+    return view('/samples/dd_flare');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_map1', function () {
+    return view('/samples/dd_map1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_map2', function () {
+    return view('/samples/dd_map2');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_map3', function () {
+    return view('/samples/dd_map3');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_map4', function () {
+    return view('/samples/dd_map4');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_map5', function () {
+    return view('/samples/dd_map5');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_weather1', function () {
+    return view('/samples/dd_weather1');
+})->middleware(PasswordProtected::class);
+
+Route::get('/dd_wolframstyle1', function () {
+    return view('/samples/dd_wolframstyle1');
+})->middleware(PasswordProtected::class);
+
+Route::post('/analyses/search', [AnalysisController::class, 'search']);  // 검색을 위한 라우트 추가
+Route::get('/dd_wolframstyle2', [AnalysisController::class, 'dd_wolframstyle2']);
+Route::get('/dd_wolframstyle3', [AnalysisController::class, 'dd_wolframstyle3']);
+Route::get('/dd_wolframstyle4', [AnalysisController::class, 'dd_wolframstyle4']); 
+
+Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
+Route::get('/dd_wolframstyle5', [AnalysisController::class, 'dd_wolframstyle5']);
 
 
 

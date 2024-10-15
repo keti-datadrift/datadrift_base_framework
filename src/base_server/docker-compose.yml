@@ -89,8 +89,10 @@ services:
             #- ./web:/var/www/html:delegated
             - ./web:/var/www/html:rw
             - ./config/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ./config/php/php.ini:/usr/local/etc/php/php.ini
         command: bash -c "docker-php-ext-install pdo pdo_mysql && docker-php-entrypoint php-fpm" # 동적으로 확장모듈 설치
         environment:
+            PHP_EXTENSION: zip  # zip 확장 사용
             MYSQL_USER: ${DB_USER}
             MYSQL_PASSWORD: ${DB_USER_PASSWORD}
         depends_on:

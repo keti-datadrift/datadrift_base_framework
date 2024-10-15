@@ -1,0 +1,2173 @@
+{
+    "precincts": {
+        "1": {
+            "province_code": 11, 
+            "person_name": "\uc815\uc138\uade0", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770230.jpg", 
+            "no": 1, 
+            "precinct_name": "\uc885\ub85c\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "2": {
+            "province_code": 11, 
+            "person_name": "\uc815\ud638\uc900", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770849.jpg", 
+            "no": 2, 
+            "precinct_name": "\uc911\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "3": {
+            "province_code": 11, 
+            "person_name": "\uc9c4\uc601", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770462.jpg", 
+            "no": 3, 
+            "precinct_name": "\uc6a9\uc0b0\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "4": {
+            "province_code": 11, 
+            "person_name": "\ucd5c\uc7ac\ucc9c", 
+            "party_color": "#999999", 
+            "image": "http://www.assembly.go.kr/photo/9770884.jpg", 
+            "no": 4, 
+            "precinct_name": "\uc131\ub3d9\uad6c\uac11", 
+            "party": "\ubb34\uc18c\uc18d"
+        }, 
+        "5": {
+            "province_code": 11, 
+            "person_name": "\ud64d\uc775\ud45c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770864.jpg", 
+            "no": 5, 
+            "precinct_name": "\uc131\ub3d9\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "6": {
+            "province_code": 11, 
+            "person_name": "\uae40\ud55c\uae38", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770743.jpg", 
+            "no": 6, 
+            "precinct_name": "\uad11\uc9c4\uad6c\uac11", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "7": {
+            "province_code": 11, 
+            "person_name": "\ucd94\ubbf8\uc560", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770659.jpg", 
+            "no": 7, 
+            "precinct_name": "\uad11\uc9c4\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "8": {
+            "province_code": 11, 
+            "person_name": "\uc548\uaddc\ubc31", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770587.jpg", 
+            "no": 8, 
+            "precinct_name": "\ub3d9\ub300\ubb38\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "9": {
+            "province_code": 11, 
+            "person_name": "\ubbfc\ubcd1\ub450", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770761.jpg", 
+            "no": 9, 
+            "precinct_name": "\ub3d9\ub300\ubb38\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "10": {
+            "province_code": 11, 
+            "person_name": "\uc11c\uc601\uad50", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770784.jpg", 
+            "no": 10, 
+            "precinct_name": "\uc911\ub791\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "11": {
+            "province_code": 11, 
+            "person_name": "\ubc15\ud64d\uadfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770779.jpg", 
+            "no": 11, 
+            "precinct_name": "\uc911\ub791\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "12": {
+            "province_code": 11, 
+            "person_name": "\uc720\uc2b9\ud76c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770874.jpg", 
+            "no": 12, 
+            "precinct_name": "\uc131\ubd81\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "13": {
+            "province_code": 11, 
+            "person_name": "\uc2e0\uacc4\ub95c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770793.jpg", 
+            "no": 13, 
+            "precinct_name": "\uc131\ubd81\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "14": {
+            "province_code": 11, 
+            "person_name": "\uc624\uc601\uc2dd", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770870.jpg", 
+            "no": 14, 
+            "precinct_name": "\uac15\ubd81\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "15": {
+            "province_code": 11, 
+            "person_name": "\uc720\ub300\uc6b4", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770804.jpg", 
+            "no": 15, 
+            "precinct_name": "\uac15\ubd81\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "16": {
+            "province_code": 11, 
+            "person_name": "\uc778\uc7ac\uadfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770839.jpg", 
+            "no": 16, 
+            "precinct_name": "\ub3c4\ubd09\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "17": {
+            "province_code": 11, 
+            "person_name": "\uc720\uc778\ud0dc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770875.jpg", 
+            "no": 17, 
+            "precinct_name": "\ub3c4\ubd09\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "18": {
+            "province_code": 11, 
+            "person_name": "\uc774\ub178\uadfc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770816.jpg", 
+            "no": 18, 
+            "precinct_name": "\ub178\uc6d0\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "19": {
+            "province_code": 11, 
+            "person_name": "\uc6b0\uc6d0\uc2dd", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770872.jpg", 
+            "no": 19, 
+            "precinct_name": "\ub178\uc6d0\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "20": {
+            "province_code": 11, 
+            "person_name": "\uc548\ucca0\uc218", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770896.jpg", 
+            "no": 20, 
+            "precinct_name": "\ub178\uc6d0\uad6c\ubcd1", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "21": {
+            "province_code": 11, 
+            "person_name": "\uc774\ubbf8\uacbd", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770169.jpg", 
+            "no": 21, 
+            "precinct_name": "\uc740\ud3c9\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "22": {
+            "province_code": 11, 
+            "person_name": "\uc774\uc7ac\uc624", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770694.jpg", 
+            "no": 22, 
+            "precinct_name": "\uc740\ud3c9\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "23": {
+            "province_code": 11, 
+            "person_name": "\uc6b0\uc0c1\ud638", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770871.jpg", 
+            "no": 23, 
+            "precinct_name": "\uc11c\ub300\ubb38\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "24": {
+            "province_code": 11, 
+            "person_name": "\uc815\ub450\uc5b8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770441.jpg", 
+            "no": 24, 
+            "precinct_name": "\uc11c\ub300\ubb38\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "25": {
+            "province_code": 11, 
+            "person_name": "\ub178\uc6c5\ub798", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770753.jpg", 
+            "no": 25, 
+            "precinct_name": "\ub9c8\ud3ec\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "26": {
+            "province_code": 11, 
+            "person_name": "\uc815\uccad\ub798", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770882.jpg", 
+            "no": 26, 
+            "precinct_name": "\ub9c8\ud3ec\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "27": {
+            "province_code": 11, 
+            "person_name": "\uae38\uc815\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770711.jpg", 
+            "no": 27, 
+            "precinct_name": "\uc591\ucc9c\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "28": {
+            "province_code": 11, 
+            "person_name": "\uae40\uc6a9\ud0dc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770542.jpg", 
+            "no": 28, 
+            "precinct_name": "\uc591\ucc9c\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "29": {
+            "province_code": 11, 
+            "person_name": "\uc2e0\uae30\ub0a8", 
+            "party_color": "#999999", 
+            "image": "http://www.assembly.go.kr/photo/9770868.jpg", 
+            "no": 29, 
+            "precinct_name": "\uac15\uc11c\uad6c\uac11", 
+            "party": "\ubb34\uc18c\uc18d"
+        }, 
+        "30": {
+            "province_code": 11, 
+            "person_name": "\uae40\uc131\ud0dc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770532.jpg", 
+            "no": 30, 
+            "precinct_name": "\uac15\uc11c\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "31": {
+            "province_code": 11, 
+            "person_name": "\uc774\uc778\uc601", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770878.jpg", 
+            "no": 31, 
+            "precinct_name": "\uad6c\ub85c\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "32": {
+            "province_code": 11, 
+            "person_name": "\ubc15\uc601\uc120", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770347.jpg", 
+            "no": 32, 
+            "precinct_name": "\uad6c\ub85c\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "33": {
+            "province_code": 11, 
+            "person_name": "\uc774\ubaa9\ud76c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770877.jpg", 
+            "no": 33, 
+            "precinct_name": "\uae08\ucc9c\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "34": {
+            "province_code": 11, 
+            "person_name": "\uae40\uc601\uc8fc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770729.jpg", 
+            "no": 34, 
+            "precinct_name": "\uc601\ub4f1\ud3ec\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "35": {
+            "province_code": 11, 
+            "person_name": "\uc2e0\uacbd\ubbfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770792.jpg", 
+            "no": 35, 
+            "precinct_name": "\uc601\ub4f1\ud3ec\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "36": {
+            "province_code": 11, 
+            "person_name": "\uc804\ubcd1\ud5cc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770437.jpg", 
+            "no": 36, 
+            "precinct_name": "\ub3d9\uc791\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "37": {
+            "province_code": 11, 
+            "person_name": "\ub098\uacbd\uc6d0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770903.jpg", 
+            "no": 37, 
+            "precinct_name": "\ub3d9\uc791\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "38": {
+            "province_code": 11, 
+            "person_name": "\uc720\uae30\ud64d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770873.jpg", 
+            "no": 38, 
+            "precinct_name": "\uad00\uc545\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "39": {
+            "province_code": 11, 
+            "person_name": "\uc624\uc2e0\ud658", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770918.jpg", 
+            "no": 39, 
+            "precinct_name": "\uad00\uc545\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "40": {
+            "province_code": 11, 
+            "person_name": "\uae40\ud68c\uc120", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770749.jpg", 
+            "no": 40, 
+            "precinct_name": "\uc11c\ucd08\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "41": {
+            "province_code": 11, 
+            "person_name": "\uac15\uc11d\ud6c8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770705.jpg", 
+            "no": 41, 
+            "precinct_name": "\uc11c\ucd08\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "42": {
+            "province_code": 11, 
+            "person_name": "\uc2ec\uc724\uc870", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770797.jpg", 
+            "no": 42, 
+            "precinct_name": "\uac15\ub0a8\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "43": {
+            "province_code": 11, 
+            "person_name": "\uae40\uc885\ud6c8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770739.jpg", 
+            "no": 43, 
+            "precinct_name": "\uac15\ub0a8\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "44": {
+            "province_code": 11, 
+            "person_name": "\ubc15\uc778\uc219", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770776.jpg", 
+            "no": 44, 
+            "precinct_name": "\uc1a1\ud30c\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "45": {
+            "province_code": 11, 
+            "person_name": "\uc720\uc77c\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770595.jpg", 
+            "no": 45, 
+            "precinct_name": "\uc1a1\ud30c\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "46": {
+            "province_code": 11, 
+            "person_name": "\uae40\uc744\ub3d9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770544.jpg", 
+            "no": 46, 
+            "precinct_name": "\uc1a1\ud30c\uad6c\ubcd1", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "47": {
+            "province_code": 11, 
+            "person_name": "\uc2e0\ub3d9\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770794.jpg", 
+            "no": 47, 
+            "precinct_name": "\uac15\ub3d9\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "48": {
+            "province_code": 11, 
+            "person_name": "\uc2ec\uc7ac\uad8c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770798.jpg", 
+            "no": 48, 
+            "precinct_name": "\uac15\ub3d9\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "49": {
+            "province_code": 21, 
+            "person_name": "\uc815\uc758\ud654", 
+            "party_color": "#999999", 
+            "image": "http://www.assembly.go.kr/photo/9770232.jpg", 
+            "no": 49, 
+            "precinct_name": "\uc911\uad6c\ub3d9\uad6c", 
+            "party": "\ubb34\uc18c\uc18d"
+        }, 
+        "50": {
+            "province_code": 21, 
+            "person_name": "\uc720\uae30\uc900", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770387.jpg", 
+            "no": 50, 
+            "precinct_name": "\uc11c\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "51": {
+            "province_code": 21, 
+            "person_name": "\uae40\ubb34\uc131", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770895.jpg", 
+            "no": 51, 
+            "precinct_name": "\uc601\ub3c4\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "52": {
+            "province_code": 21, 
+            "person_name": "\ub098\uc131\ub9b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770553.jpg", 
+            "no": 52, 
+            "precinct_name": "\ubd80\uc0b0\uc9c4\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "53": {
+            "province_code": 21, 
+            "person_name": "\uc774\ud5cc\uc2b9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770837.jpg", 
+            "no": 53, 
+            "precinct_name": "\ubd80\uc0b0\uc9c4\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "54": {
+            "province_code": 21, 
+            "person_name": "\uc774\uc9c4\ubcf5", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770621.jpg", 
+            "no": 54, 
+            "precinct_name": "\ub3d9\ub798\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "55": {
+            "province_code": 21, 
+            "person_name": "\uae40\uc815\ud6c8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770316.jpg", 
+            "no": 55, 
+            "precinct_name": "\ub0a8\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "56": {
+            "province_code": 21, 
+            "person_name": "\uc11c\uc6a9\uad50", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770785.jpg", 
+            "no": 56, 
+            "precinct_name": "\ub0a8\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "57": {
+            "province_code": 21, 
+            "person_name": "\ubc15\ubbfc\uc2dd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770557.jpg", 
+            "no": 57, 
+            "precinct_name": "\ubd81\uad6c\uac15\uc11c\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "58": {
+            "province_code": 21, 
+            "person_name": "\uae40\ub3c4\uc74d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770719.jpg", 
+            "no": 58, 
+            "precinct_name": "\ubd81\uad6c\uac15\uc11c\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "59": {
+            "province_code": 21, 
+            "person_name": "\ubc30\ub355\uad11", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770904.jpg", 
+            "no": 59, 
+            "precinct_name": "\ud574\uc6b4\ub300\uad6c\uae30\uc7a5\uad70\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "60": {
+            "province_code": 21, 
+            "person_name": "\ud558\ud0dc\uacbd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770858.jpg", 
+            "no": 60, 
+            "precinct_name": "\ud574\uc6b4\ub300\uad6c\uae30\uc7a5\uad70\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "61": {
+            "province_code": 21, 
+            "person_name": "\ubb38\ub300\uc131", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770757.jpg", 
+            "no": 61, 
+            "precinct_name": "\uc0ac\ud558\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "62": {
+            "province_code": 21, 
+            "person_name": "\uc870\uacbd\ud0dc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770450.jpg", 
+            "no": 62, 
+            "precinct_name": "\uc0ac\ud558\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "63": {
+            "province_code": 21, 
+            "person_name": "\uae40\uc138\uc5f0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770534.jpg", 
+            "no": 63, 
+            "precinct_name": "\uae08\uc815\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "64": {
+            "province_code": 21, 
+            "person_name": "\uae40\ud76c\uc815", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770751.jpg", 
+            "no": 64, 
+            "precinct_name": "\uc5f0\uc81c\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "65": {
+            "province_code": 21, 
+            "person_name": "\uc720\uc7ac\uc911", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770596.jpg", 
+            "no": 65, 
+            "precinct_name": "\uc218\uc601\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "66": {
+            "province_code": 21, 
+            "person_name": "\ubb38\uc7ac\uc778", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770759.jpg", 
+            "no": 66, 
+            "precinct_name": "\uc0ac\uc0c1\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "67": {
+            "province_code": 22, 
+            "person_name": "\uae40\ud76c\uad6d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770750.jpg", 
+            "no": 67, 
+            "precinct_name": "\uc911\uad6c\ub0a8\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "68": {
+            "province_code": 22, 
+            "person_name": "\ub958\uc131\uac78", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770888.jpg", 
+            "no": 68, 
+            "precinct_name": "\ub3d9\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "69": {
+            "province_code": 22, 
+            "person_name": "\uc720\uc2b9\ubbfc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770497.jpg", 
+            "no": 69, 
+            "precinct_name": "\ub3d9\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "70": {
+            "province_code": 22, 
+            "person_name": "\uae40\uc0c1\ud6c8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770725.jpg", 
+            "no": 70, 
+            "precinct_name": "\uc11c\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "71": {
+            "province_code": 22, 
+            "person_name": "\uad8c\uc740\ud76c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770710.jpg", 
+            "no": 71, 
+            "precinct_name": "\ubd81\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "72": {
+            "province_code": 22, 
+            "person_name": "\uc11c\uc0c1\uae30", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770360.jpg", 
+            "no": 72, 
+            "precinct_name": "\ubd81\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "73": {
+            "province_code": 22, 
+            "person_name": "\uc774\ud55c\uad6c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770197.jpg", 
+            "no": 73, 
+            "precinct_name": "\uc218\uc131\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "74": {
+            "province_code": 22, 
+            "person_name": "\uc8fc\ud638\uc601", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770459.jpg", 
+            "no": 74, 
+            "precinct_name": "\uc218\uc131\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "75": {
+            "province_code": 22, 
+            "person_name": "\ud64d\uc9c0\ub9cc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770866.jpg", 
+            "no": 75, 
+            "precinct_name": "\ub2ec\uc11c\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "76": {
+            "province_code": 22, 
+            "person_name": "\uc724\uc7ac\uc625", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770812.jpg", 
+            "no": 76, 
+            "precinct_name": "\ub2ec\uc11c\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "77": {
+            "province_code": 22, 
+            "person_name": "\uc870\uc6d0\uc9c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770648.jpg", 
+            "no": 77, 
+            "precinct_name": "\ub2ec\uc11c\uad6c\ubcd1", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "78": {
+            "province_code": 22, 
+            "person_name": "\uc774\uc885\uc9c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770833.jpg", 
+            "no": 78, 
+            "precinct_name": "\ub2ec\uc131\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "80": {
+            "province_code": 23, 
+            "person_name": "\ud64d\uc77c\ud45c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770665.jpg", 
+            "no": 80, 
+            "precinct_name": "\ub0a8\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "81": {
+            "province_code": 23, 
+            "person_name": "\uc724\uc0c1\ud604", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770598.jpg", 
+            "no": 81, 
+            "precinct_name": "\ub0a8\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "82": {
+            "province_code": 23, 
+            "person_name": "\ud669\uc6b0\uc5ec", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770273.jpg", 
+            "no": 82, 
+            "precinct_name": "\uc5f0\uc218\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "83": {
+            "province_code": 23, 
+            "person_name": "\ubc15\ub0a8\ucd98", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770765.jpg", 
+            "no": 83, 
+            "precinct_name": "\ub0a8\ub3d9\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "84": {
+            "province_code": 23, 
+            "person_name": "\uc724\uad00\uc11d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770808.jpg", 
+            "no": 84, 
+            "precinct_name": "\ub0a8\ub3d9\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "85": {
+            "province_code": 23, 
+            "person_name": "\ubb38\ubcd1\ud638", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770758.jpg", 
+            "no": 85, 
+            "precinct_name": "\ubd80\ud3c9\uad6c\uac11", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "86": {
+            "province_code": 23, 
+            "person_name": "\ud64d\uc601\ud45c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770676.jpg", 
+            "no": 86, 
+            "precinct_name": "\ubd80\ud3c9\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "87": {
+            "province_code": 23, 
+            "person_name": "\uc2e0\ud559\uc6a9", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770367.jpg", 
+            "no": 87, 
+            "precinct_name": "\uacc4\uc591\uad6c\uac11", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "88": {
+            "province_code": 23, 
+            "person_name": "\ucd5c\uc6d0\uc2dd", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770857.jpg", 
+            "no": 88, 
+            "precinct_name": "\uacc4\uc591\uad6c\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "89": {
+            "province_code": 23, 
+            "person_name": "\uc774\ud559\uc7ac", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770625.jpg", 
+            "no": 89, 
+            "precinct_name": "\uc11c\uad6c\uac15\ud654\uad70\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "90": {
+            "province_code": 23, 
+            "person_name": "\uc548\uc0c1\uc218", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770919.jpg", 
+            "no": 90, 
+            "precinct_name": "\uc11c\uad6c\uac15\ud654\uad70\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "91": {
+            "province_code": 24, 
+            "person_name": "\ubc15\uc8fc\uc120", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770566.jpg", 
+            "no": 91, 
+            "precinct_name": "\ub3d9\uad6c", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "92": {
+            "province_code": 24, 
+            "person_name": "\ubc15\ud61c\uc790", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770778.jpg", 
+            "no": 92, 
+            "precinct_name": "\uc11c\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "93": {
+            "province_code": 24, 
+            "person_name": "\ucc9c\uc815\ubc30", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770920.jpg", 
+            "no": 93, 
+            "precinct_name": "\uc11c\uad6c\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "94": {
+            "province_code": 24, 
+            "person_name": "\uc7a5\ubcd1\uc644", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770688.jpg", 
+            "no": 94, 
+            "precinct_name": "\ub0a8\uad6c", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "95": {
+            "province_code": 24, 
+            "person_name": "\uac15\uae30\uc815", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770275.jpg", 
+            "no": 95, 
+            "precinct_name": "\ubd81\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "96": {
+            "province_code": 24, 
+            "person_name": "\uc784\ub0b4\ud604", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770840.jpg", 
+            "no": 96, 
+            "precinct_name": "\ubd81\uad6c\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "97": {
+            "province_code": 24, 
+            "person_name": "\uae40\ub3d9\ucca0", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770295.jpg", 
+            "no": 97, 
+            "precinct_name": "\uad11\uc0b0\uad6c\uac11", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "98": {
+            "province_code": 24, 
+            "person_name": "\uad8c\uc740\ud76c", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770906.jpg", 
+            "no": 98, 
+            "precinct_name": "\uad11\uc0b0\uad6c\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "99": {
+            "province_code": 25, 
+            "person_name": "\uc774\uc7a5\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770829.jpg", 
+            "no": 99, 
+            "precinct_name": "\ub3d9\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "100": {
+            "province_code": 25, 
+            "person_name": "\uac15\ucc3d\ud76c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770707.jpg", 
+            "no": 100, 
+            "precinct_name": "\uc911\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "101": {
+            "province_code": 25, 
+            "person_name": "\ubc15\ubcd1\uc11d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770090.jpg", 
+            "no": 101, 
+            "precinct_name": "\uc11c\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "102": {
+            "province_code": 25, 
+            "person_name": "\ubc15\ubc94\uacc4", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770770.jpg", 
+            "no": 102, 
+            "precinct_name": "\uc11c\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "103": {
+            "province_code": 25, 
+            "person_name": "\uc774\uc0c1\ubbfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770414.jpg", 
+            "no": 103, 
+            "precinct_name": "\uc720\uc131\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "104": {
+            "province_code": 25, 
+            "person_name": "\uc815\uc6a9\uae30", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770907.jpg", 
+            "no": 104, 
+            "precinct_name": "\ub300\ub355\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "105": {
+            "province_code": 26, 
+            "person_name": "\uc815\uac11\uc724", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770439.jpg", 
+            "no": 105, 
+            "precinct_name": "\uc911\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "106": {
+            "province_code": 26, 
+            "person_name": "\uc774\ucc44\uc775", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770835.jpg", 
+            "no": 106, 
+            "precinct_name": "\ub0a8\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "107": {
+            "province_code": 26, 
+            "person_name": "\ubc15\ub9f9\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770908.jpg", 
+            "no": 107, 
+            "precinct_name": "\ub0a8\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "108": {
+            "province_code": 26, 
+            "person_name": "\uc548\ud6a8\ub300", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770589.jpg", 
+            "no": 108, 
+            "precinct_name": "\ub3d9\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "109": {
+            "province_code": 26, 
+            "person_name": "\ubc15\ub300\ub3d9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770766.jpg", 
+            "no": 109, 
+            "precinct_name": "\ubd81\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "110": {
+            "province_code": 26, 
+            "person_name": "\uac15\uae38\ubd80", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770276.jpg", 
+            "no": 110, 
+            "precinct_name": "\uc6b8\uc8fc\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "111": {
+            "province_code": 29, 
+            "person_name": "\uc774\ud574\ucc2c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770879.jpg", 
+            "no": 111, 
+            "precinct_name": "\uc138\uc885\ud2b9\ubcc4\uc790\uce58\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "112": {
+            "province_code": 31, 
+            "person_name": "\uc774\ucc2c\uc5f4", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770678.jpg", 
+            "no": 112, 
+            "precinct_name": "\uc218\uc6d0\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "113": {
+            "province_code": 31, 
+            "person_name": "\uc815\ubbf8\uacbd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770909.jpg", 
+            "no": 113, 
+            "precinct_name": "\uc218\uc6d0\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "114": {
+            "province_code": 31, 
+            "person_name": "\uae40\uc6a9\ub0a8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770910.jpg", 
+            "no": 114, 
+            "precinct_name": "\uc218\uc6d0\uc2dc\ubcd1", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "115": {
+            "province_code": 31, 
+            "person_name": "\ubc15\uad11\uc628", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770911.jpg", 
+            "no": 115, 
+            "precinct_name": "\uc218\uc6d0\uc2dc\uc815", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "116": {
+            "province_code": 31, 
+            "person_name": "\uae40\ud0dc\ub144", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770741.jpg", 
+            "no": 116, 
+            "precinct_name": "\uc131\ub0a8\uc2dc\uc218\uc815\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "117": {
+            "province_code": 31, 
+            "person_name": "\uc2e0\uc0c1\uc9c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770921.jpg", 
+            "no": 117, 
+            "precinct_name": "\uc131\ub0a8\uc2dc\uc911\uc6d0\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "118": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc885\ud6c8", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770834.jpg", 
+            "no": 118, 
+            "precinct_name": "\uc131\ub0a8\uc2dc\ubd84\ub2f9\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "119": {
+            "province_code": 31, 
+            "person_name": "\uc804\ud558\uc9c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770845.jpg", 
+            "no": 119, 
+            "precinct_name": "\uc131\ub0a8\uc2dc\ubd84\ub2f9\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "120": {
+            "province_code": 31, 
+            "person_name": "\ubb38\ud76c\uc0c1", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770084.jpg", 
+            "no": 120, 
+            "precinct_name": "\uc758\uc815\ubd80\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "121": {
+            "province_code": 31, 
+            "person_name": "\ud64d\ubb38\uc885", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770862.jpg", 
+            "no": 121, 
+            "precinct_name": "\uc758\uc815\ubd80\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "122": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc885\uac78", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770194.jpg", 
+            "no": 122, 
+            "precinct_name": "\uc548\uc591\uc2dc\ub9cc\uc548\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "123": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc11d\ud604", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770416.jpg", 
+            "no": 123, 
+            "precinct_name": "\uc548\uc591\uc2dc\ub3d9\uc548\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "124": {
+            "province_code": 31, 
+            "person_name": "\uc2ec\uc7ac\ucca0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770138.jpg", 
+            "no": 124, 
+            "precinct_name": "\uc548\uc591\uc2dc\ub3d9\uc548\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "125": {
+            "province_code": 31, 
+            "person_name": "\uae40\uacbd\ud611", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770712.jpg", 
+            "no": 125, 
+            "precinct_name": "\ubd80\ucc9c\uc2dc\uc6d0\ubbf8\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "126": {
+            "province_code": 31, 
+            "person_name": "\uc124\ud6c8", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770786.jpg", 
+            "no": 126, 
+            "precinct_name": "\ubd80\ucc9c\uc2dc\uc6d0\ubbf8\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "127": {
+            "province_code": 31, 
+            "person_name": "\uae40\uc0c1\ud76c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770527.jpg", 
+            "no": 127, 
+            "precinct_name": "\ubd80\ucc9c\uc2dc\uc18c\uc0ac\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "128": {
+            "province_code": 31, 
+            "person_name": "\uc6d0\ud61c\uc601", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770386.jpg", 
+            "no": 128, 
+            "precinct_name": "\ubd80\ucc9c\uc2dc\uc624\uc815\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "129": {
+            "province_code": 31, 
+            "person_name": "\ubc31\uc7ac\ud604", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770573.jpg", 
+            "no": 129, 
+            "precinct_name": "\uad11\uba85\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "130": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc5b8\uc8fc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770822.jpg", 
+            "no": 130, 
+            "precinct_name": "\uad11\uba85\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "131": {
+            "province_code": 31, 
+            "person_name": "\uc6d0\uc720\ucca0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770592.jpg", 
+            "no": 131, 
+            "precinct_name": "\ud3c9\ud0dd\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "132": {
+            "province_code": 31, 
+            "person_name": "\uc720\uc758\ub3d9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770912.jpg", 
+            "no": 132, 
+            "precinct_name": "\ud3c9\ud0dd\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "133": {
+            "province_code": 31, 
+            "person_name": "\uc815\uc131\ud638", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770881.jpg", 
+            "no": 133, 
+            "precinct_name": "\uc591\uc8fc\uc2dc\ub3d9\ub450\ucc9c\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "134": {
+            "province_code": 31, 
+            "person_name": "\uc804\ud574\ucca0", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770846.jpg", 
+            "no": 134, 
+            "precinct_name": "\uc548\uc0b0\uc2dc\uc0c1\ub85d\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "135": {
+            "province_code": 31, 
+            "person_name": "\uae40\uc601\ud658", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770684.jpg", 
+            "no": 135, 
+            "precinct_name": "\uc548\uc0b0\uc2dc\uc0c1\ub85d\uad6c\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "136": {
+            "province_code": 31, 
+            "person_name": "\uae40\uba85\uc5f0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770721.jpg", 
+            "no": 136, 
+            "precinct_name": "\uc548\uc0b0\uc2dc\ub2e8\uc6d0\uad6c\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "137": {
+            "province_code": 31, 
+            "person_name": "\ubd80\uc88c\ud604", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770783.jpg", 
+            "no": 137, 
+            "precinct_name": "\uc548\uc0b0\uc2dc\ub2e8\uc6d0\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "138": {
+            "province_code": 31, 
+            "person_name": "\uc2ec\uc0c1\uc815", 
+            "party_color": "#FFCB08", 
+            "image": "http://www.assembly.go.kr/photo/9770869.jpg", 
+            "no": 138, 
+            "precinct_name": "\uace0\uc591\uc2dc\ub355\uc591\uad6c\uac11", 
+            "party": "\uc815\uc758\ub2f9"
+        }, 
+        "139": {
+            "province_code": 31, 
+            "person_name": "\uae40\ud0dc\uc6d0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770550.jpg", 
+            "no": 139, 
+            "precinct_name": "\uace0\uc591\uc2dc\ub355\uc591\uad6c\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "140": {
+            "province_code": 31, 
+            "person_name": "\uc720\uc740\ud61c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770807.jpg", 
+            "no": 140, 
+            "precinct_name": "\uace0\uc591\uc2dc\uc77c\uc0b0\ub3d9\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "141": {
+            "province_code": 31, 
+            "person_name": "\uae40\ud604\ubbf8", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770746.jpg", 
+            "no": 141, 
+            "precinct_name": "\uace0\uc591\uc2dc\uc77c\uc0b0\uc11c\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "142": {
+            "province_code": 31, 
+            "person_name": "\uc1a1\ud638\ucc3d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770790.jpg", 
+            "no": 142, 
+            "precinct_name": "\uc758\uc655\uc2dc\uacfc\ucc9c\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "143": {
+            "province_code": 31, 
+            "person_name": "\uc724\ud638\uc911", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770876.jpg", 
+            "no": 143, 
+            "precinct_name": "\uad6c\ub9ac\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "144": {
+            "province_code": 31, 
+            "person_name": "\ucd5c\uc7ac\uc131", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770472.jpg", 
+            "no": 144, 
+            "precinct_name": "\ub0a8\uc591\uc8fc\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "145": {
+            "province_code": 31, 
+            "person_name": "\ubc15\uae30\ucd98", 
+            "party_color": "#999999", 
+            "image": "http://www.assembly.go.kr/photo/9770339.jpg", 
+            "no": 145, 
+            "precinct_name": "\ub0a8\uc591\uc8fc\uc2dc\uc744", 
+            "party": "\ubb34\uc18c\uc18d"
+        }, 
+        "146": {
+            "province_code": 31, 
+            "person_name": "\uc548\ubbfc\uc11d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770372.jpg", 
+            "no": 146, 
+            "precinct_name": "\uc624\uc0b0\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "147": {
+            "province_code": 31, 
+            "person_name": "\uc11c\uccad\uc6d0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770898.jpg", 
+            "no": 147, 
+            "precinct_name": "\ud654\uc131\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "148": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc6d0\uc6b1", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770826.jpg", 
+            "no": 148, 
+            "precinct_name": "\ud654\uc131\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "149": {
+            "province_code": 31, 
+            "person_name": "\ud568\uc9c4\uaddc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770860.jpg", 
+            "no": 149, 
+            "precinct_name": "\uc2dc\ud765\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "150": {
+            "province_code": 31, 
+            "person_name": "\uc870\uc815\uc2dd", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770456.jpg", 
+            "no": 150, 
+            "precinct_name": "\uc2dc\ud765\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "151": {
+            "province_code": 31, 
+            "person_name": "\uc774\ud559\uc601", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770836.jpg", 
+            "no": 151, 
+            "precinct_name": "\uad70\ud3ec\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "152": {
+            "province_code": 31, 
+            "person_name": "\uc774\ud604\uc7ac", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770838.jpg", 
+            "no": 152, 
+            "precinct_name": "\ud558\ub0a8\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "153": {
+            "province_code": 31, 
+            "person_name": "\uc724\ud6c4\ub355", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770813.jpg", 
+            "no": 153, 
+            "precinct_name": "\ud30c\uc8fc\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "154": {
+            "province_code": 31, 
+            "person_name": "\ud669\uc9c4\ud558", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770484.jpg", 
+            "no": 154, 
+            "precinct_name": "\ud30c\uc8fc\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "155": {
+            "province_code": 31, 
+            "person_name": "\uc774\uc6b0\ud604", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770825.jpg", 
+            "no": 155, 
+            "precinct_name": "\uc6a9\uc778\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "156": {
+            "province_code": 31, 
+            "person_name": "\uae40\ubbfc\uae30", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770723.jpg", 
+            "no": 156, 
+            "precinct_name": "\uc6a9\uc778\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "157": {
+            "province_code": 31, 
+            "person_name": "\ud55c\uc120\uad50", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770477.jpg", 
+            "no": 157, 
+            "precinct_name": "\uc6a9\uc778\uc2dc\ubcd1", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "158": {
+            "province_code": 31, 
+            "person_name": "\uae40\ud559\uc6a9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770670.jpg", 
+            "no": 158, 
+            "precinct_name": "\uc548\uc131\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "159": {
+            "province_code": 31, 
+            "person_name": "\ud64d\ucca0\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770913.jpg", 
+            "no": 159, 
+            "precinct_name": "\uae40\ud3ec\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "160": {
+            "province_code": 31, 
+            "person_name": "\ub178\ucca0\ub798", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770554.jpg", 
+            "no": 160, 
+            "precinct_name": "\uad11\uc8fc\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "161": {
+            "province_code": 31, 
+            "person_name": "\uae40\uc601\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770538.jpg", 
+            "no": 161, 
+            "precinct_name": "\ud3ec\ucc9c\uc2dc\uc5f0\ucc9c\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "162": {
+            "province_code": 31, 
+            "person_name": "\uc720\uc2b9\uc6b0", 
+            "party_color": "#999999", 
+            "image": "http://www.assembly.go.kr/photo/9770806.jpg", 
+            "no": 162, 
+            "precinct_name": "\uc774\ucc9c\uc2dc", 
+            "party": "\ubb34\uc18c\uc18d"
+        }, 
+        "163": {
+            "province_code": 31, 
+            "person_name": "\uc815\ubcd1\uad6d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770229.jpg", 
+            "no": 163, 
+            "precinct_name": "\uc5ec\uc8fc\uad70\uc591\ud3c9\uad70\uac00\ud3c9\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "164": {
+            "province_code": 32, 
+            "person_name": "\uae40\uc9c4\ud0dc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770740.jpg", 
+            "no": 164, 
+            "precinct_name": "\ucd98\ucc9c\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "165": {
+            "province_code": 32, 
+            "person_name": "\uae40\uae30\uc120", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770716.jpg", 
+            "no": 165, 
+            "precinct_name": "\uc6d0\uc8fc\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "166": {
+            "province_code": 32, 
+            "person_name": "\uc774\uac15\ud6c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770815.jpg", 
+            "no": 166, 
+            "precinct_name": "\uc6d0\uc8fc\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "167": {
+            "province_code": 32, 
+            "person_name": "\uad8c\uc131\ub3d9", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770679.jpg", 
+            "no": 167, 
+            "precinct_name": "\uac15\ub989\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "168": {
+            "province_code": 32, 
+            "person_name": "\uc774\uc774\uc7ac", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770827.jpg", 
+            "no": 168, 
+            "precinct_name": "\ub3d9\ud574\uc2dc\uc0bc\ucc99\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "169": {
+            "province_code": 32, 
+            "person_name": "\uc815\ubb38\ud5cc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770880.jpg", 
+            "no": 169, 
+            "precinct_name": "\uc18d\ucd08\uc2dc\uace0\uc131\uad70\uc591\uc591\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "170": {
+            "province_code": 32, 
+            "person_name": "\ud669\uc601\ucca0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770669.jpg", 
+            "no": 170, 
+            "precinct_name": "\ud64d\ucc9c\uad70\ud6a1\uc131\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "171": {
+            "province_code": 32, 
+            "person_name": "\uc5fc\ub3d9\uc5f4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770802.jpg", 
+            "no": 171, 
+            "precinct_name": "\ud0dc\ubc31\uc2dc\uc601\uc6d4\uad70\ud3c9\ucc3d\uad70\uc815\uc120\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "172": {
+            "province_code": 32, 
+            "person_name": "\ud55c\uae30\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770691.jpg", 
+            "no": 172, 
+            "precinct_name": "\ucca0\uc6d0\uad70\ud654\ucc9c\uad70\uc591\uad6c\uad70\uc778\uc81c\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "173": {
+            "province_code": 33, 
+            "person_name": "\uc815\uc6b0\ud0dd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770847.jpg", 
+            "no": 173, 
+            "precinct_name": "\uccad\uc8fc\uc2dc\uc0c1\ub2f9\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "174": {
+            "province_code": 33, 
+            "person_name": "\uc624\uc81c\uc138", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770380.jpg", 
+            "no": 174, 
+            "precinct_name": "\uccad\uc8fc\uc2dc\ud765\ub355\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "175": {
+            "province_code": 33, 
+            "person_name": "\ub178\uc601\ubbfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770329.jpg", 
+            "no": 175, 
+            "precinct_name": "\uccad\uc8fc\uc2dc\ud765\ub355\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "176": {
+            "province_code": 33, 
+            "person_name": "\uc774\uc885\ubc30", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770914.jpg", 
+            "no": 176, 
+            "precinct_name": "\ucda9\uc8fc\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "178": {
+            "province_code": 33, 
+            "person_name": "\ubcc0\uc7ac\uc77c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770356.jpg", 
+            "no": 178, 
+            "precinct_name": "\uccad\uc6d0\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "179": {
+            "province_code": 33, 
+            "person_name": "\ubc15\ub355\ud760", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770768.jpg", 
+            "no": 179, 
+            "precinct_name": "\ubcf4\uc740\uad70\uc625\ucc9c\uad70\uc601\ub3d9\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "180": {
+            "province_code": 33, 
+            "person_name": "\uacbd\ub300\uc218", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770708.jpg", 
+            "no": 180, 
+            "precinct_name": "\uc99d\ud3c9\uad70\uc9c4\ucc9c\uad70\uad34\uc0b0\uad70\uc74c\uc131\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "181": {
+            "province_code": 34, 
+            "person_name": "\uc591\uc2b9\uc870", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770375.jpg", 
+            "no": 181, 
+            "precinct_name": "\ucc9c\uc548\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "182": {
+            "province_code": 34, 
+            "person_name": "\ubc15\uc644\uc8fc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770774.jpg", 
+            "no": 182, 
+            "precinct_name": "\ucc9c\uc548\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "183": {
+            "province_code": 34, 
+            "person_name": "\ubc15\uc218\ud604", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770773.jpg", 
+            "no": 183, 
+            "precinct_name": "\uacf5\uc8fc\uc2dc", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "184": {
+            "province_code": 34, 
+            "person_name": "\uae40\ud0dc\ud760", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770742.jpg", 
+            "no": 184, 
+            "precinct_name": "\ubcf4\ub839\uc2dc\uc11c\ucc9c\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "185": {
+            "province_code": 34, 
+            "person_name": "\uc774\uba85\uc218", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770602.jpg", 
+            "no": 185, 
+            "precinct_name": "\uc544\uc0b0\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "186": {
+            "province_code": 34, 
+            "person_name": "\uae40\uc81c\uc2dd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770915.jpg", 
+            "no": 186, 
+            "precinct_name": "\uc11c\uc0b0\uc2dc\ud0dc\uc548\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "187": {
+            "province_code": 34, 
+            "person_name": "\uc774\uc778\uc81c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770188.jpg", 
+            "no": 187, 
+            "precinct_name": "\ub17c\uc0b0\uc2dc\uacc4\ub8e1\uc2dc\uae08\uc0b0\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "188": {
+            "province_code": 34, 
+            "person_name": "\uc774\uc644\uad6c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770897.jpg", 
+            "no": 188, 
+            "precinct_name": "\ubd80\uc5ec\uad70\uccad\uc591\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "189": {
+            "province_code": 34, 
+            "person_name": "\ud64d\ubb38\ud45c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770886.jpg", 
+            "no": 189, 
+            "precinct_name": "\ud64d\uc131\uad70\uc608\uc0b0\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "190": {
+            "province_code": 34, 
+            "person_name": "\uae40\ub3d9\uc644", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770720.jpg", 
+            "no": 190, 
+            "precinct_name": "\ub2f9\uc9c4\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "191": {
+            "province_code": 35, 
+            "person_name": "\uae40\uc724\ub355", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770732.jpg", 
+            "no": 191, 
+            "precinct_name": "\uc804\uc8fc\uc2dc\uc644\uc0b0\uad6c\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "192": {
+            "province_code": 35, 
+            "person_name": "\uc774\uc0c1\uc9c1", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770820.jpg", 
+            "no": 192, 
+            "precinct_name": "\uc804\uc8fc\uc2dc\uc644\uc0b0\uad6c\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "193": {
+            "province_code": 35, 
+            "person_name": "\uae40\uc131\uc8fc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770726.jpg", 
+            "no": 193, 
+            "precinct_name": "\uc804\uc8fc\uc2dc\ub355\uc9c4\uad6c", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "194": {
+            "province_code": 35, 
+            "person_name": "\uae40\uad00\uc601", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770713.jpg", 
+            "no": 194, 
+            "precinct_name": "\uad70\uc0b0\uc2dc", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "195": {
+            "province_code": 35, 
+            "person_name": "\uc774\ucd98\uc11d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770623.jpg", 
+            "no": 195, 
+            "precinct_name": "\uc775\uc0b0\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "196": {
+            "province_code": 35, 
+            "person_name": "\uc804\uc815\ud76c", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770844.jpg", 
+            "no": 196, 
+            "precinct_name": "\uc775\uc0b0\uc2dc\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "197": {
+            "province_code": 35, 
+            "person_name": "\uc720\uc131\uc5fd", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770594.jpg", 
+            "no": 197, 
+            "precinct_name": "\uc815\uc74d\uc2dc", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "198": {
+            "province_code": 35, 
+            "person_name": "\uac15\ub3d9\uc6d0", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770704.jpg", 
+            "no": 198, 
+            "precinct_name": "\ub0a8\uc6d0\uc2dc\uc21c\ucc3d\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "199": {
+            "province_code": 35, 
+            "person_name": "\ucd5c\uaddc\uc131", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770467.jpg", 
+            "no": 199, 
+            "precinct_name": "\uae40\uc81c\uc2dc\uc644\uc8fc\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "200": {
+            "province_code": 35, 
+            "person_name": "\ubc15\ubbfc\uc218", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770769.jpg", 
+            "no": 200, 
+            "precinct_name": "\uc9c4\uc548\uad70\ubb34\uc8fc\uad70\uc7a5\uc218\uad70\uc784\uc2e4\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "201": {
+            "province_code": 35, 
+            "person_name": "\uae40\ucd98\uc9c4", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770320.jpg", 
+            "no": 201, 
+            "precinct_name": "\uace0\ucc3d\uad70\ubd80\uc548\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "202": {
+            "province_code": 36, 
+            "person_name": "\ubc15\uc9c0\uc6d0", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770568.jpg", 
+            "no": 202, 
+            "precinct_name": "\ubaa9\ud3ec\uc2dc", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "203": {
+            "province_code": 36, 
+            "person_name": "\uae40\uc131\uace4", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770302.jpg", 
+            "no": 203, 
+            "precinct_name": "\uc5ec\uc218\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "204": {
+            "province_code": 36, 
+            "person_name": "\uc8fc\uc2b9\uc6a9", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770458.jpg", 
+            "no": 204, 
+            "precinct_name": "\uc5ec\uc218\uc2dc\uc744", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "205": {
+            "province_code": 36, 
+            "person_name": "\uc774\uc815\ud604", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770916.jpg", 
+            "no": 205, 
+            "precinct_name": "\uc21c\ucc9c\uc2dc\uace1\uc131\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "206": {
+            "province_code": 36, 
+            "person_name": "\uc2e0\uc815\ud6c8", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770917.jpg", 
+            "no": 206, 
+            "precinct_name": "\ub098\uc8fc\uc2dc\ud654\uc21c\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "207": {
+            "province_code": 36, 
+            "person_name": "\uc6b0\uc724\uadfc", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770383.jpg", 
+            "no": 207, 
+            "precinct_name": "\uad11\uc591\uc2dc\uad6c\ub840\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "208": {
+            "province_code": 36, 
+            "person_name": "\uc774\uac1c\ud638", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770905.jpg", 
+            "no": 208, 
+            "precinct_name": "\ub2f4\uc591\uad70\ud568\ud3c9\uad70\uc601\uad11\uad70\uc7a5\uc131\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "209": {
+            "province_code": 36, 
+            "person_name": "\uae40\uc2b9\ub0a8", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770728.jpg", 
+            "no": 209, 
+            "precinct_name": "\uace0\ud765\uad70\ubcf4\uc131\uad70", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "210": {
+            "province_code": 36, 
+            "person_name": "\ud669\uc8fc\ud64d", 
+            "party_color": "#659F32", 
+            "image": "http://www.assembly.go.kr/photo/9770867.jpg", 
+            "no": 210, 
+            "precinct_name": "\uc7a5\ud765\uad70\uac15\uc9c4\uad70\uc601\uc554\uad70", 
+            "party": "\uad6d\ubbfc\uc758\ub2f9"
+        }, 
+        "211": {
+            "province_code": 36, 
+            "person_name": "\uae40\uc601\ub85d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770537.jpg", 
+            "no": 211, 
+            "precinct_name": "\ud574\ub0a8\uad70\uc644\ub3c4\uad70\uc9c4\ub3c4\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "212": {
+            "province_code": 36, 
+            "person_name": "\uc774\uc724\uc11d", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770614.jpg", 
+            "no": 212, 
+            "precinct_name": "\ubb34\uc548\uad70\uc2e0\uc548\uad70", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "213": {
+            "province_code": 37, 
+            "person_name": "\uc774\ubcd1\uc11d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770171.jpg", 
+            "no": 213, 
+            "precinct_name": "\ud3ec\ud56d\uc2dc\ubd81\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "214": {
+            "province_code": 37, 
+            "person_name": "\ubc15\uba85\uc7ac", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770899.jpg", 
+            "no": 214, 
+            "precinct_name": "\ud3ec\ud56d\uc2dc\ub0a8\uad6c\uc6b8\ub989\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "215": {
+            "province_code": 37, 
+            "person_name": "\uc815\uc218\uc131", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770675.jpg", 
+            "no": 215, 
+            "precinct_name": "\uacbd\uc8fc\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "216": {
+            "province_code": 37, 
+            "person_name": "\uc774\ucca0\uc6b0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770685.jpg", 
+            "no": 216, 
+            "precinct_name": "\uae40\ucc9c\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "217": {
+            "province_code": 37, 
+            "person_name": "\uae40\uad11\ub9bc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770523.jpg", 
+            "no": 217, 
+            "precinct_name": "\uc548\ub3d9\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "219": {
+            "province_code": 37, 
+            "person_name": "\uae40\ud0dc\ud658", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770323.jpg", 
+            "no": 219, 
+            "precinct_name": "\uad6c\ubbf8\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "220": {
+            "province_code": 37, 
+            "person_name": "\uc7a5\uc724\uc11d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770435.jpg", 
+            "no": 220, 
+            "precinct_name": "\uc601\uc8fc\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "221": {
+            "province_code": 37, 
+            "person_name": "\uc815\ud76c\uc218", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770491.jpg", 
+            "no": 221, 
+            "precinct_name": "\uc601\ucc9c\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "222": {
+            "province_code": 37, 
+            "person_name": "\uae40\uc885\ud0dc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770738.jpg", 
+            "no": 222, 
+            "precinct_name": "\uc0c1\uc8fc\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "223": {
+            "province_code": 37, 
+            "person_name": "\uc774\ud55c\uc131", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770626.jpg", 
+            "no": 223, 
+            "precinct_name": "\ubb38\uacbd\uc2dc\uc608\ucc9c\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "224": {
+            "province_code": 37, 
+            "person_name": "\ucd5c\uacbd\ud658", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770465.jpg", 
+            "no": 224, 
+            "precinct_name": "\uacbd\uc0b0\uc2dc\uccad\ub3c4\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "225": {
+            "province_code": 37, 
+            "person_name": "\uc774\uc644\uc601", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770824.jpg", 
+            "no": 225, 
+            "precinct_name": "\uace0\ub839\uad70\uc131\uc8fc\uad70\uce60\uace1\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "226": {
+            "province_code": 37, 
+            "person_name": "\uae40\uc7ac\uc6d0", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770735.jpg", 
+            "no": 226, 
+            "precinct_name": "\uad70\uc704\uad70\uc758\uc131\uad70\uccad\uc1a1\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "227": {
+            "province_code": 37, 
+            "person_name": "\uac15\uc11d\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770512.jpg", 
+            "no": 227, 
+            "precinct_name": "\uc601\uc591\uad70\uc601\ub355\uad70\ubd09\ud654\uad70\uc6b8\uc9c4\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "228": {
+            "province_code": 38, 
+            "person_name": "\ubc15\uc131\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770771.jpg", 
+            "no": 228, 
+            "precinct_name": "\ucc3d\uc6d0\uc2dc\uc758\ucc3d\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "229": {
+            "province_code": 38, 
+            "person_name": "\uac15\uae30\uc724", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770703.jpg", 
+            "no": 229, 
+            "precinct_name": "\ucc3d\uc6d0\uc2dc\uc131\uc0b0\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "230": {
+            "province_code": 38, 
+            "person_name": "\uc774\uc8fc\uc601", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770499.jpg", 
+            "no": 230, 
+            "precinct_name": "\ucc3d\uc6d0\uc2dc\ub9c8\uc0b0\ud569\ud3ec\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "231": {
+            "province_code": 38, 
+            "person_name": "\uc548\ud64d\uc900", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770374.jpg", 
+            "no": 231, 
+            "precinct_name": "\ucc3d\uc6d0\uc2dc\ub9c8\uc0b0\ud68c\uc6d0\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "232": {
+            "province_code": 38, 
+            "person_name": "\uae40\uc131\ucc2c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770727.jpg", 
+            "no": 232, 
+            "precinct_name": "\ucc3d\uc6d0\uc2dc\uc9c4\ud574\uad6c", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "233": {
+            "province_code": 38, 
+            "person_name": "\ubc15\ub300\ucd9c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770767.jpg", 
+            "no": 233, 
+            "precinct_name": "\uc9c4\uc8fc\uc2dc\uac11", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "234": {
+            "province_code": 38, 
+            "person_name": "\uae40\uc7ac\uacbd", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770310.jpg", 
+            "no": 234, 
+            "precinct_name": "\uc9c4\uc8fc\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "235": {
+            "province_code": 38, 
+            "person_name": "\uc774\uad70\ud604", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770406.jpg", 
+            "no": 235, 
+            "precinct_name": "\ud1b5\uc601\uc2dc\uace0\uc131\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "236": {
+            "province_code": 38, 
+            "person_name": "\uc5ec\uc0c1\uaddc", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770591.jpg", 
+            "no": 236, 
+            "precinct_name": "\uc0ac\ucc9c\uc2dc\ub0a8\ud574\uad70\ud558\ub3d9\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "237": {
+            "province_code": 38, 
+            "person_name": "\ubbfc\ud64d\ucca0", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770764.jpg", 
+            "no": 237, 
+            "precinct_name": "\uae40\ud574\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "238": {
+            "province_code": 38, 
+            "person_name": "\uae40\ud0dc\ud638", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770698.jpg", 
+            "no": 238, 
+            "precinct_name": "\uae40\ud574\uc2dc\uc744", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "239": {
+            "province_code": 38, 
+            "person_name": "\uc870\ud574\uc9c4", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770653.jpg", 
+            "no": 239, 
+            "precinct_name": "\ubc00\uc591\uc2dc\ucc3d\ub155\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "240": {
+            "province_code": 38, 
+            "person_name": "\uae40\ud55c\ud45c", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770744.jpg", 
+            "no": 240, 
+            "precinct_name": "\uac70\uc81c\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "241": {
+            "province_code": 38, 
+            "person_name": "\uc724\uc601\uc11d", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770811.jpg", 
+            "no": 241, 
+            "precinct_name": "\uc591\uc0b0\uc2dc", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "243": {
+            "province_code": 38, 
+            "person_name": "\uc2e0\uc131\ubc94", 
+            "party_color": "#C9252B", 
+            "image": "http://www.assembly.go.kr/photo/9770584.jpg", 
+            "no": 243, 
+            "precinct_name": "\uc0b0\uccad\uad70\ud568\uc591\uad70\uac70\ucc3d\uad70", 
+            "party": "\uc0c8\ub204\ub9ac\ub2f9"
+        }, 
+        "244": {
+            "province_code": 39, 
+            "person_name": "\uac15\ucc3d\uc77c", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770279.jpg", 
+            "no": 244, 
+            "precinct_name": "\uc81c\uc8fc\uc2dc\uac11", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }, 
+        "245": {
+            "province_code": 39, 
+            "person_name": "\uae40\uc6b0\ub0a8", 
+            "party_color": "#025AAA", 
+            "image": "http://www.assembly.go.kr/photo/9770309.jpg", 
+            "no": 245, 
+            "precinct_name": "\uc81c\uc8fc\uc2dc\uc744", 
+            "party": "\ub354\ubd88\uc5b4\ubbfc\uc8fc\ub2f9"
+        }
+    }
+}
