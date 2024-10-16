@@ -18,10 +18,13 @@ services:
             dockerfile: Dockerfile
         container_name: datadrift_base_framework
         volumes:
-            - ./web:/var/www/html
-        user: "$UID:$GID" # 현재 사용자의 UID와 GID로 설정
+            - ./web:/var/www/html:rw
+        user: 1000:999 # 현재 사용자의 UID와 GID로 설정
         networks:
             - dev_network
+        environment:
+          - APP_ENV=local
+          - APP_DEBUG=true
       
     nginx:
         image: nginx

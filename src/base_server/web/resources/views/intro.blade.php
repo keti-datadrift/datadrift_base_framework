@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title', 'Dashboard')
 
 @section('content')
-    <h1>Welcome to the Home Page!</h1>
-    <p>This is the main content of the home page.</p>
+    <h1>Data Drift Intro</h1>
+    <div id="chart"></div>
 @endsection

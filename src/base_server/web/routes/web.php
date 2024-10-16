@@ -18,14 +18,102 @@ use App\Http\Controllers\TimeSeriesController;
 use App\Http\Controllers\BarChartRaceController;
 use App\Http\Controllers\AnalysisController;
 
-
-Route::get('/intro_controller', [IntroController::class, 'showIntro']);
-Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
-Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
-Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 //-------------------------------------------
-// 암호 입력
+// 로그인 로그아웃 
+//-------------------------------------------
+
+/*
+// 로그인 폼 보여주기
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+
+// 로그인 요청 처리
+Route::post('login', [LoginController::class, 'login']);
+
+// 로그아웃 요청 처리
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// 사용자 등록 요청 처리
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+
+// 사용자 등록 요청 처리
+Route::post('register', [RegisterController::class, 'register']);
+*/
+
+// 로그인 폼을 보여주는 라우트
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+    ->middleware('guest')
+    ->name('login');
+
+// 로그인 처리 라우트
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest');
+
+// 로그아웃 처리 라우트
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest');
+
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+
+
+
+
+Route::get('/', function () {     
+    return view('intro');
+});
+
+Route::get('/intro', function () {     
+    return view('intro');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard'); // 또는 대시보드 관련 Blade 템플릿
+})->middleware(['auth'])->name('dashboard');
+
+// Breeze에서 제공하는 인증 라우트
+require __DIR__.'/auth.php';
+
+
+Route::get('/overview', function () {
+    return view('pages.overview');
+})->name('overview');
+
+Route::get('/stats', function () {
+    return view('pages.stats');
+})->name('stats');
+
+Route::get('/reports', function () {
+    return view('pages.reports');
+})->name('reports');
+
+Route::get('/sales', function () {
+    return view('pages.sales');
+})->name('sales');
+ 
+Route::get('/expenses', function () {
+    return view('pages.expenses');
+})->name('expenses');
+
+Route::get('/settings_profile', function () {
+    return view('pages.settings_profile');
+})->name('settings_profile');
+
+Route::get('/settings_security', function () {
+    return view('pages.settings_security');
+})->name('settings_security');
+
+    
+
+//-------------------------------------------
+// 암호로 보호할 페이지
 //-------------------------------------------
 
 use App\Http\Controllers\ProtectedController;
@@ -52,59 +140,9 @@ Route::post('/password', function (Request $request) {
 })->name('password.check');
 
 
-//-------------------------------------------
-// 업로드 테스트
-//-------------------------------------------
-
-
-// upload
-//use App\Http\Controllers\UploadController;
-//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
-//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
-//Route::get('/dd_upload', function () {
-//    return view('dd_upload');
-//});
-
-use App\Http\Controllers\ZipController;
-Route::get('/zipupload', [ZipController::class, 'index']);
-Route::post('/upload', [ZipController::class, 'upload']);
-
-//-------------------------------------------
-// 암호로 보호할 페이지
-//-------------------------------------------
-
-Route::get('/', function () {
-    return view('intro');
-})->middleware(PasswordProtected::class);
-
-Route::get('/chart', function () {
-    return view('chart');
-})->middleware(PasswordProtected::class);
-
-Route::get('/introview', function () {
-    return view('intro');
-})->middleware(PasswordProtected::class);
-
-Route::get('/intro', function () {     
-    return 'Data Drift 시연 페이지'; 
-})->middleware(PasswordProtected::class);
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(PasswordProtected::class);
-
-Route::get('/reports', function () {
-    return view('reports');
-})->middleware(PasswordProtected::class);
-
-Route::get('/settings', function () {
-    return view('settings');
-})->middleware(PasswordProtected::class);
-
 Route::get('/docs', function () {
     return view('docs');
 })->middleware(PasswordProtected::class);
-
 
 Route::get('/dd_progress1', function () {
     return view('/samples/dd_progress1');
@@ -197,6 +235,32 @@ Route::get('/dd_wolframstyle4', [AnalysisController::class, 'dd_wolframstyle4'])
 
 Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
 Route::get('/dd_wolframstyle5', [AnalysisController::class, 'dd_wolframstyle5']);
+
+
+Route::get('/intro_controller', [IntroController::class, 'showIntro']);
+Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
+Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
+Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
+
+
+
+//-------------------------------------------
+// 업로드 테스트
+//-------------------------------------------
+
+
+// upload
+//use App\Http\Controllers\UploadController;
+//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
+//Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
+//Route::get('/dd_upload', function () {
+//    return view('dd_upload');
+//});
+
+use App\Http\Controllers\ZipController;
+Route::get('/zipupload', [ZipController::class, 'index']);
+Route::post('/upload', [ZipController::class, 'upload']);
+
 
 //-------------------------------------------
 // 그라파나 연동 페이지, 암호로 보호할 페이지
