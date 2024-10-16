@@ -42,6 +42,12 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 Route::post('register', [RegisterController::class, 'register']);
 */
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 // 로그인 폼을 보여주는 라우트
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware('guest')
@@ -70,17 +76,16 @@ Route::get('/', function () {
     return view('intro');
 });
 
-Route::get('/intro', function () {     
-    return view('intro');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard'); // 또는 대시보드 관련 Blade 템플릿
-})->middleware(['auth'])->name('dashboard');
+Route::get('/intro', function () {
+    return view('intro'); // 또는 대시보드 관련 Blade 템플릿
+})->middleware(['auth'])->name('intro');
 
 // Breeze에서 제공하는 인증 라우트
 require __DIR__.'/auth.php';
 
+Route::get('/test', function () {
+    return view('pages.test');
+})->name('test');
 
 Route::get('/overview', function () {
     return view('pages.overview');
@@ -110,7 +115,9 @@ Route::get('/settings_security', function () {
     return view('pages.settings_security');
 })->name('settings_security');
 
-    
+Route::get('/confusion1', function () {
+    return view('pages.confusion1');
+})->name('confusion1');
 
 //-------------------------------------------
 // 암호로 보호할 페이지

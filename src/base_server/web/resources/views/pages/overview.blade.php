@@ -1,2 +1,3 @@
-<h2>Overview Page</h2>
-<p>This is the content for the Overview page, loaded via AJAX.</p>
+<h2>Overview</h2>
+<p>데이터 드리프트 관리 기술입니다.</p>
+<p>로그인하시면 모든 기능을 사용하실 수 있습니다.</p>
