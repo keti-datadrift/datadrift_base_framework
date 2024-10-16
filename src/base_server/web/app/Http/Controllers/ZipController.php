@@ -37,9 +37,11 @@ class ZipController extends Controller
         ]);
         */
 
+        /*
         $request->validate([
     'zipfile' => 'required|mimetypes:application/zip,application/x-zip-compressed,application/octet-stream|max:51200',  // 최대 50MB 허용
 ]);
+        */
 
         
         Log::info('[pass] validate');
@@ -102,6 +104,7 @@ class ZipController extends Controller
                         'file_content' => $fileContent,
                     ]);
                     */
+    
                     
                     // 파일 정보 저장 (데이터베이스 또는 배열에)
                     FileEntry::create([

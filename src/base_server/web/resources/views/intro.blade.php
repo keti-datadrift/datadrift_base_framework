@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Hello World (blade)</title>
-</head>
-<body>
-    <h1>Hello, World! (view)</h1>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('title', 'Home')
+
+@section('content')
+    <h1>Welcome to the Home Page!</h1>
+    <p>This is the main content of the home page.</p>
+@endsection

@@ -45,7 +45,7 @@ Route::post('/password', function (Request $request) {
     if ($request->input('password') === $password) {
         // 암호가 일치하면 세션에 상태 저장
         $request->session()->put('password_passed', true);
-        return redirect()->intended('/chart');  // 보호된 페이지로 리다이렉트
+        return redirect()->intended('/intro');  // 보호된 페이지로 리다이렉트
     }
 
     return back()->withErrors(['password' => 'Invalid password']);
@@ -77,8 +77,8 @@ Route::get('/', function () {
     return view('intro');
 })->middleware(PasswordProtected::class);
 
-Route::get('/docs', function () {
-    return view('docs');
+Route::get('/chart', function () {
+    return view('chart');
 })->middleware(PasswordProtected::class);
 
 Route::get('/introview', function () {
@@ -88,6 +88,23 @@ Route::get('/introview', function () {
 Route::get('/intro', function () {     
     return 'Data Drift 시연 페이지'; 
 })->middleware(PasswordProtected::class);
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(PasswordProtected::class);
+
+Route::get('/reports', function () {
+    return view('reports');
+})->middleware(PasswordProtected::class);
+
+Route::get('/settings', function () {
+    return view('settings');
+})->middleware(PasswordProtected::class);
+
+Route::get('/docs', function () {
+    return view('docs');
+})->middleware(PasswordProtected::class);
+
 
 Route::get('/dd_progress1', function () {
     return view('/samples/dd_progress1');
@@ -181,6 +198,10 @@ Route::get('/dd_wolframstyle4', [AnalysisController::class, 'dd_wolframstyle4'])
 Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
 Route::get('/dd_wolframstyle5', [AnalysisController::class, 'dd_wolframstyle5']);
 
+//-------------------------------------------
+// 그라파나 연동 페이지, 암호로 보호할 페이지
+//-------------------------------------------
 
-
-
+Route::get('/g/metrics', function () {
+    return view('/grafana/metrics');
+})->middleware(PasswordProtected::class);
