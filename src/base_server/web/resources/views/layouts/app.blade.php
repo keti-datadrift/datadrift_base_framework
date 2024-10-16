@@ -23,8 +23,8 @@
             height: 100vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 100%) */
             border: none;        /* 테두리 없애기 */
             display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
+            position: fixed;
         }
-
 
         .tabs {
             background-color: #2980b9;
@@ -145,14 +145,21 @@
     <div class="sidebar" id="demos-sidebar">
         <ul>
             <li data-link="test">test</li>
-            <li data-link="confusion1">confusion1</li>
+            <li data-link="pages_map1">map1</li>
+            <li data-link="pages_map2">map2</li>
+            <li data-link="pages_confusion1">confusion1</li>
+            <li data-link="pages_confusion2">confusion2</li>
+            <li data-link="pages_confusion3">confusion3</li>
+            <li data-link="pages_cm1">cm1</li>
+            <li data-link="pages_cm2">cm2</li>
+            <li data-link="pages_cm3">cm3</li>
         </ul>
     </div>
 
     <div class="sidebar" id="reports-sidebar">
         <ul>
-            <li data-link="sales">Sales Report</li>
-            <li data-link="expenses">Expenses Report</li>
+            <li data-link="pages_progress1">과제 정량 목표</li>
+            <li data-link="expenses">todo</li>
         </ul>
     </div>
 
@@ -179,7 +186,7 @@
     <!-- Content Area -->
     <div class="content">
         <!-- Iframe을 통해 페이지를 렌더링 -->
-        <iframe id="main-content" src="/confusion1" width="100%" height="100%" />></iframe>
+        <iframe id="main-content" src="/overview" width="100%" height="100%" />></iframe>
 
 
         <!-- 본문 콘텐츠가 여기에서 동적으로 바뀝니다 -->

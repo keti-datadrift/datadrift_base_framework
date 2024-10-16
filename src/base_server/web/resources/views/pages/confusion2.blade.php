@@ -26,21 +26,11 @@ text.active {
 
 <h1><i>Les Misérables</i> Co-occurrence</h1>
 
-<aside style="margin-top:80px;">
 <p>Order: <select id="order">
   <option value="name">by Name</option>
   <option value="count">by Frequency</option>
   <option value="group">by Cluster</option>
 </select>
-
-<p>This matrix diagram visualizes character co-occurrences in Victor Hugo’s <i><a href="https://en.wikipedia.org/wiki/Les_Misérables">Les Misérables</a></i>.
-
-<p>Each colored cell represents two characters that appeared in the same chapter; darker cells indicate characters that co-occurred more frequently.
-
-<p>Use the drop-down menu to reorder the matrix and explore the data.
-
-<p>Built with <a href="http://d3js.org/">d3.js</a>.
-</aside>
 
 <script>
 var margin = {top: 80, right: 0, bottom: 10, left: 80},
@@ -181,27 +171,4 @@ d3.json("data/miserables.json", function(miserables) {
 
 </script>
 
-<p class="attribution">Source: <a href="http://www-cs-staff.stanford.edu/~uno/sgb.html">The Stanford GraphBase</a>.
 
-<p>A network can be represented by an <i><a href="https://en.wikipedia.org/wiki/Adjacency_matrix">adjacency matrix</a></i>, where each cell <i>ij</i> represents an edge from vertex <i>i</i> to vertex <i>j</i>. Here, vertices represent characters in a book, while edges represent co-occurrence in a chapter.
-
-<p>Given this two-dimensional representation of a graph, a natural visualization is to show the matrix! However, the effectiveness of a matrix diagram is heavily dependent on the order of rows and columns: if related nodes are placed closed to each other, it is easier to identify clusters and bridges.
-
-<p>This example lets you try different orderings via the drop-down menu. This type of diagram can be extended with manual reordering of rows and columns, and expanding or collapsing of clusters, to allow deeper exploration. <a href="https://en.wikipedia.org/wiki/Jacques_Bertin">Jacques Bertin</a> (or more specifically, his fleet of assistants) did this by hand with paper strips.
-
-<p>While path-following is harder in a matrix view than in a <a href="https://mbostock.github.com/d3/ex/force.html">node-link diagram</a>, matrices have other advantages. As networks get large and highly connected, node-link diagrams often devolve into giant hairballs of line crossings. Line crossings are impossible with matrix views. Matrix cells can also be encoded to show additional data; here color depicts clusters computed by a community-detection algorithm.
-
-<p>Want more? See this analysis of <a href="../shuffle/compare.html">shuffling algorithms</a> using matrix diagrams.
-
-<footer>
-  <aside>January 12, 2012</aside>
-  <a href="../" rel="author">Mike Bostock</a>
-</footer>
-
-<script>
-
-GoogleAnalyticsObject = "ga", ga = function() { ga.q.push(arguments); }, ga.q = [], ga.l = +new Date;
-ga("create", "UA-48272912-3", "ocks.org");
-ga("send", "pageview");
-
-</script>

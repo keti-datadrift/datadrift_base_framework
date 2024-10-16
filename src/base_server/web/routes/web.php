@@ -115,9 +115,47 @@ Route::get('/settings_security', function () {
     return view('pages.settings_security');
 })->name('settings_security');
 
-Route::get('/confusion1', function () {
+Route::get('/pages_confusion1', function () {
     return view('pages.confusion1');
-})->name('confusion1');
+})->name('pages_confusion1');
+
+Route::get('/pages_confusion2', function () {
+    return view('pages.confusion2');
+})->name('pages_confusion2');
+
+Route::get('/pages_confusion3', function () {
+    return view('pages.confusion3');
+})->name('pages_confusion3');
+
+Route::get('/pages_cm1', function () {
+    return view('pages.cm1');
+})->name('pages_cm1');
+
+Route::get('/pages_cm2', function () {
+    return view('pages.cm2');
+})->name('pages_cm2');
+
+Route::get('/pages_cm3', function () {
+    return view('pages.cm3');
+})->name('pages_cm3');
+
+
+Route::get('/pages_map1', function () {
+    return view('pages.map1');
+})->name('pages_map1');
+
+Route::get('/pages_map2', function () {
+    return view('pages.map2');
+})->name('pages_map2');
+
+
+
+
+Route::get('/pages_progress1', function () {
+    return view('pages.progress1');
+})->name('pages_progress1');
+
+
 
 //-------------------------------------------
 // 암호로 보호할 페이지
