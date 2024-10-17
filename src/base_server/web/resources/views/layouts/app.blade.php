@@ -116,12 +116,16 @@
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home"><i class="fas fa-home"></i> Data Drift Management</div>
+            <div class="tab" data-tab="home"><i class="fa fa-home"></i> Data Drift Management</div>
+            <div class="tab" data-tab="dd_targetservices"><i class="fa fa-user-md"></i> 분석대상</div>
+            <div class="tab" data-tab="dd_detection"><i class="fa fa-search"></i> 드리프트 검출</div>
+            <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 파이프라인</div>
+            <div class="tab" data-tab="dd_visionai"><i class="fa fa-video-camera"></i> 비전AI</div>
+            <div class="tab" data-tab="dd_management"><i class="fa fa-pie-chart"></i> 추적관리</div>
+            
+            <!--
             <div class="tab" data-tab="demos"><i class="fas fa-laptop"></i> 시연</div>
-            <div class="tab" data-tab="reports"><i class="fas fa-laptop"></i> 검출</div>
-            <div class="tab" data-tab="reports"><i class="fas fa-laptop"></i> 파이프라인</div>
-            <div class="tab" data-tab="settings"><i class="fas fa-laptop"></i> 비전AI</div>
-            <div class="tab" data-tab="settings"><i class="fas fa-laptop"></i> 추적관리</div>
+            -->
         </div>
         
         <div class="tabs-right">
@@ -151,6 +155,45 @@
             <li data-link="expenses">todo</li>
         </ul>
     </div>
+
+    <!-- (실증) 타겟 서비스 : 교통,마케팅 -->
+    <div class="sidebar" id="dd_targetservices-sidebar">
+        <ul>
+            <li data-link="dd_targetservices_lp_detection">차량 번호판 영역 검출</li>
+            <li data-link="dd_targetservices_lp_ocr">차량 번호판 ORC</li>
+            <li data-link="dd_targetservices_car_detection">차량 객체 분류</li>
+            <li data-link="dd_targetservices_marketing">마케팅 전략 수립</li>
+        </ul>
+    </div>
+
+    <!-- 검출 -->
+    <div class="sidebar" id="dd_detection-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+        </ul>
+    </div>
+
+    <!-- 파이프라인 -->
+    <div class="sidebar" id="dd_pipeline-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+        </ul>
+    </div>
+
+    <!-- 비전 AI -->
+    <div class="sidebar" id="dd_visionai-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+        </ul>
+    </div>
+
+    <!-- 추적 관리 -->
+    <div class="sidebar" id="dd_management-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+        </ul>
+    </div>
+
 
     <div class="sidebar" id="demos-sidebar">
         <ul>
@@ -294,5 +337,11 @@
         //loadPage_content('/intro');
     </script>
 
+    <!-- Footer 영역 추가 -->
+    <!--
+    <footer class="footer">
+        <img src="images/keti-logo1.jpg" alt="Logo" class="logo">
+    </footer>
+    -->
 </body>
 </html>

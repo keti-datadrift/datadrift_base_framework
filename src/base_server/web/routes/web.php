@@ -87,7 +87,6 @@ Route::get('/intro', function () {
     return view('intro'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('intro');
 
-
 Route::get('/test', function () {
     return view('pages.test');
 })->middleware(['auth'])->name('test');
@@ -95,6 +94,31 @@ Route::get('/test', function () {
 Route::get('/overview', function () {
     return view('pages.overview');
 })->middleware(['auth'])->name('overview');
+
+//------------------------------------
+// target services
+//------------------------------------
+
+Route::get('/dd_targetservices_car_detection', function () {
+    return view('dd_targetservices.car_detection');
+})->middleware(['auth'])->name('dd_targetservices_car_detection');
+
+Route::get('/dd_targetservices_lp_detection', function () {
+    return view('dd_targetservices.lp_detection');
+})->middleware(['auth'])->name('dd_targetservices_lp');
+
+Route::get('/dd_targetservices_lp_ocr', function () {
+    return view('dd_targetservices.lp_ocr');
+})->middleware(['auth'])->name('dd_targetservices_lp_ocr');
+
+Route::get('/dd_targetservices_marketing', function () {
+    return view('dd_targetservices.marketing');
+})->middleware(['auth'])->name('dd_targetservices_marketing');
+
+
+
+
+
 
 Route::get('/stats', function () {
     return view('pages.stats');
@@ -157,8 +181,6 @@ Route::get('/pages_cm4', function () {
 Route::get('/pages_cm5', function () {
     return view('pages.cm5');
 })->middleware(['auth'])->name('pages_cm5');
-
-
 
 Route::get('/pages_map1', function () {
     return view('pages.map1');
