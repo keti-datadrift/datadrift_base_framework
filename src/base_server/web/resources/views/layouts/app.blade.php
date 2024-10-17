@@ -17,6 +17,20 @@
             padding: 0;
         }
 
+        .header {
+            background-color: #ffffff;
+            display: flex;
+            text-align: center;
+            justify-content: space-around;
+            align-items: center;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            height: 30px;
+            padding: 1px;
+            margin: 0;
+        }
+
         /* iframe을 main-content 영역에 꽉 채우도록 설정 */
         #main-content {
             width: 100%;         /* 가로로 화면 전체를 차지 */
@@ -101,6 +115,20 @@
 
     
 <body>
+    <!-- 새로 추가된 헤더 영역 -->
+    <div class="header">
+        <p> 데이터 드리프트 관리 기술 개발 </p>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <img height=30px src='images/logo/keti-logo1.png'></img>
+        <img height=20px src='images/logo/dq-logo1.png'></img>
+        <img height=20px src='images/logo/iv-logo1.png'></img>
+        <img height=20px src='images/logo/skku-logo1.jpg'></img>
+        <img height=20px src='images/logo/knpu-logo1.png'></img>
+        <img height=15px src='images/logo/bcave-logo1.png'></img>
+        <img height=25px src='images/logo/osan-logo1.png'></img>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+
     <!-- Tabs -->
     <div class="tabs">
         <!----------------------------->
@@ -116,7 +144,7 @@
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home"><i class="fa fa-home"></i> Data Drift Management</div>
+            <div class="tab" data-tab="home"><i class="fa fa-home"></i> 데이터 드리프트 관리기술 </div>
             <div class="tab" data-tab="dd_targetservices"><i class="fa fa-user-md"></i> 분석대상</div>
             <div class="tab" data-tab="dd_detection"><i class="fa fa-search"></i> 드리프트 검출</div>
             <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 파이프라인</div>
@@ -336,12 +364,5 @@
         document.getElementById('home-sidebar').classList.add('active-sidebar');
         //loadPage_content('/intro');
     </script>
-
-    <!-- Footer 영역 추가 -->
-    <!--
-    <footer class="footer">
-        <img src="images/keti-logo1.jpg" alt="Logo" class="logo">
-    </footer>
-    -->
 </body>
 </html>
