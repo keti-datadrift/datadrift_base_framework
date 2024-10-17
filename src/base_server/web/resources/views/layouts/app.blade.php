@@ -153,6 +153,8 @@
             <li data-link="pages_cm1">cm1</li>
             <li data-link="pages_cm2">cm2</li>
             <li data-link="pages_cm3">cm3</li>
+            <li data-link="pages_cm4">cm4</li>
+            <li data-link="pages_cm5">cm5</li>
         </ul>
     </div>
 

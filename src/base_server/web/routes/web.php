@@ -70,6 +70,8 @@ Route::get('/register', [RegisteredUserController::class, 'create'])
     ->name('register');
 
 
+// Breeze에서 제공하는 인증 라우트
+require __DIR__.'/auth.php';
 
 
 Route::get('/', function () {     
@@ -80,69 +82,76 @@ Route::get('/intro', function () {
     return view('intro'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('intro');
 
-// Breeze에서 제공하는 인증 라우트
-require __DIR__.'/auth.php';
 
 Route::get('/test', function () {
     return view('pages.test');
-})->name('test');
+})->middleware(['auth'])->name('test');
 
 Route::get('/overview', function () {
     return view('pages.overview');
-})->name('overview');
+})->middleware(['auth'])->name('overview');
 
 Route::get('/stats', function () {
     return view('pages.stats');
-})->name('stats');
+})->middleware(['auth'])->name('stats');
 
 Route::get('/reports', function () {
     return view('pages.reports');
-})->name('reports');
+})->middleware(['auth'])->name('reports');
 
 Route::get('/sales', function () {
     return view('pages.sales');
-})->name('sales');
+})->middleware(['auth'])->name('sales');
  
 Route::get('/expenses', function () {
     return view('pages.expenses');
-})->name('expenses');
+})->middleware(['auth'])->name('expenses');
 
 Route::get('/settings_profile', function () {
     return view('pages.settings_profile');
-})->name('settings_profile');
+})->middleware(['auth'])->name('settings_profile');
 
 Route::get('/settings_security', function () {
     return view('pages.settings_security');
-})->name('settings_security');
+})->middleware(['auth'])->name('settings_security');
 
 Route::get('/pages_confusion1', function () {
     return view('pages.confusion1');
-})->name('pages_confusion1');
+})->middleware(['auth'])->name('pages_confusion1');
 
 Route::get('/pages_confusion2', function () {
     return view('pages.confusion2');
-})->name('pages_confusion2');
+})->middleware(['auth'])->name('pages_confusion2');
 
 Route::get('/pages_confusion3', function () {
     return view('pages.confusion3');
-})->name('pages_confusion3');
+})->middleware(['auth'])->name('pages_confusion3');
 
 Route::get('/pages_cm1', function () {
     return view('pages.cm1');
-})->name('pages_cm1');
+})->middleware(['auth'])->name('pages_cm1');
 
 Route::get('/pages_cm2', function () {
     return view('pages.cm2');
-})->name('pages_cm2');
+})->middleware(['auth'])->name('pages_cm2');
 
 Route::get('/pages_cm3', function () {
     return view('pages.cm3');
-})->name('pages_cm3');
+})->middleware(['auth'])->name('pages_cm3');
+
+Route::get('/pages_cm4', function () {
+    return view('pages.cm4');
+})->middleware(['auth'])->name('pages_cm4');
+
+Route::get('/pages_cm5', function () {
+    return view('pages.cm5');
+})->middleware(['auth'])->name('pages_cm5');
+
 
 
 Route::get('/pages_map1', function () {
     return view('pages.map1');
-})->name('pages_map1');
+})->middleware(['auth'])->name('pages_map1');
 
 Route::get('/pages_map2', function () {
     return view('pages.map2');
