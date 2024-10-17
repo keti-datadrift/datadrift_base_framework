@@ -18,10 +18,13 @@ services:
             dockerfile: Dockerfile
         container_name: datadrift_base_framework
         volumes:
-            - ./web:/var/www/html
-        user: "$UID:$GID" # 현재 사용자의 UID와 GID로 설정
+            - ./web:/var/www/html:rw
+        user: 1000:999 # 현재 사용자의 UID와 GID로 설정
         networks:
             - dev_network
+        environment:
+          - APP_ENV=local
+          - APP_DEBUG=true
       
     nginx:
         image: nginx
@@ -89,8 +92,10 @@ services:
             #- ./web:/var/www/html:delegated
             - ./web:/var/www/html:rw
             - ./config/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ./config/php/php.ini:/usr/local/etc/php/php.ini
         command: bash -c "docker-php-ext-install pdo pdo_mysql && docker-php-entrypoint php-fpm" # 동적으로 확장모듈 설치
         environment:
+            PHP_EXTENSION: zip  # zip 확장 사용
             MYSQL_USER: ${DB_USER}
             MYSQL_PASSWORD: ${DB_USER_PASSWORD}
         depends_on:
@@ -100,7 +105,72 @@ services:
         networks:
             - dev_network
 
+    app_fiftyone:
+        build:
+            context: ./app_fiftyone
+            dockerfile: Dockerfile
+        container_name: app_fiftyone
+        ports:
+            - "5151:5151"  # fiftyone 기본 포트
+        networks:
+            - dev_network
 
+    app_gradio8011:
+        build:
+            context: ./app_gradio8011
+            dockerfile: Dockerfile
+        container_name: app_gradio8011
+        ports:
+            - "8011:8011"
+        networks:
+            - dev_network
+
+    app_fastapi8012:
+        build:
+            context: ./app_fastapi8012
+            dockerfile: Dockerfile
+        container_name: app_fastapi8012
+        ports:
+            - "8012:8012"
+        networks:
+            - dev_network
+
+    grafana:
+        image: grafana/grafana-oss:latest
+        user: "$UID:$GID" # 현재 사용자의 UID와 GID로 설정
+        #user: "472"
+        container_name: grafana
+        #restart: unless-stopped
+        restart: always
+        ports:
+            - 3000:3000 # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+        volumes:
+            - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+            #- ./config/grafana/defaults.ini:/usr/share/grafana/conf/defaults.ini
+            - ~/.datadrift/grafana:/var/lib/grafana
+        environment:            
+            #- GF_SERVER_ROOT_URL=http://192.168.1.6:3000/grafana/
+            - GF_SERVER_ROOT_URL=http://datadoctor.kr/grafana/
+            - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+            - GF_SECURITY_ADMIN_USER=admin
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_SECURITY_ALLOW_EMBEDDING=true
+            - GF_SECURITY_LOGIN_REMEMBER_DAYS=365
+            - GF_DEFAULT_APP_MODE=development
+            - GF_ENABLE_GZIP=true
+            - GF_SERVER_SERVE_FROM_SUB_PATH=true
+            - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-worldmap-panel,marcusolsson-csv-datasource,frser-sqlite-datasource,grafana-simple-json-datasource,innius-video-panel,jdbranham-diagram-panel,volkovlabs-image-panel,redis-app,redis-datasource,redis-explorer-app
+            #- GF_RENDERING_SERVER_URL=http://renderer:8081/render
+            #- GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+            #- GF_LOG_FILTERS=rendering:debug
+        expose:
+            - 3000
+        env_file:
+            - .env
+        networks:
+            - dev_network
            
     # (참고) redis 기초 명령어 : https://tgyun615.com/192
     redis:

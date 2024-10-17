@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotly.js 3D Scatter Plot - Embedding Vectors</title>
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <!-- 차트를 렌더링할 DOM 요소 -->
+    <div id="chart" style="width: 100%; height: 600px;"></div>
+
+    <script>
+        // 데이터를 비동기적으로 불러오기
+        fetch('multimodal_embedding_vectors.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                // CSV 데이터를 행 단위로 파싱
+                const rows = csvData.split('\n').slice(1); // 첫 번째 행은 헤더이므로 제외
+                const x = [];
+                const y = [];
+                const z = [];
+
+                rows.forEach(row => {
+                    const [xi, yi, zi] = row.split(',');
+                    x.push(parseFloat(xi));
+                    y.push(parseFloat(yi));
+                    z.push(parseFloat(zi));
+                });
+
+                // Plotly.js를 사용해 3D 산포도 생성
+                const trace = {
+                    x: x,
+                    y: y,
+                    z: z,
+                    mode: 'markers',
+                    marker: {
+                        size: 3,
+                        color: z,  // z값에 따라 색상 변경
+                        colorscale: 'Viridis',  // 색상 스케일 설정
+                        opacity: 0.8
+                    },
+                    type: 'scatter3d'  // 3D 산포도 유형
+                };
+
+                const data = [trace];
+
+                const layout = {
+                    title: '3D Scatter Plot of Embedding Vectors',
+                    scene: {
+                        xaxis: { title: 'X Axis' },
+                        yaxis: { title: 'Y Axis' },
+                        zaxis: { title: 'Z Axis' }
+                    }
+                };
+
+                // 차트 렌더링
+                Plotly.newPlot('chart', data, layout);
+            })
+            .catch(error => console.error('Error loading CSV data:', error));
+    </script>
+</body>
+</html>

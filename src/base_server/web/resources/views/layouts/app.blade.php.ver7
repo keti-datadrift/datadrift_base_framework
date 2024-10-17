@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Data Drift Management System')</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tabs {
+            background-color: #2980b9;
+            padding: 10px;
+            display: flex;
+        }
+
+        .tabs .tab {
+            margin-right: 20px;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .tabs .tab.active {
+            background-color: #3498db;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #2c3e50;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            display: none;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #34495e;
+        }
+
+        .content {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+            padding: 20px;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        /* Dynamic layout adjustments based on tab/sidebars */
+        .active-sidebar {
+            display: block;
+        }
+
+        .active-link {
+            background-color: #1abc9c;
+        }
+    </style>
+</head>
+
+    
+<body>
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab" data-tab="home">Data Drift Management System</div>
+        <div class="tab" data-tab="reports">Reports</div>
+        
+        <div class="tab" data-tab="settings">Settings</div>
+
+        @guest
+        <div class="tab" data-tab="login"><a href="javascript:void(0)" style="color: white;">Login</a></div>
+        <div class="tab" data-tab="register"><a href="javascript:void(0)" style="color: white;">Register</a></div>
+        @else
+        <div class="tab">{{ Auth::user()->name }}</div>
+        <div class="tab">
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: white;">
+                Logout
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        </div>
+        @endguest
+    </div>
+
+    <!-- Sidebars -->
+    <div class="sidebar" id="home-sidebar">
+        <ul>
+            <li data-link="overview"> <i class="fas fa-home"></i> Overview</li>
+            <li data-link="stats"> <i class="fas fa-chart-bar"></i> Statistics</li>
+        </ul>
+    </div>
+
+    <div class="sidebar" id="reports-sidebar">
+        <ul>
+            <li data-link="sales">Sales Report</li>
+            <li data-link="expenses">Expenses Report</li>
+        </ul>
+    </div>
+
+    <div class="sidebar" id="settings-sidebar">
+        <ul>
+            <li data-link="profile">Profile Settings</li>
+            <li data-link="security">Security Settings</li>
+        </ul>
+    </div>
+
+    <div class="sidebar" id="login-sidebar">
+        <ul>
+            <li data-link="profile">todo</li>
+        </ul>
+    </div>
+
+    <div class="sidebar" id="register-sidebar">
+        <ul>
+            <li data-link="profile">todo</li>
+        </ul>
+    </div>
+
+    
+    <!-- Content Area -->
+    <div class="content">
+        <div class="main-content" id="main-content">
+            <!-- 본문 콘텐츠가 여기에서 동적으로 바뀝니다 -->
+            <h2>Welcome to DD</h2>
+            <p>Select a tab or sidebar option to see more details.</p>
+        </div>
+    </div>
+
+    <script>
+        // 페이지를 비동기로 로드하는 함수
+        function loadPage(url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('main-content').innerHTML = html;
+                })
+                .catch(error => console.log('Error:', error));
+        }
+
+        // Tab 클릭 시, 각 탭에 맞는 사이드바 표시
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                // 탭 활성화 관리
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // 사이드바 숨기기 및 해당 탭의 사이드바 표시
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.sidebar').forEach(sidebar => sidebar.classList.remove('active-sidebar'));
+                const sidebar = document.getElementById(`${tabName}-sidebar`);
+                if (sidebar) {
+                    sidebar.classList.add('active-sidebar');
+                }
+
+                // 페이지 로드 (로그인, 회원가입 등)
+                if (tabName === 'login') {
+                    loadPage('/login');
+                } else if (tabName === 'register') {
+                    loadPage('/register');
+                }
+            });
+        });
+
+        // 사이드바 링크 클릭 시 본문 콘텐츠 변경
+        document.querySelectorAll('.sidebar ul li').forEach(link => {
+            link.addEventListener('click', function () {
+                const contentKey = this.getAttribute('data-link');
+                let url = `/${contentKey}`;
+                loadPage(url);
+
+                // 활성화된 링크 스타일 관리
+                document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active-link'));
+                this.classList.add('active-link');
+            });
+        });
+
+        // 초기 상태 설정: 대시보드 탭과 사이드바 활성화
+        document.getElementById('home-sidebar').classList.add('active-sidebar');
+        loadPage('/overview');
+    </script>
+
+</body>
+</html>

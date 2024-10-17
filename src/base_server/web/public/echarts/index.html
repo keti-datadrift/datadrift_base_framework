@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ECharts Example</title>
+    <!-- ECharts CDN -->
+    
+      <!--
+      <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+      -->
+      
+      <script src="echarts.min.js"></script>
+  </head>
+  <body>
+    <!-- Prepare a DOM container with defined width and height for ECharts -->
+    <div id="main" style="width: 600px; height: 400px;"></div>
+
+    <script>
+      // Initialize the ECharts instance based on the prepared DOM
+      var myChart = echarts.init(document.getElementById('main'));
+
+      // Specify the configuration and data for the chart
+      var option = {
+        title: {
+          text: 'Simple ECharts Example'
+        },
+        tooltip: {},
+        xAxis: {
+          data: ['A', 'B', 'C', 'D', 'E', 'F']
+        },
+        yAxis: {},
+        series: [
+          {
+            name: 'Example',
+            type: 'bar',
+            data: [10, 22, 28, 23, 19, 25]
+          }
+        ]
+      };
+
+      // Use the specified configuration and data to render the chart
+      myChart.setOption(option);
+    </script>
+  </body>
+</html>
