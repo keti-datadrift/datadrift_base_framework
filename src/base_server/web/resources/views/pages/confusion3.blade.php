@@ -25,7 +25,7 @@
 <svg></svg>
 
 <script>
-  var margin = { top: 80, right: 0, bottom: 10, left: 520 },
+  var margin = { top: 80, right: -10, bottom: 10, left: 50 },
       width = 600,
       height = 600;
 

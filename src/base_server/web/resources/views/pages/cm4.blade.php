@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compare Confusion Matrices</title>
+  <title>Confusion Matrix with Metrics</title>
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <style>
     .background { fill: #eee; }
@@ -20,52 +20,78 @@
     .cell rect {
       stroke-width: 1px;
     }
-
-    /* Flexbox 설정 */
     .matrix-container {
       display: flex;
-      justify-content: left; /* 행렬을 가운데로 정렬 */
-      align-items: flex-start; /* 수직 정렬 */
-      gap: 30px; /* 두 행렬 사이의 간격 */
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
     }
-
     .matrix-title {
       text-align: center;
       margin-bottom: 10px;
       font-weight: bold;
     }
-
-    /* SVG의 크기를 줄여 두 개가 더 가까워지도록 설정 */
-    svg {
-      width: 400px; /* 너비를 줄여서 두 행렬이 가까워지도록 */
-      height: 400px;
+    .metrics {
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
     }
-
+    .metric-label {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
 <div class="matrix-container">
   <div>
-    <div class="matrix-title">참고 모델 성능</div>
-    <svg id="matrix1"></svg>
-  </div>
-  <div>
-    <div class="matrix-title">데이터 드리프트 처리 모델 성능</div>
-    <svg id="matrix2"></svg>
+    <div class="matrix-title">Confusion Matrix</div>
+    <svg id="matrix"></svg>
   </div>
 </div>
 
+<div class="metrics">
+  <div><span class="metric-label">Accuracy:</span> <span id="accuracy"></span></div>
+  <div><span class="metric-label">Recall:</span> <span id="recall"></span></div>
+  <div><span class="metric-label">F1-Score:</span> <span id="f1score"></span></div>
+</div>
+
 <script>
-  var margin = { top: 0, right: 10, bottom: 20, left: 20 },
-      width = 350,
-      height = 350;
+  var margin = { top: 80, right: 20, bottom: 80, left: 80 },
+      width = 300,
+      height = 300;
 
   var x = d3.scaleBand().range([0, width]).padding(0.05),
       y = d3.scaleBand().range([0, height]).padding(0.05),
       color = d3.scaleSequential(d3.interpolateBlues).domain([0, 100]);
 
-  // 첫 번째 Confusion Matrix를 그리는 함수
+  // 성능 지표를 계산하는 함수
+  function calculateMetrics(data) {
+    let TP = 0, TN = 0, FP = 0, FN = 0;
+
+    data.forEach(d => {
+      const actual = +d.actual;
+      const predicted = +d.predicted;
+      const count = +d.count;
+
+      if (actual === 1 && predicted === 1) TP += count;
+      if (actual === 0 && predicted === 0) TN += count;
+      if (actual === 0 && predicted === 1) FP += count;
+      if (actual === 1 && predicted === 0) FN += count;
+    });
+
+    const accuracy = (TP + TN) / (TP + TN + FP + FN);
+    const recall = TP / (TP + FN);
+    const precision = TP / (TP + FP);
+    const f1Score = 2 * (precision * recall) / (precision + recall);
+
+    return {
+      accuracy: accuracy.toFixed(2),
+      recall: recall.toFixed(2),
+      f1Score: f1Score.toFixed(2)
+    };
+  }
+
+  // Confusion Matrix 그리는 함수
   function drawConfusionMatrix(container, dataFile) {
     var svg = d3.select(container)
         .attr("width", width + margin.left + margin.right)
@@ -128,16 +154,19 @@
         .text(function(d) { return d.count; })
         .style("fill", "black");
 
+      // 성능 지표 계산 후 HTML에 표시
+      const metrics = calculateMetrics(data);
+      d3.select("#accuracy").text(metrics.accuracy);
+      d3.select("#recall").text(metrics.recall);
+      d3.select("#f1score").text(metrics.f1Score);
+
     }).catch(function(error) {
       console.log("Error loading the data: ", error);
     });
   }
 
-  // 첫 번째 Confusion Matrix
-  drawConfusionMatrix("#matrix1", "data/cm3before.csv");
-
-  // 두 번째 Confusion Matrix
-  drawConfusionMatrix("#matrix2", "data/cm3after.csv");
+  // Confusion Matrix 및 성능 지표 표시
+  drawConfusionMatrix("#matrix", "data/cm4.csv");
 
 </script>
 

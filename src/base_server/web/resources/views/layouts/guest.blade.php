@@ -26,7 +26,7 @@
             
             <div class="shrink-0 flex items-center">
                 <a href="/">
-                    <img width=50% src="{{ asset('images/dd-logo.jpg') }}" alt="DD Logo" />
+                    <img width=100px src="{{ asset('images/signin.png') }}" alt="signin" />
                 </a>
             </div> 
 

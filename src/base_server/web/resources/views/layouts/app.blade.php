@@ -48,6 +48,7 @@
             color: white;
             cursor: pointer;
             border-radius: 5px;
+            font-size: 15px; /* 탭의 글자 크기를 여기서 설정합니다 */
         }
 
         .tabs .tab.active {
@@ -108,17 +109,19 @@
             <div class="tab" data-tab="home"><i class="fas fa-home"></i> Data Drift Management System</div>
         </div>
         <div class="tabs-right">
-            <div class="tab" data-tab="login"><a href="javascript:void(0)" style="color: white;">Login <i class="fa fa-sign-in"></i> </a></div>
-            <div class="tab" data-tab="register"><a href="javascript:void(0)" style="color: white;">Register <i class="fa fa-cogs"></i> </a></div>
+            <div class="tab" data-tab="login"><a href="javascript:void(0)" style="color: white;">Login</i> </a></div>
+            <div class="tab" data-tab="register"><a href="javascript:void(0)" style="color: white;">Register</a></div>
         </div>
 
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home"><i class="fas fa-home"></i> Data Drift Management System</div>
-            <div class="tab" data-tab="demos"><i class="fas fa-laptop"></i> Demos</div>
-            <div class="tab" data-tab="reports"><i class="fas fa-book"></i> Reports</div>
-            <div class="tab" data-tab="settings"><i class="fas fa-cog"></i> Settings</div>
+            <div class="tab" data-tab="home"><i class="fas fa-home"></i> Data Drift Management</div>
+            <div class="tab" data-tab="demos"><i class="fas fa-laptop"></i> 시연</div>
+            <div class="tab" data-tab="reports"><i class="fas fa-laptop"></i> 검출</div>
+            <div class="tab" data-tab="reports"><i class="fas fa-laptop"></i> 파이프라인</div>
+            <div class="tab" data-tab="settings"><i class="fas fa-laptop"></i> 비전AI</div>
+            <div class="tab" data-tab="settings"><i class="fas fa-laptop"></i> 추적관리</div>
         </div>
         
         <div class="tabs-right">
@@ -138,32 +141,34 @@
     <!-- Sidebars -->
     <div class="sidebar" id="home-sidebar">
         <ul>
-            <li data-link="overview"> <i class="fas fa-home"></i> Overview</li>
+            <li data-link="overview">Overview</li>
         </ul>
     </div>
 
-    <div class="sidebar" id="demos-sidebar">
-        <ul>
-            <li data-link="test">test</li>
-            <li data-link="pages_map1">map1</li>
-            <li data-link="pages_map2">map2</li>
-            <li data-link="pages_confusion1">confusion1</li>
-            <li data-link="pages_confusion2">confusion2</li>
-            <li data-link="pages_confusion3">confusion3</li>
-            <li data-link="pages_cm1">cm1</li>
-            <li data-link="pages_cm2">cm2</li>
-            <li data-link="pages_cm3">cm3</li>
-            <li data-link="pages_cm4">cm4</li>
-            <li data-link="pages_cm5">cm5</li>
-        </ul>
-    </div>
-
-    <div class="sidebar" id="reports-sidebar">
+    <div class="sidebar" id="project-sidebar">
         <ul>
             <li data-link="pages_progress1">과제 정량 목표</li>
             <li data-link="expenses">todo</li>
         </ul>
     </div>
+
+    <div class="sidebar" id="demos-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+            <li data-link="pages_map1">map1</li>
+            <li data-link="pages_map2">map2</li>
+            <li data-link="pages_confusion1">human graph 1</li>
+            <li data-link="pages_confusion2">human graph 2</li>
+            <li data-link="pages_confusion3">human graph 3</li>
+            <li data-link="pages_cm1">cm1</li>
+            <li data-link="pages_cm2">cm2</li>
+            <li data-link="pages_cm3">cm3</li>
+            <li data-link="pages_cm4">cm4</li>
+            <li data-link="pages_cm5">cm5</li>
+            <li data-link="test">Reserved</li>
+        </ul>
+    </div>
+
 
     <div class="sidebar" id="settings-sidebar">
         <ul>
@@ -175,6 +180,7 @@
     <div class="sidebar" id="login-sidebar">
         <ul>
             <li data-link="profile">todo</li>
+            <li data-link="profile"><i class="fas fa-cog"></i> Settings</li>
         </ul>
     </div>
 
@@ -190,7 +196,6 @@
         <!-- Iframe을 통해 페이지를 렌더링 -->
         <iframe id="main-content" src="/overview" width="100%" height="100%" />></iframe>
 
-
         <!-- 본문 콘텐츠가 여기에서 동적으로 바뀝니다 -->
         <!--
         <div class="main-content2" id="main-content2">
@@ -203,7 +208,7 @@
     <script>
 
         // 페이지를 비동기로 로드하는 함수
-        function loadPage(url) {
+        function loadPage_content(url) {
             fetch(url)
                 .then(response => response.text())
                 .then(html => {
@@ -241,9 +246,11 @@
 
                 // 페이지 로드 (로그인, 회원가입 등)
                 if (tabName === 'login') {
-                    loadPage('/login');
+                    loadPage_iframe('/login');
+                } else if (tabName === 'logout') {
+                    loadPage_iframe('/intro');
                 } else if (tabName === 'register') {
-                    loadPage('/register');
+                    loadPage_iframe('/register');
                 }
             });
         });
@@ -284,7 +291,7 @@
 
         // 초기 상태 설정: 대시보드 탭과 사이드바 활성화
         document.getElementById('home-sidebar').classList.add('active-sidebar');
-        loadPage('/overview');
+        //loadPage_content('/intro');
     </script>
 
 </body>

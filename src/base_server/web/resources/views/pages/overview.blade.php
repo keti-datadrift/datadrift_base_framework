@@ -1,3 +1,9 @@
-<h2>Overview</h2>
-<p>데이터 드리프트 관리 기술입니다.</p>
-<p>로그인하시면 모든 기능을 사용하실 수 있습니다.</p>
+
+<img src="images/keti-logo3.png" width=300>
+<left>
+<!--
+<h1>데이터 드리프트 관리 기술</h1>
+-->
+<br/>
+<img src="images/kes2024.jpg" width=600>
+</left>

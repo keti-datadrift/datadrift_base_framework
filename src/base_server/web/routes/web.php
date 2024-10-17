@@ -58,10 +58,15 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('guest');
 
 // 로그아웃 처리 라우트
+Route::get('/logout', function () {     
+    return view('intro');
+});
+
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+// 사용자 등록 처리 라우트
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest');
 
@@ -115,6 +120,11 @@ Route::get('/settings_security', function () {
     return view('pages.settings_security');
 })->middleware(['auth'])->name('settings_security');
 
+
+Route::get('/pages_demoui', function () {
+    return view('pages.demoui');
+})->middleware(['auth'])->name('pages_demoui');
+
 Route::get('/pages_confusion1', function () {
     return view('pages.confusion1');
 })->middleware(['auth'])->name('pages_confusion1');
@@ -122,6 +132,7 @@ Route::get('/pages_confusion1', function () {
 Route::get('/pages_confusion2', function () {
     return view('pages.confusion2');
 })->middleware(['auth'])->name('pages_confusion2');
+
 
 Route::get('/pages_confusion3', function () {
     return view('pages.confusion3');

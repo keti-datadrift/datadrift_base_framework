@@ -26,6 +26,7 @@
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
+
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
@@ -54,29 +55,4 @@
             </x-primary-button>
         </div>
     </form>
-
-    <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault();  // 기본 폼 제출 동작을 방지
-            var form = this;
-
-            var formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    // 로그인 성공 후 부모 페이지(상위 프레임)를 새로고침
-                    window.top.location.reload();  // 상위 페이지를 새로고침
-                } else {
-                    // 실패한 경우 (로그인 실패 처리)
-                    console.log('Login failed');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    </script>
-
 </x-guest-layout>

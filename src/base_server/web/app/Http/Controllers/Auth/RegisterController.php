@@ -1,5 +1,5 @@
-<?--
-    
+<?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ class RegisterController extends Controller
     use RegistersUsers;
 
     // 사용자가 회원가입 후 리디렉션될 경로
-    protected $redirectTo = '/';
+    protected $redirectTo = '/intro';
 
     public function __construct()
     {
@@ -33,7 +33,7 @@ class RegisterController extends Controller
     // 사용자 등록 폼을 보여주는 메서드
     public function showRegistrationForm()
     {
-        return view('auth.register2'); // 이 메서드가 회원가입 폼을 반환합니다.
+        return view('auth.register'); // 이 메서드가 회원가입 폼을 반환합니다.
     }
     
     // 사용자 생성
