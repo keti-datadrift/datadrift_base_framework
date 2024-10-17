@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2x2 Plotly Multimodal Data Visualization</title>
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <!-- 2x2 섹션을 위한 div 컨테이너 -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; width: 1vw; height: 1vh;">
+        <div id="plot-3d" style="width: 400px; height: 400px;"></div>   <!-- 좌상단 3D 그래프 -->
+        <div id="plot-x" style="width: 400px; height: 400px;"></div>    <!-- 우상단 X축 기준 2D 그래프 -->
+        <div id="plot-y" style="width: 400px; height: 400px;"></div>    <!-- 좌하단 Y축 기준 2D 그래프 -->
+        <div id="plot-z" style="width: 400px; height: 400px;"></div>    <!-- 우하단 Z축 기준 2D 그래프 -->
+    </div>
+
+    <script>
+        // 데이터를 비동기적으로 로드 (multimodal_embedding_vectors.csv는 이미 생성된 파일로 가정)
+        fetch('multimodal_embedding_vectors.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                // CSV 데이터를 행 단위로 파싱
+                const rows = csvData.split('\n').slice(1);  // 첫 번째 행은 헤더이므로 제외
+                const x = [], y = [], z = [];
+
+                rows.forEach(row => {
+                    const [xi, yi, zi] = row.split(',');
+                    x.push(parseFloat(xi));
+                    y.push(parseFloat(yi));
+                    z.push(parseFloat(zi));
+                });
+
+                // 좌상단 3D 산포도
+                const trace3D = {
+                    x: x,
+                    y: y,
+                    z: z,
+                    mode: 'markers',
+                    marker: {
+                        size: 3,
+                        color: z,  // z값에 따라 색상 변경
+                        colorscale: 'Viridis',
+                        opacity: 0.8
+                    },
+                    type: 'scatter3d'
+                };
+
+                // 우상단 X축 기준 2D 산포도 (Y vs Z)
+                const traceX = {
+                    x: y,
+                    y: z,
+                    mode: 'markers',
+                    marker: {
+                        size: 3,
+                        color: z,  // z값에 따라 색상 변경
+                        colorscale: 'Viridis',
+                        opacity: 0.8
+                    },
+                    type: 'scatter'
+                };
+
+                // 좌하단 Y축 기준 2D 산포도 (X vs Z)
+                const traceY = {
+                    x: x,
+                    y: z,
+                    mode: 'markers',
+                    marker: {
+                        size: 3,
+                        color: z,  // z값에 따라 색상 변경
+                        colorscale: 'Viridis',
+                        opacity: 0.8
+                    },
+                    type: 'scatter'
+                };
+
+                // 우하단 Z축 기준 2D 산포도 (X vs Y)
+                const traceZ = {
+                    x: x,
+                    y: y,
+                    mode: 'markers',
+                    marker: {
+                        size: 3,
+                        color: z,  // z값에 따라 색상 변경
+                        colorscale: 'Viridis',
+                        opacity: 0.8
+                    },
+                    type: 'scatter'
+                };
+
+                // 각 섹션에 차트 렌더링
+                Plotly.newPlot('plot-3d', [trace3D], { title: '3D Scatter Plot' });
+                Plotly.newPlot('plot-x', [traceX], { title: 'Y vs Z (X axis projection)', xaxis: {title: 'Y'}, yaxis: {title: 'Z'} });
+                Plotly.newPlot('plot-y', [traceY], { title: 'X vs Z (Y axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Z'} });
+                Plotly.newPlot('plot-z', [traceZ], { title: 'X vs Y (Z axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Y'} });
+            })
+            .catch(error => console.error('Error loading CSV data:', error));
+    </script>
+</body>
+</html>

@@ -116,18 +116,22 @@
     
 <body>
     <!-- 새로 추가된 헤더 영역 -->
+    <!--
     <div class="header">
         <p> 데이터 드리프트 관리 기술 개발 </p>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <img height=30px src='images/logo/keti-logo1.png'></img>
-        <img height=20px src='images/logo/dq-logo1.png'></img>
-        <img height=20px src='images/logo/iv-logo1.png'></img>
-        <img height=20px src='images/logo/skku-logo1.jpg'></img>
-        <img height=20px src='images/logo/knpu-logo1.png'></img>
-        <img height=15px src='images/logo/bcave-logo1.png'></img>
-        <img height=25px src='images/logo/osan-logo1.png'></img>
+        <a href="http://datadrift.kr">
+            <img height=30px src='images/logo/keti-logo1.png'></img>
+            <img height=20px src='images/logo/dq-logo1.png'></img>
+            <img height=20px src='images/logo/iv-logo1.png'></img>
+            <img height=20px src='images/logo/skku-logo1.jpg'></img>
+            <img height=20px src='images/logo/knpu-logo1.png'></img>
+            <img height=15px src='images/logo/bcave-logo1.png'></img>
+            <img height=25px src='images/logo/osan-logo1.png'></img>
+        </a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </div>
+    -->
 
     <!-- Tabs -->
     <div class="tabs">
@@ -191,13 +195,17 @@
             <li data-link="dd_targetservices_lp_ocr">차량 번호판 ORC</li>
             <li data-link="dd_targetservices_car_detection">차량 객체 분류</li>
             <li data-link="dd_targetservices_marketing">마케팅 전략 수립</li>
+            <li data-link="dd_targetservices_video_4ch_player">[test] 4ch play</li>
         </ul>
     </div>
 
     <!-- 검출 -->
     <div class="sidebar" id="dd_detection-sidebar">
         <ul>
-            <li data-link="pages_demoui">demoui</li>
+            <li data-link="detection1">d1</li>
+            <li data-link="detection2">d2</li>
+            <li data-link="detection3">d3</li>
+            <li data-link="detection4">d4</li>
         </ul>
     </div>
 
@@ -289,11 +297,28 @@
         }
         
         // 페이지를 비동기로 로드하는 함수
+        // iframe이 로드된 후 발생하는 이벤트 핸들러 추가
         function loadPage_iframe(url) {
-            // iframe 요소를 찾아서 src 속성을 변경하여 해당 페이지 로드
             const iframe = document.getElementById('main-content');
             if (iframe) {
                 iframe.src = url;
+
+                document.getElementById('iframe-id').onload = function() {
+                
+                    // 페이지가 로드된 후 jQuery 실행
+                // 오류 방지
+                try {
+                        document.querySelector( ":has(*,:jqfake)" );
+                    } catch (e) {
+                        console.error("jQuery error: ", e);
+                    }
+                };
+
+                // iframe이 로드된 후 처리할 동작
+                iframe.onload = function() {
+                    console.log("Iframe loaded successfully");
+                    // 필요 시 추가 작업
+                };
             } else {
                 console.log('Error: iframe element not found');
             }

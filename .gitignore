@@ -1,5 +1,7 @@
 src/base_server/web/public/d3
 src/base_server/web/node_modules
+src/base_server/web/public/plotly/number-aug.csv
+src/base_server/web/public/plotly/*.csv
 
 
 

@@ -105,6 +105,36 @@ services:
         networks:
             - dev_network
 
+    app_fiftyone:
+        build:
+            context: ./app_fiftyone
+            dockerfile: Dockerfile
+        container_name: app_fiftyone
+        ports:
+            - "5151:5151"  # fiftyone 기본 포트
+        networks:
+            - dev_network
+
+    app_gradio8011:
+        build:
+            context: ./app_gradio8011
+            dockerfile: Dockerfile
+        container_name: app_gradio8011
+        ports:
+            - "8011:8011"
+        networks:
+            - dev_network
+
+    app_fastapi8012:
+        build:
+            context: ./app_fastapi8012
+            dockerfile: Dockerfile
+        container_name: app_fastapi8012
+        ports:
+            - "8012:8012"
+        networks:
+            - dev_network
+
     grafana:
         image: grafana/grafana-oss:latest
         user: "$UID:$GID" # 현재 사용자의 UID와 GID로 설정

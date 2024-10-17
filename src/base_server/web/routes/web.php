@@ -99,13 +99,15 @@ Route::get('/overview', function () {
 // target services
 //------------------------------------
 
+
+use App\Http\Controllers\VideoPlayController;
+
 Route::get('/dd_targetservices_car_detection', function () {
     return view('dd_targetservices.car_detection');
 })->middleware(['auth'])->name('dd_targetservices_car_detection');
 
-Route::get('/dd_targetservices_lp_detection', function () {
-    return view('dd_targetservices.lp_detection');
-})->middleware(['auth'])->name('dd_targetservices_lp');
+Route::get('/dd_targetservices_lp_detection', [VideoPlayController::class, 'showCCTVWithGraphs'
+])->middleware(['auth'])->name('dd_targetservices_lp_detection');
 
 Route::get('/dd_targetservices_lp_ocr', function () {
     return view('dd_targetservices.lp_ocr');
@@ -114,6 +116,33 @@ Route::get('/dd_targetservices_lp_ocr', function () {
 Route::get('/dd_targetservices_marketing', function () {
     return view('dd_targetservices.marketing');
 })->middleware(['auth'])->name('dd_targetservices_marketing');
+
+Route::get('/dd_targetservices_video_4ch_player', [VideoPlayController::class, 'showVideo'
+])->middleware(['auth'])->name('dd_targetservices_video_4ch_player');
+
+
+
+//------------------------------------
+// detection
+//------------------------------------
+
+Route::get('/detection1', function () {
+    return redirect('http://datadrift.kr:5151/datasets/quickstart');
+});
+
+Route::get('/detection2', function () {
+    return redirect('http://datadrift.kr/plotly/3d4.html');
+});
+
+Route::get('/detection3', function () {
+    return view('dd_detection.detection3');
+})->middleware(['auth'])->name('detection3');
+
+
+//------------------------------------
+// pipeline
+//------------------------------------
+
 
 
 
