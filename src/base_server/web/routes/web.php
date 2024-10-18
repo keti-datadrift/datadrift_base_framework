@@ -117,6 +117,9 @@ Route::get('/overview5', function () {
 
 
 use App\Http\Controllers\VideoPlayController;
+Route::get('/dd_targetservices_overview', function () {
+    return view('dd_targetservices.overview');
+})->middleware(['auth'])->name('dd_targetservices_overview');
 
 Route::get('/dd_targetservices_car_detection', function () {
     return view('dd_targetservices.car_detection');
@@ -142,6 +145,10 @@ Route::get('/dd_targetservices_video_4ch_player', [VideoPlayController::class, '
 // detection
 //------------------------------------
 
+Route::get('/dd_detection_overview', function () {
+    return view('dd_detection.overview');
+})->middleware(['auth'])->name('dd_detection_overview');
+
 Route::get('/detection1', function () {
     return redirect('http://datadrift.kr:5151/datasets/quickstart');
 });
@@ -159,12 +166,34 @@ Route::get('/detection3', function () {
 // pipeline
 //------------------------------------
 
+Route::get('/dd_pipeline_overview', function () {
+    return redirect('http://datadrift.kr:5151/datasets/quickstart');
+});
 
 Route::get('/fiftyone5151', function () {
     return redirect('http://datadrift.kr:5151/datasets/quickstart');
 });
 
+//------------------------------------
+// deployment
+//------------------------------------
 
+Route::get('/dd_deployment_overview', function () {
+    return view('dd_deployment.overview');
+})->middleware(['auth'])->name('dd_deployment_overview');
+
+//------------------------------------
+// deployment
+//------------------------------------
+
+Route::get('/dd_management_overview', function () {
+    return view('dd_management.overview');
+})->middleware(['auth'])->name('dd_management_overview');
+
+
+//------------------------------------
+// etc
+//------------------------------------
 
 
 

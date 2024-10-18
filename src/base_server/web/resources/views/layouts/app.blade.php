@@ -15,31 +15,24 @@
 
     <style>
         body {
-            background-color: #212121;
-            color: white;
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        /* iframe을 main-content 영역에 꽉 채우도록 설정 */
-        #main-content {
-            width: 100%;         /* 가로로 화면 전체를 차지 */
-            height: 80vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
-            border: none;        /* 테두리 없애기 */
-            display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
-            position: fixed;
-            top: 10vh;
+            background-color: #262b3c;
             color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column; /* 행방향 배치 */
+            height: 100vh;
         }
 
         .tabs {
-            background-color: #0d0d0d;
-            padding: 20px;
+            background-color: #262b3c;
+            padding: 0px;
             display: flex;
-            justify-content: space-between; /* 좌우 간격을 최대한으로 벌림 */
+            justify-content: space-around; 
             align-items: center; /* 수직 정렬 */
-            min-width: 1200px;     /* 최소 너비 설정 */
+            min-width: 1250px; /* 최소 너비 설정 */
+            height: 10vh;
         }
 
         .tabs-left {
@@ -63,38 +56,76 @@
             background-color: #3498db;
         }
 
-        .sidebar {
-            width: 200px;
-            background-color: #0d0d0d;
-            color: white;
-            height: 80vh;
-            position: fixed;
-            display: none;
+        .dropdown {
+            display: none; /* 드롭다운 메뉴 기본적으로 숨김 */
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background-color: #ffffff;
+            color: black;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
-        .sidebar-narrow {
-            width: 10px;
-            background-color: #0d0d0d;
-            color: white;
-            height: 80vh;
-            position: fixed;
-            display: none;
+        .dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown ul li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .dropdown ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #222736;
+            height: 15px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+
+
+
+        .expanded-content {
+            width: 100%;
+            margin-left: 0;
         }
 
         /* Footer 스타일 */
-        .footer {
-            background-color: #0d0d0d;
+        .footer1 {
+            background-color: #212121;
             color: white;
-            height: 10vh;
+            height: 40px;
             width: 100%;
             position: fixed;
             bottom: 0;
             display: flex;
-            justify-content: space-between; /* 요소들 사이에 간격 */
+            justify-content: center;
             align-items: center;             /* 수직 가운데 정렬 */
             padding: 0 0px;                 /* 좌우 padding 추가 */
             font-size: 10px;
-            min-width: 1200px;     /* 최소 너비 설정 */
+            min-width: 1250px;     /* 최소 너비 설정 */
+        }
+        .footer2 {
+            background-color: #ffffff;
+            color: white;
+            height: 30px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;             /* 수직 가운데 정렬 */
+            padding: 0 0px;                 /* 좌우 padding 추가 */
+            font-size: 10px;
+            min-width: 1250px;     /* 최소 너비 설정 */
         }
 
         .footer-item {
@@ -115,14 +146,17 @@
             background-color: #34495e;
         }
 
-        .content {
+        .main-content {
             margin-left: 200px;
             width: calc(100% - 200px);
             padding: 20px;
+            color: white;
         }
 
-        .main-content {
-            padding: 20px;
+        .main {
+            display: flex;
+            flex: 1;
+            transition: all 0.3s ease;
         }
 
         /* Dynamic layout adjustments based on tab/sidebars */
@@ -133,38 +167,35 @@
         .active-link {
             background-color: #1abc9c;
         }
+
+        /* iframe을 main-content 영역에 꽉 채우도록 설정 */
+        #main-content-frame {
+            width: 100%;         /* 가로로 화면 전체를 차지 */
+            height: 90vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
+            border: none;        /* 테두리 없애기 */
+            display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
+            position: fixed;
+            top: 20vh;
+            color: white;
+        }
+
     </style>
 </head>
 
     
 <body>
-    <!-- 새로 추가된 헤더 영역 -->
-    
-    <!--
-    <div class="header">
-        <p> 데이터 드리프트 관리 기술 개발 </p>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="http://datadrift.kr">
-            <img height=30px src='images/logo/keti-logo1.png'></img>
-            <img height=20px src='images/logo/dq-logo1.png'></img>
-            <img height=20px src='images/logo/iv-logo1.png'></img>
-            <img height=20px src='images/logo/skku-logo1.jpg'></img>
-            <img height=20px src='images/logo/knpu-logo1.png'></img>
-            <img height=15px src='images/logo/bcave-logo1.png'></img>
-            <img height=25px src='images/logo/osan-logo1.png'></img>
-        </a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    </div>
-    -->
-    
     <!-- Tabs -->
     <div class="tabs">
         <!----------------------------->
         @guest
-        <div class="tabs-left">
-            <div class="tab" data-tab="home"><i class="fas fa-home"></i> Data Drift Management System</div>
-        </div>
-        <div class="tabs-right">
+        <div class="tabs-left">            
+            <div class="tab" data-tab="home" data-link="pages_demoui"><i class="fa fa-home"></i> 데이터 드리프트 관리기술 </div>
+            <div class="tab" data-tab="dd_targetservices" data-link="pages_demoui"><i class="fa fa-user-md"></i> 분석대상</div>
+            <div class="tab" data-tab="dd_detection"><i class="fa fa-search"></i> 드리프트 검출</div>
+            <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 데이터 재구성</div>
+            <div class="tab" data-tab="dd_deployment"><i class="fa fa-paper-plane"></i> 능동적 배포</div>
+            <div class="tab" data-tab="dd_management"><i class="fa fa-pie-chart"></i> 추적관리</div>
+            
             <div class="tab" data-tab="login"><a href="javascript:void(0)" style="color: white;">Login</i> </a></div>
             <div class="tab" data-tab="register"><a href="javascript:void(0)" style="color: white;">Register</a></div>
         </div>
@@ -172,16 +203,16 @@
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home" data-link="pages_demoui"><i class="fa fa-home"></i> 데이터 드리프트 관리기술 </div>
+            <div class="tab" data-tab="home"><i class="fas fa-home"></i> 데이터 드리프트 관리기술 </div>
             <div class="tab" data-tab="dd_targetservices" data-link="pages_demoui"><i class="fa fa-user-md"></i> 분석대상</div>
             <div class="tab" data-tab="dd_detection"><i class="fa fa-search"></i> 드리프트 검출</div>
             <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 데이터 재구성</div>
             <div class="tab" data-tab="dd_deployment"><i class="fa fa-paper-plane"></i> 능동적 배포</div>
+            <div class="tab" data-tab="dd_management"><i class="fa fa-pie-chart"></i> 추적관리</div>
+            
             <!--
             <div class="tab" data-tab="dd_visionai"><i class="fa fa-video-camera"></i> 비전AI</div>
             -->
-            <div class="tab" data-tab="dd_management"><i class="fa fa-pie-chart"></i> 추적관리</div>
-            
             <!--
             <div class="tab" data-tab="demos"><i class="fas fa-laptop"></i> 시연</div>
             -->
@@ -201,8 +232,13 @@
         @endguest
     </div>
 
-    <!-- Sidebars -->
-    <div class="sidebar" id="home-sidebar">
+    <!-- 새로 추가된 헤더 영역 -->
+    <div class="header" id="header-content">
+        데이터 드리프트 관리 기술 개발
+    </div>
+
+
+    <div class="dropdown" id="home-dropdown">
         <ul>
             <li data-link="overview">개념도</li>
             <li data-link="overview2">구조도</li>
@@ -210,133 +246,36 @@
         </ul>
     </div>
 
-    <div class="sidebar" id="project-sidebar">
-        <ul>
-            <li data-link="pages_progress1">과제 정량 목표</li>
-            <li data-link="expenses">todo</li>
-        </ul>
-    </div>
-
-    <!-- (실증) 타겟 서비스 : 교통,마케팅 -->
-    <div class="sidebar" id="dd_targetservices-sidebar">
-        <ul>
-            <li data-link="dd_targetservices_lp_detection">차량 번호판 영역 검출</li>
-            <li data-link="dd_targetservices_lp_ocr">차량 번호판 OCR</li>
-            <li data-link="dd_targetservices_car_detection">차량 객체 분류</li>
-            <li data-link="dd_targetservices_marketing">마케팅 전략 수립</li>
-            <li data-link="dd_targetservices_video_4ch_player">[test] 4ch play</li>
-        </ul>
-    </div>
-
-    <!-- 검출 -->
-    <div class="sidebar" id="dd_detection-sidebar">
-        <ul>
-            <li data-link="detection1">d1</li>
-            <li data-link="detection2">d2</li>
-            <li data-link="detection3">d3</li>
-            <li data-link="detection4">d4</li>
-        </ul>
-    </div>
-
-    <!-- 파이프라인 -->
-    <div class="sidebar-narrow" id="dd_pipeline-sidebar">
-    </div>
-
-    <!-- 비전 AI -->
-    <div class="sidebar" id="dd_visionai-sidebar">
-        <ul>
-            <li data-link="pages_demoui">demoui</li>
-        </ul>
-    </div>
-
-    <!-- 추적 관리 -->
-    <div class="sidebar" id="dd_management-sidebar">
-        <ul>
-            <li data-link="pages_demoui">demoui</li>
-        </ul>
-    </div>
 
 
-    <div class="sidebar" id="demos-sidebar">
-        <ul>
-            <li data-link="pages_demoui">demoui</li>
-            <li data-link="pages_map1">map1</li>
-            <li data-link="pages_map2">map2</li>
-            <li data-link="pages_confusion1">human graph 1</li>
-            <li data-link="pages_confusion2">human graph 2</li>
-            <li data-link="pages_confusion3">human graph 3</li>
-            <li data-link="pages_cm1">cm1</li>
-            <li data-link="pages_cm2">cm2</li>
-            <li data-link="pages_cm3">cm3</li>
-            <li data-link="pages_cm4">cm4</li>
-            <li data-link="pages_cm5">cm5</li>
-            <li data-link="test">Reserved</li>
-        </ul>
-    </div>
 
-
-    <div class="sidebar" id="settings-sidebar">
-        <ul>
-            <li data-link="profile">Profile Settings</li>
-            <li data-link="security">Security Settings</li>
-        </ul>
-    </div>
-
-    <div class="sidebar" id="login-sidebar">
-        <ul>
-            <li data-link="profile">todo</li>
-            <li data-link="profile"><i class="fas fa-cog"></i> Settings</li>
-        </ul>
-    </div>
-
-    <div class="sidebar" id="register-sidebar">
-        <ul>
-            <li data-link="profile">todo</li>
-        </ul>
-    </div>
 
     
     <!-- Content Area -->
-    <div class="content">
-        
-<!-- Toggle Sidebar Buttons -->
-    
+    <div class="main-content">
         <!-- Iframe을 통해 페이지를 렌더링 -->
-        <iframe id="main-content" src="/overview" width="100%" height="100%" /></iframe>
-
-        <!-- 본문 콘텐츠가 여기에서 동적으로 바뀝니다 -->
-        <!--
-        <div class="main-content2" id="main-content2">
-            <h2>Welcome to DD</h2>
-            <p>Select a tab or sidebar option to see more details.</p>
-        </div>
-        -->
-
+        <iframe id="main-content-frame" src="/overview" width="100%" height="100%" /></iframe>
     </div>
 
-
     <script>
-
         // 페이지를 비동기로 로드하는 함수
         function loadPage_content(url) {
             fetch(url)
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('main-content').innerHTML = html;
+                    document.getElementById('main-content-frame').innerHTML = html;
                 })
                 .catch(error => console.log('Error:', error));
         }
         
         // 페이지를 비동기로 로드하는 함수
         // iframe이 로드된 후 발생하는 이벤트 핸들러 추가
-        function loadPage_iframe(url) {
-            const iframe = document.getElementById('main-content');
+        function loadMainContent(url) {
+            const iframe = document.getElementById('main-content-frame');
             if (iframe) {
                 iframe.src = url;
-
-                document.getElementById('iframe-id').onload = function() {
-                
-                    // 페이지가 로드된 후 jQuery 실행
+                document.getElementById('main-content-frame').onload = function() {
+                // 페이지가 로드된 후 jQuery 실행
                 // 오류 방지
                 try {
                         document.querySelector( ":has(*,:jqfake)" );
@@ -354,7 +293,26 @@
                 console.log('Error: iframe element not found');
             }
         }
-            
+
+
+        // Main Content 업데이트 함수
+        function loadInitMainContent(tab) {
+            const iframe = document.getElementById('main-content-frame');
+            if (tab === 'home') {
+                loadMainContent('/overview');
+            } else if (tab === 'dd_targetservices') {
+                loadMainContent('/dd_targetservices_overview');
+            } else if (tab === 'dd_detection') {
+                loadMainContent('/dd_detection_overview');
+            } else if (tab === 'dd_pipeline') {
+                loadMainContent('/dd_pipeline_overview');
+            } else if (tab === 'dd_deployment') {
+                loadMainContent('/dd_deployment_overview');
+            } else if (tab === 'dd_management') {
+                loadMainContent('/dd_management_overview');
+            }
+
+        }
 
         // Tab 클릭 시, 각 탭에 맞는 사이드바 표시
         document.querySelectorAll('.tab').forEach(tab => {
@@ -362,7 +320,7 @@
                 // 탭 활성화 관리
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-
+   
                 // 사이드바 숨기기 및 해당 탭의 사이드바 표시
                 const tabName = this.getAttribute('data-tab');
                 document.querySelectorAll('.sidebar').forEach(sidebar => sidebar.classList.remove('active-sidebar'));
@@ -374,33 +332,76 @@
                 // 페이지 로드 (로그인, 회원가입 등)
                 if (tabName === 'login') {
                     loadPage_iframe('/login');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
+                    toggleSidebar(true); // 로그인 탭에서는 사이드바 숨기기
                 } else if (tabName === 'logout') {
                     loadPage_iframe('/intro');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
+                    toggleSidebar(true); // 로그인 탭에서는 사이드바 숨기기
                 } else if (tabName === 'register') {
                     loadPage_iframe('/register');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
-                } else if (tabName === 'dashboard') {
-                    loadPage_iframe('/dashboard');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
+                    toggleSidebar(true); // 로그인 탭에서는 사이드바 숨기기
                 } else if (tabName === 'dd_pipeline') {
-                    loadPage_iframe('/dd_pipeline');
                     toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
                 } else {
-                    toggleSidebar(true); // 로그인 탭에서는 사이드바 숨기기
+                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
                 }
 
 
+                updateHeader(tabName);
+                loadInitMainContent(tabName);
             });
         });
+
+        // Header 업데이트 함수
+        function updateHeader(tab) {
+            const header = document.getElementById('header-content');
+            if (tab === 'home') {
+                header.textContent = 'home';
+                toggleSidebar(true);
+            } else if (tab === 'dd_targetservices') {
+                toggleSidebar(false);
+                header.textContent = 'dd_targetservices';
+            } else if (tab === 'dd_detection') {
+                header.textContent = 'dd_detection';
+            } else if (tab === 'dd_pipeline') {
+                header.textContent = 'dd_pipeline';
+            } else if (tab === 'dd_deployment') {
+                header.textContent = 'dd_deployment';
+            } else if (tab === 'dd_management') {
+                header.textContent = 'dd_management';
+            } else if (tab === 'dd_management') {
+                header.textContent = 'dd_management';
+            } else if (tab === 'dd_management') {
+                header.textContent = 'dd_management';
+            } else if (tab === 'login') {
+                header.textContent = 'login';
+            } else if (tab === 'logout') {
+                header.textContent = 'logout';
+            } else if (tab === 'register') {
+                header.textContent = 'register';
+            } 
+        }
+
+        // Sidebar 업데이트 함수
+        function updateSidebar(tab) {
+            const sidebar = document.getElementById('sidebar-content');
+            let content = '';
+            if (tab === 'home') {
+                content = '<ul><li>Home Menu 1</li><li>Home Menu 2</li></ul>';
+            } else if (tab === 'profile') {
+                content = '<ul><li>Profile Menu 1</li><li>Profile Menu 2</li></ul>';
+            } else if (tab === 'settings') {
+                content = '<ul><li>Settings Menu 1</li><li>Settings Menu 2</li></ul>';
+            }
+            sidebar.innerHTML = content;
+        }
+
 
         // Sidebar 클릭 시, 메인 콘텐츠에 해당 페이지 로드
         document.querySelectorAll('.sidebar ul li').forEach(link => {
             link.addEventListener('click', function () {
                 const contentKey = this.getAttribute('data-link');
                 let url = `/${contentKey}`;
-                loadPage_iframe(url);
+                loadMainContent(url);
 
                 // 사이드바 링크 활성화 상태 관리
                 document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active-link'));
@@ -408,23 +409,26 @@
             });
         });
 
-        // 사이드바를 숨기고 메인 콘텐츠를 전체 화면으로 표시하는 함수
+        // Sidebar를 숨기고 Main Content를 전체 화면으로 표시하거나 복원하는 함수
         function toggleSidebar(show) {
-            const sidebar = document.querySelector('.active-sidebar');
-            const content = document.getElementById('main-content');
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.main-content');
             
-            if (show) {
-                // 사이드바를 보이게 하고 메인 콘텐츠 크기 조정
-                if (sidebar) sidebar.style.display = 'block';
-                content.style.width = 'calc(100% - 200px)';
-                content.style.marginLeft = '200px';
+            if (content) {  // content가 null이 아닌지 확인
+                if (show) {
+                    // 사이드바를 보이게 하고 메인 콘텐츠 크기 조정
+                    sidebar.classList.remove('hidden-sidebar');
+                    content.classList.remove('expanded-content');
+                } else {
+                    // 사이드바를 숨기고 메인 콘텐츠를 전체 화면으로 확장
+                    sidebar.classList.add('hidden-sidebar');
+                    content.classList.add('expanded-content');
+                }
             } else {
-                // 사이드바를 숨기고 메인 콘텐츠를 전체 화면으로 확장
-                if (sidebar) sidebar.style.display = 'none';
-                content.style.width = '100%';
-                content.style.marginLeft = '0';
+                console.error('Main content element not found!');
             }
         }
+
         
         // 초기 상태 설정: 대시보드 탭과 사이드바 활성화
         document.getElementById('home-sidebar').classList.add('active-sidebar');
@@ -432,16 +436,13 @@
     </script>
 
     <!-- footer -->
-    <div class="footer">
-        <div class="footer-item" bgcolor=white>
-            <img height=30px src='images/logo/keti-logo1.png'></img>
-            <img height=20px src='images/logo/dq-logo1.png'></img>
-            <img height=20px src='images/logo/iv-logo1.png'></img>
-            <img height=20px src='images/logo/skku-logo1.jpg'></img>
-            <img height=20px src='images/logo/knpu-logo1.png'></img>
-            <img height=15px src='images/logo/bcave-logo1.png'></img>
-            <img height=25px src='images/logo/osan-logo1.png'></img>
-            &nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="footer1">
+    </div>
+
+    <div class="footer2">
+        <div class="footer-item">
+            <img height=25px src='images/logo/all-logo.png'></img>&nbsp;
+        </div>
     </div>
 </body>
 </html>
