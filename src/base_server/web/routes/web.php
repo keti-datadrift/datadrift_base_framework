@@ -92,8 +92,24 @@ Route::get('/test', function () {
 })->middleware(['auth'])->name('test');
 
 Route::get('/overview', function () {
-    return view('pages.overview');
+    return view('overview.ov1');
 })->middleware(['auth'])->name('overview');
+
+Route::get('/overview2', function () {
+    return view('overview.ov2');
+})->middleware(['auth'])->name('overview2');
+
+Route::get('/overview3', function () {
+    return view('overview.ov3');
+})->middleware(['auth'])->name('overview3');
+
+Route::get('/overview4', function () {
+    return view('overview.ov4');
+})->middleware(['auth'])->name('overview4');
+
+Route::get('/overview5', function () {
+    return view('overview.ov5');
+})->middleware(['auth'])->name('overview5');
 
 //------------------------------------
 // target services
@@ -144,6 +160,9 @@ Route::get('/detection3', function () {
 //------------------------------------
 
 
+Route::get('/fiftyone5151', function () {
+    return redirect('http://datadrift.kr:5151/datasets/quickstart');
+});
 
 
 

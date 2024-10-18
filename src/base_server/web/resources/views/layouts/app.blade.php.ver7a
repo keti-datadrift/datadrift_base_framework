@@ -9,17 +9,26 @@
     
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <!-- Vite로 번들된 자바스크립트와 CSS 파일을 로드 -->
-    @vite('js/app.js')
 
     <style>
         body {
-            background-color: #212121;
-            color: white;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            display: flex;
+            text-align: center;
+            justify-content: space-around;
+            align-items: center;
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            height: 30px;
+            padding: 1px;
+            margin: 0;
         }
 
         /* iframe을 main-content 영역에 꽉 채우도록 설정 */
@@ -29,17 +38,15 @@
             border: none;        /* 테두리 없애기 */
             display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
             position: fixed;
-            top: 10vh;
-            color: white;
+            top: 20vh;
         }
 
         .tabs {
-            background-color: #0d0d0d;
-            padding: 20px;
+            background-color: #2980b9;
+            padding: 10px;
             display: flex;
             justify-content: space-between; /* 좌우 간격을 최대한으로 벌림 */
             align-items: center; /* 수직 정렬 */
-            min-width: 1200px;     /* 최소 너비 설정 */
         }
 
         .tabs-left {
@@ -65,40 +72,25 @@
 
         .sidebar {
             width: 200px;
-            background-color: #0d0d0d;
+            background-color: #2c3e50;
             color: white;
             height: 80vh;
             position: fixed;
             display: none;
         }
 
-        .sidebar-narrow {
-            width: 10px;
-            background-color: #0d0d0d;
-            color: white;
-            height: 80vh;
-            position: fixed;
-            display: none;
-        }
-
-        /* Footer 스타일 */
         .footer {
-            background-color: #0d0d0d;
-            color: white;
+            background-color: #2c3e50;
+            color: white;  /* 흰색 글자로 변경 */
             height: 10vh;
-            width: 100%;
+            width: 100%;   /* 가로로 화면 전체를 차지 */
             position: fixed;
-            bottom: 0;
+            bottom: 0;     /* 화면의 맨 아래에 고정 */
             display: flex;
-            justify-content: space-between; /* 요소들 사이에 간격 */
-            align-items: center;             /* 수직 가운데 정렬 */
-            padding: 0 0px;                 /* 좌우 padding 추가 */
-            font-size: 10px;
-            min-width: 1200px;     /* 최소 너비 설정 */
-        }
-
-        .footer-item {
-            margin: 0 10px; /* 각 개체 간 좌우 10px 간격 */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 14px;
         }
 
         .sidebar ul {
@@ -140,7 +132,6 @@
 <body>
     <!-- 새로 추가된 헤더 영역 -->
     
-    <!--
     <div class="header">
         <p> 데이터 드리프트 관리 기술 개발 </p>
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -155,8 +146,8 @@
         </a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </div>
-    -->
     
+
     <!-- Tabs -->
     <div class="tabs">
         <!----------------------------->
@@ -172,14 +163,11 @@
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home" data-link="pages_demoui"><i class="fa fa-home"></i> 데이터 드리프트 관리기술 </div>
-            <div class="tab" data-tab="dd_targetservices" data-link="pages_demoui"><i class="fa fa-user-md"></i> 분석대상</div>
+            <div class="tab" data-tab="home"><i class="fa fa-home"></i> 데이터 드리프트 관리기술 </div>
+            <div class="tab" data-tab="dd_targetservices"><i class="fa fa-user-md"></i> 분석대상</div>
             <div class="tab" data-tab="dd_detection"><i class="fa fa-search"></i> 드리프트 검출</div>
-            <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 데이터 재구성</div>
-            <div class="tab" data-tab="dd_deployment"><i class="fa fa-paper-plane"></i> 능동적 배포</div>
-            <!--
+            <div class="tab" data-tab="dd_pipeline"><i class="fa fa-tasks"></i> 파이프라인</div>
             <div class="tab" data-tab="dd_visionai"><i class="fa fa-video-camera"></i> 비전AI</div>
-            -->
             <div class="tab" data-tab="dd_management"><i class="fa fa-pie-chart"></i> 추적관리</div>
             
             <!--
@@ -204,9 +192,7 @@
     <!-- Sidebars -->
     <div class="sidebar" id="home-sidebar">
         <ul>
-            <li data-link="overview">개념도</li>
-            <li data-link="overview2">구조도</li>
-            <li data-link="overview2">시연순서</li>
+            <li data-link="overview">Overview</li>
         </ul>
     </div>
 
@@ -221,7 +207,7 @@
     <div class="sidebar" id="dd_targetservices-sidebar">
         <ul>
             <li data-link="dd_targetservices_lp_detection">차량 번호판 영역 검출</li>
-            <li data-link="dd_targetservices_lp_ocr">차량 번호판 OCR</li>
+            <li data-link="dd_targetservices_lp_ocr">차량 번호판 ORC</li>
             <li data-link="dd_targetservices_car_detection">차량 객체 분류</li>
             <li data-link="dd_targetservices_marketing">마케팅 전략 수립</li>
             <li data-link="dd_targetservices_video_4ch_player">[test] 4ch play</li>
@@ -239,7 +225,10 @@
     </div>
 
     <!-- 파이프라인 -->
-    <div class="sidebar-narrow" id="dd_pipeline-sidebar">
+    <div class="sidebar" id="dd_pipeline-sidebar">
+        <ul>
+            <li data-link="pages_demoui">demoui</li>
+        </ul>
     </div>
 
     <!-- 비전 AI -->
@@ -298,11 +287,8 @@
     
     <!-- Content Area -->
     <div class="content">
-        
-<!-- Toggle Sidebar Buttons -->
-    
         <!-- Iframe을 통해 페이지를 렌더링 -->
-        <iframe id="main-content" src="/overview" width="100%" height="100%" /></iframe>
+        <iframe id="main-content" src="/overview" width="100%" height="100%" />></iframe>
 
         <!-- 본문 콘텐츠가 여기에서 동적으로 바뀝니다 -->
         <!--
@@ -311,7 +297,6 @@
             <p>Select a tab or sidebar option to see more details.</p>
         </div>
         -->
-
     </div>
 
 
@@ -354,7 +339,7 @@
                 console.log('Error: iframe element not found');
             }
         }
-            
+        
 
         // Tab 클릭 시, 각 탭에 맞는 사이드바 표시
         document.querySelectorAll('.tab').forEach(tab => {
@@ -374,74 +359,58 @@
                 // 페이지 로드 (로그인, 회원가입 등)
                 if (tabName === 'login') {
                     loadPage_iframe('/login');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
                 } else if (tabName === 'logout') {
                     loadPage_iframe('/intro');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
                 } else if (tabName === 'register') {
                     loadPage_iframe('/register');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
-                } else if (tabName === 'dashboard') {
-                    loadPage_iframe('/dashboard');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
-                } else if (tabName === 'dd_pipeline') {
-                    loadPage_iframe('/dd_pipeline');
-                    toggleSidebar(false); // 로그인 탭에서는 사이드바 숨기기
-                } else {
-                    toggleSidebar(true); // 로그인 탭에서는 사이드바 숨기기
                 }
-
-
             });
         });
 
-        // Sidebar 클릭 시, 메인 콘텐츠에 해당 페이지 로드
+        // 사이드바 링크 클릭 시 본문 콘텐츠 변경
+        /*
         document.querySelectorAll('.sidebar ul li').forEach(link => {
             link.addEventListener('click', function () {
                 const contentKey = this.getAttribute('data-link');
                 let url = `/${contentKey}`;
+
+                // 활성화된 링크 스타일 관리
+                document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active-link'));
+                this.classList.add('active-link');
+
+                loadPage(url);
+
+            });
+        });
+        */
+
+        // 사이드바에서 링크 클릭 시 iframe의 src를 변경하여 페이지를 동적으로 로드
+        document.querySelectorAll('.sidebar ul li').forEach(link => {
+            link.addEventListener('click', function () {
+                const contentKey = this.getAttribute('data-link');
+                const iframe = document.getElementById('main-content');
+                let url = `/${contentKey}`;  // 원하는 페이지의 URL
+
+                // iframe에 새 페이지 로드
                 loadPage_iframe(url);
 
-                // 사이드바 링크 활성화 상태 관리
+                // 활성화된 링크 스타일 관리
                 document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active-link'));
                 this.classList.add('active-link');
             });
         });
-
-        // 사이드바를 숨기고 메인 콘텐츠를 전체 화면으로 표시하는 함수
-        function toggleSidebar(show) {
-            const sidebar = document.querySelector('.active-sidebar');
-            const content = document.getElementById('main-content');
-            
-            if (show) {
-                // 사이드바를 보이게 하고 메인 콘텐츠 크기 조정
-                if (sidebar) sidebar.style.display = 'block';
-                content.style.width = 'calc(100% - 200px)';
-                content.style.marginLeft = '200px';
-            } else {
-                // 사이드바를 숨기고 메인 콘텐츠를 전체 화면으로 확장
-                if (sidebar) sidebar.style.display = 'none';
-                content.style.width = '100%';
-                content.style.marginLeft = '0';
-            }
-        }
         
+
         // 초기 상태 설정: 대시보드 탭과 사이드바 활성화
         document.getElementById('home-sidebar').classList.add('active-sidebar');
         //loadPage_content('/intro');
     </script>
 
+
+    
     <!-- footer -->
     <div class="footer">
-        <div class="footer-item" bgcolor=white>
-            <img height=30px src='images/logo/keti-logo1.png'></img>
-            <img height=20px src='images/logo/dq-logo1.png'></img>
-            <img height=20px src='images/logo/iv-logo1.png'></img>
-            <img height=20px src='images/logo/skku-logo1.jpg'></img>
-            <img height=20px src='images/logo/knpu-logo1.png'></img>
-            <img height=15px src='images/logo/bcave-logo1.png'></img>
-            <img height=25px src='images/logo/osan-logo1.png'></img>
-            &nbsp;&nbsp;&nbsp;&nbsp;
+        jhjjjj
     </div>
 </body>
 </html>
