@@ -31,8 +31,8 @@
             display: flex;
             justify-content: space-around; 
             align-items: center; /* 수직 정렬 */
-            min-width: 1500px; /* 최소 너비 설정 */
             height: 70px;
+            min-width: 1000px; /* 최소 너비 설정 */
         }
 
         .tabs-left {
@@ -46,12 +46,12 @@
         .tabs .tab {
             font-weight: bold;
             position: relative; /* 드롭다운 메뉴가 이 탭을 기준으로 위치 */
-            margin-right: 20px;
+            margin-right: 0px;
             padding: 10px 20px;
             color: white;
             cursor: pointer;
             border-radius: 5px;
-            font-size: 15px; /* 탭의 글자 크기를 여기서 설정합니다 */
+            font-size: 17px; /* 탭의 글자 크기를 여기서 설정합니다 */
         }
 
         .tabs .tab.active {
@@ -96,7 +96,29 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .header {
+        .expanded-content {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        /* Footer 스타일 */
+        .talk {
+            background-color: #222736;
+            color: #aaeeff;
+            height: 50px;
+            width: 100%;
+            position: fixed;
+            bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 0px;
+            font-size: 19px;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .talk_tmp {
             background-color: #222736;
             color: #aaaaaa;
             height: 20px;
@@ -105,26 +127,7 @@
             font-weight: bold;
         }
 
-        .expanded-content {
-            width: 100%;
-            margin-left: 0;
-        }
-
-        /* Footer 스타일 */
-        .footer1 {
-            background-color: #212121;
-            color: white;
-            height: 40px;
-            width: 100%;
-            position: fixed;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;             /* 수직 가운데 정렬 */
-            padding: 0 0px;                 /* 좌우 padding 추가 */
-            font-size: 10px;
-        }
-        .footer2 {
+        .footer {
             background-color: #ffffff;
             color: white;
             height: 50px;
@@ -136,6 +139,8 @@
             align-items: center;             /* 수직 가운데 정렬 */
             padding: 0 0px;                 /* 좌우 padding 추가 */
             font-size: 10px;
+            text-align: center;
+            font-weight: bold;
         }
 
         .footer-item {
@@ -164,11 +169,11 @@
         /* iframe을 main-content 영역에 꽉 채우도록 설정 */
         #main-content-frame {
             width: 100%;         /* 가로로 화면 전체를 차지 */
-            height: 90vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
+            height: 80vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
             border: none;        /* 테두리 없애기 */
             display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
             position: fixed;
-            top: 110px;
+            top: 70px;
             color: white;
         }
 
@@ -191,7 +196,8 @@
         <!----------------------------->
         @else
         <div class="tabs-left">
-            <div class="tab" data-tab="home"><i class="fas fa-home"></i> 데이터 드리프트 관리기술 
+            <div class="tab" data-tab="home">
+                <i class="fas fa-home"></i> 데이터 드리프트 관리기술 
                 <div class="dropdown" id="dropdown-home">
                     <ul>
                         <li data-link="/ov1">기존의 문제점</li>
@@ -200,7 +206,8 @@
                 </div>
             </div>
             
-            <div class="tab" data-tab="targetservices" data-link="pages_demoui"><i class="fa fa-user-md"></i> 분석 서비스 예시
+            <div class="tab" data-tab="targetservices" data-link="pages_demoui">
+                <i class="fa fa-user-md"></i> 분석 서비스 예시
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
                         <li data-link="/targetservices_lp_detection">교통 사고 분석</li>
@@ -210,7 +217,8 @@
                 </div>
             </div>
             
-            <div class="tab" data-tab="detection"><i class="fa fa-search"></i> 드리프트 검출
+            <div class="tab" data-tab="detection">
+                <i class="fa fa-search"></i> 드리프트 검출
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
                         <li data-link="/detection1">검출 시각화 1</li>
@@ -221,24 +229,29 @@
                 </div>
             </div>
             
-            <div class="tab" data-tab="pipeline"><i class="fa fa-tasks"></i> 데이터 재구성 및 학습
+            <div class="tab" data-tab="pipeline">
+                <i class="fa fa-tasks"></i> 데이터 재구성 및 학습
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/page1">Page 1d</li>
-                        <li data-link="/page2">Page 2d</li>
+                        <li data-link="/pipeline_fiftyone5151">데이터 재구성 파이프라인</li>
                     </ul>
                 </div>
             </div>
             
-            <div class="tab" data-tab="deployment"><i class="fa fa-paper-plane"></i> 능동적 배포
+            <div class="tab" data-tab="deployment">
+                <i class="fa fa-paper-plane"></i> 능동적 배포
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/page1">Page 1e</li>
+                        <li data-link="http://evc.re.kr:28001/">모델 및 서비스 배포</li>
+
+                        <li data-link="http://keticmr.iptime.org:22080/getip.php">test</li>
+                        
                     </ul>
                 </div>
             </div>
             
-            <div class="tab" data-tab="management"><i class="fa fa-pie-chart"></i> 추적 관리
+            <div class="tab" data-tab="management">
+                <i class="fa fa-pie-chart"></i> 추적 관리
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
                         <li data-link="/page1">Page 1</li>
@@ -246,18 +259,19 @@
                     </ul>
                 </div>
             </div>
-            
-            <!--
-            <div class="tab" data-tab="visionai"><i class="fa fa-video-camera"></i> 비전AI</div>
-            -->
-            <!--
-            <div class="tab" data-tab="demos"><i class="fas fa-laptop"></i> 시연</div>
-            -->
         </div>
         
         <div class="tabs-right">
-            <div class="tab"><i class="fa fa-user" aria-hidden="true"></i> {{ Auth::user()->name }}</div>
-            <div class="tab">
+            <div class="tab" data-tab="userinfo">
+                <i class="fa fa-user"></i> {{ Auth::user()->name }}
+                <div class="dropdown" id="dropdown-login">
+                    <ul>
+                        <li data-link="/userinfo"> 사용자 정보 </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tab" data-tab="logout">
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: white;">
                    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
                 </a>
@@ -268,17 +282,6 @@
         </div>
         @endguest
     </div>
-
-
-    <!-- 새로 추가된 헤더 영역 -->
-    <div class="header" id="header-content">
-        데이터 드리프트 관리 기술 개발
-    </div>
-
-
-
-
-
     
     <!-- Content Area -->
     <div class="main-content">
@@ -341,34 +344,30 @@
             }
         }
 
-        // Header 업데이트 함수
-        function updateHeader(tab) {
-            const header = document.getElementById('header-content');
+        // talk 업데이트 함수
+        function updateTalk(tab) {
+            const talk = document.getElementById('talk-content');
             if (tab === 'home') {
-                header.textContent = '';
+                talk.textContent = '데이터 드리프트 관리 기술을 소개합니다.';
             } else if (tab === 'targetservices') {
-                header.textContent = '교통 데이터 분석 및 성능 개선, 마케팅 분석 측면';
+                talk.textContent = '교통 사고 분석을 위한 번호판 분석을 수행합니다.';
             } else if (tab === 'detection') {
-                header.textContent = 'detection';
+                talk.textContent = '데이터 드리프트 현상을 검출하는 알고리즘의 원리를 소개합니다.';
             } else if (tab === 'pipeline') {
-                header.textContent = 'pipeline';
+                talk.textContent = '기존의 학습 데이터를 분석하여 문제점을 해결하고 데이터를 재구성합니다.';
             } else if (tab === 'deployment') {
-                header.textContent = 'deployment';
+                talk.textContent = '에지 기기와 연계하여 즉시 대응이 필요한 환경에 제작 모델과 서비스를 배포합니다.';
             } else if (tab === 'management') {
-                header.textContent = 'management';
-            } else if (tab === 'management') {
-                header.textContent = 'management';
-            } else if (tab === 'management') {
-                header.textContent = 'management';
-            } else if (tab === 'login') {
-                header.textContent = 'login';
-                loadMainContent('/login');
+                talk.textContent = '기계학습 모델, 학습데이터, 서비스 도메인의 데이터를 지속적으로 관리하고 해결책을 제시합니다.';
+            } else if (tab === 'userinfo') {
+                talk.textContent = '사용자 정보';
+                //loadMainContent('/login');
             } else if (tab === 'logout') {
-                header.textContent = 'logout';
-                loadMainContent('/logout');
+                talk.textContent = '로그아웃';
+                //loadMainContent('/logout');
             } else if (tab === 'register') {
-                header.textContent = 'register';
-                loadMainContent('/register');
+                talk.textContent = '사용자 등록';
+                //loadMainContent('/register');
             } 
         }
 
@@ -390,7 +389,7 @@
 
                 // Update
                 const tabName = this.getAttribute('data-tab');
-                updateHeader(tabName);
+                updateTalk(tabName);
                 //loadInitMainContent(tabName);
             });
         });
@@ -419,11 +418,13 @@
 
     </script>
 
-    <!-- footer -->
-    <div class="footer1">
+
+    <!-- 새로 추가된 헤더 영역 -->
+    <div class="talk" id="talk-content">
+        데이터 드리프트 관리 기술 개발
     </div>
 
-    <div class="footer2">
+    <div class="footer">
         <div class="footer-item">
             <img height=45px src='images/logo/all-logo.png'></img>&nbsp;
         </div>

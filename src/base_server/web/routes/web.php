@@ -87,6 +87,11 @@ Route::get('/intro', function () {
     return view('intro'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('intro');
 
+Route::get('/userinfo', function () {
+    return view('userinfo.info1'); // 또는 대시보드 관련 Blade 템플릿
+})->middleware(['auth'])->name('userinfo');
+
+
 Route::get('/test', function () {
     return view('pages.test');
 })->middleware(['auth'])->name('test');
@@ -178,9 +183,10 @@ Route::get('/pipeline_overview', function () {
     return redirect('http://datadrift.kr:5151/datasets/quickstart');
 });
 
-Route::get('/fiftyone5151', function () {
-    return redirect('http://datadrift.kr:5151/datasets/quickstart');
-});
+Route::get('/pipeline_fiftyone5151', function () {
+    return view('pipeline.fiftyone5151');
+})->middleware(['auth'])->name('pipeline_fiftyone5151');
+
 
 //------------------------------------
 // deployment
