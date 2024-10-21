@@ -7,7 +7,7 @@
     <script>
         function openNewPage() {
             // 새로운 탭 또는 창에서 특정 URL을 엽니다
-            window.open('http://datadrift.kr:5151/datasets/lphangul_dataset', '_blank');
+            // window.open('http://datadrift.kr:5151/datasets/lphangul_dataset', '_blank');
         }
     </script>
 
@@ -61,14 +61,25 @@
             object-fit: contain; /* 이미지가 프레임 안에 가득 차되 비율 유지 */
             border-radius: 8px; /* 이미지 모서리도 살짝 둥글게 */
         }
+
+        video {
+            width: 100%;
+            max-width: 900px; /* 비디오의 최대 너비 설정 */
+            border-radius: 20px; /* 둥근 모서리 설정 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가로 더욱 보기 좋게 */
+        }
     </style>
 </head>
+
 <body onload="openNewPage()">
 
-    <div class="container">
-        <h1>데이터를 재구성하고 재학습을 진행하는 파이프라인 포함 </h1>
-        <img src="images/overview/ov9.png" alt="img">
-    </div>
+<div class="container">
+        <h1>차량번호판 인식을 위한 한글 데이터 분석 및 데이터 재구성</h1>
 
+        <video controls autoplay muted loop>
+            <source src="videos/clip_hanguls.mp4" type="video/mp4">
+            브라우저가 video 태그를 지원하지 않습니다.
+        </video>
+    </div>
 </body>
 </html>

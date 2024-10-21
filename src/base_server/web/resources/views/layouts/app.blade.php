@@ -206,22 +206,22 @@
                 </div>
             </div>
             
-            <!--
+        
             <div class="tab" data-tab="targetservices" data-link="pages_demoui">
                 <i class="fa fa-user-md"></i> 분석 대상 예시
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/targetservices_lp_detection">교통 및 차량 데이터 분석</li>
-                        <li data-link="/page2">지능형 영상 처리</li>
+                        <li data-link="/targetservices_lp_ocr">교통 및 차량 데이터 분석</li>
                     </ul>
                 </div>
             </div>
-            -->
+    
             
             <div class="tab" data-tab="detection">
                 <i class="fa fa-search"></i> 드리프트 검출
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
+                        <li data-link="/detection_cm1">성능 저하 확인을 통한 검출</li>
                         <li data-link="/detection_multimodal_embedding_vector">벡터공간 데이터 분석 (고차원 임베딩)</li>
                         <li data-link="/detection_number_embedding_vector1">번호판 숫자 데이터 (단순 차원 축소)</li>
                         <li data-link="/detection_number_embedding_vector2">번호판 숫자 데이터 (UMAP, PCA)</li>
@@ -354,7 +354,7 @@
             if (tab === 'home') {
                 talk.textContent = '데이터 드리프트 관리 기술을 소개합니다.';
             } else if (tab === 'targetservices') {
-                talk.textContent = '교통 사고 분석 예시입니다.';
+                talk.textContent = '교통 데이터 분석 예시입니다.';
             } else if (tab === 'detection') {
                 talk.textContent = '데이터 드리프트 현상을 검출하는 예시입니다.';
             } else if (tab === 'pipeline') {

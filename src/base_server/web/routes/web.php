@@ -170,6 +170,11 @@ Route::get('/detection_hangul_embedding_vector', function () {
     return view('detection.hangul_embedding_vector');
 })->middleware(['auth'])->name('detection_hangul_embedding_vector');
 
+Route::get('/detection_cm1', function () {
+    return view('detection.cm1');
+})->middleware(['auth'])->name('detection_cm1');
+
+
 Route::get('/detection1', function () {
     return redirect('http://datadrift.kr/plotly/3d1.html');
 });
@@ -283,6 +288,10 @@ Route::get('/pages_cm2', function () {
 Route::get('/pages_cm3', function () {
     return view('pages.cm3');
 })->middleware(['auth'])->name('pages_cm3');
+
+Route::get('/pages_cm3a', function () {
+    return view('pages.cm3a');
+})->middleware(['auth'])->name('pages_cm3a');
 
 Route::get('/pages_cm4', function () {
     return view('pages.cm4');
