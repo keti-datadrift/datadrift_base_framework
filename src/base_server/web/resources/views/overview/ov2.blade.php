@@ -59,8 +59,8 @@
 <body>
 
     <div class="container">
-        <h1><font color=#aaffaa>(기술의 지향점)</font> 나만의 주치의 개념의 데이터 드리프트 관리 기술 개발</h1>
-        <img src="images/overview/ov2.png" alt="img">
+        <h1><font color=#aaffaa>(기술의 지향점)</font> 주치의 개념의 데이터 드리프트 관리 기술 개발</h1>
+        <img src="images/overview/ov2a.png" alt="img">
     </div>
 
 </body>

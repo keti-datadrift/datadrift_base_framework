@@ -154,6 +154,22 @@ Route::get('/detection_overview', function () {
     return view('detection.overview');
 })->middleware(['auth'])->name('detection_overview');
 
+Route::get('/detection_multimodal_embedding_vector', function () {
+    return view('detection.multimodal_embedding_vector');
+})->middleware(['auth'])->name('detection_multimodal_embedding_vector');
+
+Route::get('/detection_number_embedding_vector1', function () {
+    return view('detection.number_embedding_vector1');
+})->middleware(['auth'])->name('detection_number_embedding_vector1');
+
+Route::get('/detection_number_embedding_vector2', function () {
+    return view('detection.number_embedding_vector2');
+})->middleware(['auth'])->name('detection_number_embedding_vector2');
+
+Route::get('/detection_hangul_embedding_vector', function () {
+    return view('detection.hangul_embedding_vector');
+})->middleware(['auth'])->name('detection_hangul_embedding_vector');
+
 Route::get('/detection1', function () {
     return redirect('http://datadrift.kr/plotly/3d1.html');
 });
@@ -187,6 +203,9 @@ Route::get('/pipeline_fiftyone5151', function () {
     return view('pipeline.fiftyone5151');
 })->middleware(['auth'])->name('pipeline_fiftyone5151');
 
+Route::get('/pipeline_fiftyone5152', function () {
+    return view('pipeline.fiftyone5152');
+})->middleware(['auth'])->name('pipeline_fiftyone5152');
 
 //------------------------------------
 // deployment

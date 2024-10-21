@@ -31,7 +31,7 @@
             display: flex;
             justify-content: space-around; 
             align-items: center; /* 수직 정렬 */
-            height: 70px;
+            height: 110px;
             min-width: 1000px; /* 최소 너비 설정 */
         }
 
@@ -169,11 +169,11 @@
         /* iframe을 main-content 영역에 꽉 채우도록 설정 */
         #main-content-frame {
             width: 100%;         /* 가로로 화면 전체를 차지 */
-            height: 80vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
+            height: 100vh;       /* 세로로 화면 전체를 차지 (뷰포트 높이 80%) */
             border: none;        /* 테두리 없애기 */
             display: block;      /* 기본적으로 iframe을 블록 요소로 처리 */
             position: fixed;
-            top: 70px;
+            top: 110px;
             color: white;
         }
 
@@ -206,25 +206,26 @@
                 </div>
             </div>
             
+            <!--
             <div class="tab" data-tab="targetservices" data-link="pages_demoui">
-                <i class="fa fa-user-md"></i> 분석 서비스 예시
+                <i class="fa fa-user-md"></i> 분석 대상 예시
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/targetservices_lp_detection">교통 사고 분석</li>
+                        <li data-link="/targetservices_lp_detection">교통 및 차량 데이터 분석</li>
                         <li data-link="/page2">지능형 영상 처리</li>
-                        <li data-link="/page2">마케팅 전략 수립</li>
                     </ul>
                 </div>
             </div>
+            -->
             
             <div class="tab" data-tab="detection">
                 <i class="fa fa-search"></i> 드리프트 검출
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/detection1">검출 시각화 1</li>
-                        <li data-link="/detection2">검출 시각화 2</li>
-                        <li data-link="/detection3">검출 시각화 3</li>
-                        <li data-link="/detection4">검출 시각화 4</li>
+                        <li data-link="/detection_multimodal_embedding_vector">벡터공간 데이터 분석 (고차원 임베딩)</li>
+                        <li data-link="/detection_number_embedding_vector1">번호판 숫자 데이터 (단순 차원 축소)</li>
+                        <li data-link="/detection_number_embedding_vector2">번호판 숫자 데이터 (UMAP, PCA)</li>
+                        <li data-link="/detection_hangul_embedding_vector">번호판 한글 데이터 (UMAP, PCA)</li>
                     </ul>
                 </div>
             </div>
@@ -233,7 +234,8 @@
                 <i class="fa fa-tasks"></i> 데이터 재구성 및 학습
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/pipeline_fiftyone5151">데이터 재구성 파이프라인</li>
+                        <li data-link="/pipeline_fiftyone5151">번호판 숫자 학습셋 분석</li>
+                        <li data-link="/pipeline_fiftyone5152">번호판 한글 학습셋 분석</li>
                     </ul>
                 </div>
             </div>
@@ -242,20 +244,22 @@
                 <i class="fa fa-paper-plane"></i> 능동적 배포
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="http://evc.re.kr:28001/">모델 및 서비스 배포</li>
-
+                        <li data-link="https://8a64c077a969bdf9ba.gradio.live">모델 및 서비스 배포</li>
+                        <!--
                         <li data-link="http://keticmr.iptime.org:22080/getip.php">test</li>
-                        
+                        -->
                     </ul>
                 </div>
             </div>
             
-            <div class="tab" data-tab="management">
-                <i class="fa fa-pie-chart"></i> 추적 관리
+            <div class="tab" data-tab="demo">
+                <i class="fa fa-pie-chart"></i> 배포 서비스 예시
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/page1">Page 1</li>
-                        <li data-link="/page2">Page 2</li>
+                    <li data-link="http://datadrift.kr:5160">번호판 인식기</li>
+                        <!--
+                        <li data-link="http://keticmr.iptime.org:22080/getip.php">test</li>
+                        -->
                     </ul>
                 </div>
             </div>
@@ -350,13 +354,15 @@
             if (tab === 'home') {
                 talk.textContent = '데이터 드리프트 관리 기술을 소개합니다.';
             } else if (tab === 'targetservices') {
-                talk.textContent = '교통 사고 분석을 위한 번호판 분석을 수행합니다.';
+                talk.textContent = '교통 사고 분석 예시입니다.';
             } else if (tab === 'detection') {
-                talk.textContent = '데이터 드리프트 현상을 검출하는 알고리즘의 원리를 소개합니다.';
+                talk.textContent = '데이터 드리프트 현상을 검출하는 예시입니다.';
             } else if (tab === 'pipeline') {
                 talk.textContent = '기존의 학습 데이터를 분석하여 문제점을 해결하고 데이터를 재구성합니다.';
             } else if (tab === 'deployment') {
                 talk.textContent = '에지 기기와 연계하여 즉시 대응이 필요한 환경에 제작 모델과 서비스를 배포합니다.';
+            } else if (tab === 'demos') {
+                talk.textContent = '배포된 서비스 예시입니다.';
             } else if (tab === 'management') {
                 talk.textContent = '기계학습 모델, 학습데이터, 서비스 도메인의 데이터를 지속적으로 관리하고 해결책을 제시합니다.';
             } else if (tab === 'userinfo') {

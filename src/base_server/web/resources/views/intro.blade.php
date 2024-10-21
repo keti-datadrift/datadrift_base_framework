@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Data Drift Management Demo System')
 
 @section('content')
     <h1>Data Drift Intro</h1>
