@@ -47,7 +47,6 @@
         }
 
         /* 이미지 스타일 */
-
         img {
             max-width: 70%;
             max-height: 70%;

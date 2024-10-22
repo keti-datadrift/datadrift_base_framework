@@ -72,6 +72,7 @@
             align-items: center;
             font-size: 18px;
         }
+
     </style>
 </head>
 <body>
@@ -99,11 +100,14 @@
         </div>
 
         <!-- 2x3 섹션을 위한 div 컨테이너 -->
-        <div class='chart-grid'>
-            <div id="plot-3d" class='chart'></div>   <!-- 좌상단 3D 그래프 -->
-            <div id="plot-x" class='chart'></div>    <!-- 우상단 X축 기준 2D 그래프 -->
-            <div id="plot-y" class='chart'></div>    <!-- 좌하단 Y축 기준 2D 그래프 -->
-            <div id="plot-z" class='chart'></div>    <!-- 우하단 Z축 기준 2D 그래프 -->
+        <div>
+            <img width=90% src="images/cm1a.png">
+            <!--
+            <div id="plot-3d" class='chart'></div>
+            <div id="plot-x" class='chart'></div>
+            <div id="plot-y" class='chart'></div>
+            <div id="plot-z" class='chart'></div>
+            -->
         </div>
     </div>
 
@@ -191,10 +195,10 @@
                 };
 
                 // 각 섹션에 차트 렌더링
-                Plotly.newPlot('plot-3d', [trace3D], { title: 'Data in Embedding Space' });
-                Plotly.newPlot('plot-x', [traceX], { title: 'Y vs Z (X axis projection)', xaxis: {title: 'Y'}, yaxis: {title: 'Z'} });
-                Plotly.newPlot('plot-y', [traceY], { title: 'X vs Z (Y axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Z'} });
-                Plotly.newPlot('plot-z', [traceZ], { title: 'X vs Y (Z axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Y'} });
+                //Plotly.newPlot('plot-3d', [trace3D], { title: 'Data in Embedding Space' });
+                //Plotly.newPlot('plot-x', [traceX], { title: 'Y vs Z (X axis projection)', xaxis: {title: 'Y'}, yaxis: {title: 'Z'} });
+                //Plotly.newPlot('plot-y', [traceY], { title: 'X vs Z (Y axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Z'} });
+                //Plotly.newPlot('plot-z', [traceZ], { title: 'X vs Y (Z axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Y'} });
             })
             .catch(error => console.error('Error loading CSV data:', error));
 

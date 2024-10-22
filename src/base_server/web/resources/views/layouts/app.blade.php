@@ -221,11 +221,13 @@
                 <i class="fa fa-search"></i> 드리프트 검출
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="/detection_cm1">성능 저하 확인을 통한 검출</li>
+                        <li data-link="/detection_cm1">성능 저하 확인을 통한 검출 예시</li>
+                        <li data-link="/detection_weather">시계열 데이터 패턴 분석 예시</li>
                         <li data-link="/detection_multimodal_embedding_vector">벡터공간 데이터 분석 (고차원 임베딩)</li>
                         <li data-link="/detection_number_embedding_vector1">번호판 숫자 데이터 (단순 차원 축소)</li>
                         <li data-link="/detection_number_embedding_vector2">번호판 숫자 데이터 (UMAP, PCA)</li>
                         <li data-link="/detection_hangul_embedding_vector">번호판 한글 데이터 (UMAP, PCA)</li>
+
                     </ul>
                 </div>
             </div>

@@ -72,6 +72,7 @@
             align-items: center;
             font-size: 18px;
         }
+
     </style>
 </head>
 <body>
@@ -100,12 +101,15 @@
             <img src="images/hangul/12.jpg" alt="number image">
         </div>
 
-        <!-- 2x3 섹션을 위한 div 컨테이너 -->
-        <div class='chart-grid'>
+       <!-- 2x3 섹션을 위한 div 컨테이너 -->
+       <div>
+            <img width = 90% src="images/cm3a.png">
+            <!--
             <div id="plot-3d" class='chart'></div>
             <div id="plot-x" class='chart'></div>
-            <div id="plot-umap" class='chart'></div>
-            <div id="plot-pca" class='chart'></div>
+            <div id="plot-y" class='chart'></div>
+            <div id="plot-z" class='chart'></div>
+            -->
         </div>
     </div>
 
@@ -192,8 +196,8 @@
                 };
 
                 // 각 섹션에 차트 렌더링
-                Plotly.newPlot('plot-3d', [trace3D], { title: 'Data in Embedding Space' });
-                Plotly.newPlot('plot-x', [traceX], { title: 'Y vs Z (X axis projection)', xaxis: {title: 'Y'}, yaxis: {title: 'Z'} });
+                //Plotly.newPlot('plot-3d', [trace3D], { title: 'Data in Embedding Space' });
+                //Plotly.newPlot('plot-x', [traceX], { title: 'Y vs Z (X axis projection)', xaxis: {title: 'Y'}, yaxis: {title: 'Z'} });
                 //Plotly.newPlot('plot-y', [traceY], { title: 'X vs Z (Y axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Z'} });
                 //Plotly.newPlot('plot-z', [traceZ], { title: 'X vs Y (Z axis projection)', xaxis: {title: 'X'}, yaxis: {title: 'Y'} });
             })

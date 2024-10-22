@@ -37,12 +37,12 @@
 
 <div class="matrix-container">
   <div>
-    <div class="matrix-title">참고 모델 성능</div>
+    <div class="matrix-title">실험실 성능</div>
     <div id="matrix1" class="matrix"></div>
     <div id="metrics1" class="metrics"></div>
   </div>
   <div>
-    <div class="matrix-title">데이터 드리프트 처리 모델 성능</div>
+    <div class="matrix-title">현장 적용 성능</div>
     <div id="matrix2" class="matrix"></div>
     <div id="metrics2" class="metrics"></div>
   </div>
