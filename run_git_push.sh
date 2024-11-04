@@ -7,3 +7,4 @@ git commit -m "DataDrift Framework Documentation"
 #git commit -m "EVC MariaDB container"
 #git commit -m "Documentation update"
 git push
+
