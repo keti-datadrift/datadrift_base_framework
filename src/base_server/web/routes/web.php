@@ -225,7 +225,7 @@ Route::get('/management_overview', function () {
 })->middleware(['auth'])->name('management_overview');
 
 //------------------------------------
-// under dev.
+// todo
 //------------------------------------
 
 Route::get('/stats', function () {
