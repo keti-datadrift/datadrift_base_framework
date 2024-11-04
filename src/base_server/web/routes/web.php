@@ -300,9 +300,6 @@ Route::get('/pages_map2', function () {
     return view('pages.map2');
 })->name('pages_map2');
 
-
-
-
 Route::get('/pages_progress1', function () {
     return view('pages.progress1');
 })->name('pages_progress1');
