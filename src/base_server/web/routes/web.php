@@ -89,7 +89,6 @@ Route::get('/userinfo', function () {
     return view('userinfo.info1'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('userinfo');
 
-
 Route::get('/test', function () {
     return view('pages.test');
 })->middleware(['auth'])->name('test');
