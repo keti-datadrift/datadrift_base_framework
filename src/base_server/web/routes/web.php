@@ -304,8 +304,6 @@ Route::get('/pages_progress1', function () {
     return view('pages.progress1');
 })->name('pages_progress1');
 
-
-
 //-------------------------------------------
 // 암호로 보호할 페이지
 //-------------------------------------------
