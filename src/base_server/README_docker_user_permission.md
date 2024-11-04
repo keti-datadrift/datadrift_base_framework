@@ -8,7 +8,6 @@ docker: permission denied while trying to connect to the Docker daemon socket at
 ```
 
 ### 원인
-
 - 이 오류는 현재 사용자가 Docker 데몬 소켓 (`/var/run/docker.sock`)에 접근할 권한이 없기 때문에 발생합니다.
 
 

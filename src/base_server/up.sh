@@ -7,4 +7,4 @@ mkdir ~/.datadrift/redisearch
 clear
 # docker-compose up # OLD
 # docker compose up -d # Run backgroud process
-docker compose up --build -d # Run foreground process
+docker compose up --build # Run foreground process

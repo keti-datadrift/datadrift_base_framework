@@ -8,3 +8,4 @@ docker run -itd \
   -e ECOWITT2MQTT_INPUT_DATA_FORMAT=ambient_weather \
   -e ECOWITT2MQTT_PORT=8080 \
   bachya/ecowitt2mqtt:latest
+
