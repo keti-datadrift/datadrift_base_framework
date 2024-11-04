@@ -40,7 +40,6 @@
         allowfullscreen>
     </iframe>
     
-
     <!-- Grafana 대시보드 URL에서 orgId, panelId 및 대시보드 UID를 적절히 변경 -->
 </body>
 </html>
