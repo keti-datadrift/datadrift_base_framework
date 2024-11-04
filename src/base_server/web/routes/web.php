@@ -172,7 +172,6 @@ Route::get('/detection_weather', function () {
     return view('detection.weather');
 })->middleware(['auth'])->name('detection_weather');
 
-
 Route::get('/detection1', function () {
     return redirect('http://datadrift.kr/plotly/3d1.html');
 });
