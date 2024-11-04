@@ -74,10 +74,8 @@ Route::get('/register', [RegisteredUserController::class, 'create'])
     ->middleware('guest')
     ->name('register');
 
-
 // Breeze에서 제공하는 인증 라우트
 require __DIR__.'/auth.php';
-
 
 Route::get('/', function () {     
     return view('intro');
@@ -90,7 +88,6 @@ Route::get('/intro', function () {
 Route::get('/userinfo', function () {
     return view('userinfo.info1'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('userinfo');
-
 
 Route::get('/test', function () {
     return view('pages.test');
@@ -120,7 +117,6 @@ Route::get('/ov5', function () {
 // target services
 //------------------------------------
 
-
 use App\Http\Controllers\VideoPlayController;
 Route::get('/targetservices_overview', function () {
     return view('targetservices.overview');
@@ -143,8 +139,6 @@ Route::get('/targetservices_marketing', function () {
 
 Route::get('/targetservices_video_4ch_player', [VideoPlayController::class, 'showVideo'
 ])->middleware(['auth'])->name('targetservices_video_4ch_player');
-
-
 
 //------------------------------------
 // detection
@@ -178,7 +172,6 @@ Route::get('/detection_weather', function () {
     return view('detection.weather');
 })->middleware(['auth'])->name('detection_weather');
 
-
 Route::get('/detection1', function () {
     return redirect('http://datadrift.kr/plotly/3d1.html');
 });
@@ -198,7 +191,6 @@ Route::get('/detection4', function () {
 Route::get('/detection33', function () {
     return view('detection.detection3');
 })->middleware(['auth'])->name('detection3');
-
 
 //------------------------------------
 // pipeline
@@ -232,12 +224,9 @@ Route::get('/management_overview', function () {
     return view('management.overview');
 })->middleware(['auth'])->name('management_overview');
 
-
 //------------------------------------
-// etc
+// todo
 //------------------------------------
-
-
 
 Route::get('/stats', function () {
     return view('pages.stats');
@@ -263,7 +252,6 @@ Route::get('/settings_security', function () {
     return view('pages.settings_security');
 })->middleware(['auth'])->name('settings_security');
 
-
 Route::get('/pages_demoui', function () {
     return view('pages.demoui');
 })->middleware(['auth'])->name('pages_demoui');
@@ -275,7 +263,6 @@ Route::get('/pages_confusion1', function () {
 Route::get('/pages_confusion2', function () {
     return view('pages.confusion2');
 })->middleware(['auth'])->name('pages_confusion2');
-
 
 Route::get('/pages_confusion3', function () {
     return view('pages.confusion3');
@@ -313,14 +300,9 @@ Route::get('/pages_map2', function () {
     return view('pages.map2');
 })->name('pages_map2');
 
-
-
-
 Route::get('/pages_progress1', function () {
     return view('pages.progress1');
 })->name('pages_progress1');
-
-
 
 //-------------------------------------------
 // 암호로 보호할 페이지
@@ -348,7 +330,6 @@ Route::post('/password', function (Request $request) {
 
     return back()->withErrors(['password' => 'Invalid password']);
 })->name('password.check');
-
 
 Route::get('/docs', function () {
     return view('docs');
@@ -446,18 +427,14 @@ Route::get('/wolframstyle4', [AnalysisController::class, 'wolframstyle4']);
 Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
 Route::get('/wolframstyle5', [AnalysisController::class, 'wolframstyle5']);
 
-
 Route::get('/intro_controller', [IntroController::class, 'showIntro']);
 Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
 Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
 Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
 
-
-
 //-------------------------------------------
 // 업로드 테스트
 //-------------------------------------------
-
 
 // upload
 //use App\Http\Controllers\UploadController;
@@ -471,7 +448,6 @@ use App\Http\Controllers\ZipController;
 Route::get('/zipupload', [ZipController::class, 'index']);
 Route::post('/upload', [ZipController::class, 'upload']);
 
-
 //-------------------------------------------
 // 그라파나 연동 페이지, 암호로 보호할 페이지
 //-------------------------------------------
@@ -479,3 +455,7 @@ Route::post('/upload', [ZipController::class, 'upload']);
 Route::get('/g/metrics', function () {
     return view('/grafana/metrics');
 })->middleware(PasswordProtected::class);
+
+//-------------------------------------------
+// End of this file
+//-------------------------------------------
