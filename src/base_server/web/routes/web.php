@@ -331,7 +331,6 @@ Route::post('/password', function (Request $request) {
     return back()->withErrors(['password' => 'Invalid password']);
 })->name('password.check');
 
-
 Route::get('/docs', function () {
     return view('docs');
 })->middleware(PasswordProtected::class);
@@ -427,7 +426,6 @@ Route::get('/wolframstyle4', [AnalysisController::class, 'wolframstyle4']);
 
 Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
 Route::get('/wolframstyle5', [AnalysisController::class, 'wolframstyle5']);
-
 
 Route::get('/intro_controller', [IntroController::class, 'showIntro']);
 Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
