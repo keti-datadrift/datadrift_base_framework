@@ -81,19 +81,40 @@ require __DIR__.'/auth.php';
 
 Route::get('/', function () {     
     return view('intro');
-});
+})->name('home');
 
 Route::get('/intro', function () {
     return view('intro'); // 또는 대시보드 관련 Blade 템플릿
 })->middleware(['auth'])->name('intro');
 
+Route::get('/userinfo', function () {
+    return view('userinfo.info1'); // 또는 대시보드 관련 Blade 템플릿
+})->middleware(['auth'])->name('userinfo');
+
+
 Route::get('/test', function () {
     return view('pages.test');
 })->middleware(['auth'])->name('test');
 
-Route::get('/overview', function () {
-    return view('pages.overview');
-})->middleware(['auth'])->name('overview');
+Route::get('/ov1', function () {
+    return view('overview.ov1');
+})->middleware(['auth'])->name('ov1');
+
+Route::get('/ov2', function () {
+    return view('overview.ov2');
+})->middleware(['auth'])->name('ov2');
+
+Route::get('/ov3', function () {
+    return view('overview.ov3');
+})->middleware(['auth'])->name('ov3');
+
+Route::get('/ov4', function () {
+    return view('overview.ov4');
+})->middleware(['auth'])->name('ov4');
+
+Route::get('/ov5', function () {
+    return view('overview.ov5');
+})->middleware(['auth'])->name('ov5');
 
 //------------------------------------
 // target services
@@ -101,24 +122,27 @@ Route::get('/overview', function () {
 
 
 use App\Http\Controllers\VideoPlayController;
+Route::get('/targetservices_overview', function () {
+    return view('targetservices.overview');
+})->middleware(['auth'])->name('targetservices_overview');
 
-Route::get('/dd_targetservices_car_detection', function () {
-    return view('dd_targetservices.car_detection');
-})->middleware(['auth'])->name('dd_targetservices_car_detection');
+Route::get('/targetservices_car_detection', function () {
+    return view('targetservices.car_detection');
+})->middleware(['auth'])->name('targetservices_car_detection');
 
-Route::get('/dd_targetservices_lp_detection', [VideoPlayController::class, 'showCCTVWithGraphs'
-])->middleware(['auth'])->name('dd_targetservices_lp_detection');
+Route::get('/targetservices_lp_detection', [VideoPlayController::class, 'showCCTVWithGraphs'
+])->middleware(['auth'])->name('targetservices_lp_detection');
 
-Route::get('/dd_targetservices_lp_ocr', function () {
-    return view('dd_targetservices.lp_ocr');
-})->middleware(['auth'])->name('dd_targetservices_lp_ocr');
+Route::get('/targetservices_lp_ocr', function () {
+    return view('targetservices.lp_ocr');
+})->middleware(['auth'])->name('targetservices_lp_ocr');
 
-Route::get('/dd_targetservices_marketing', function () {
-    return view('dd_targetservices.marketing');
-})->middleware(['auth'])->name('dd_targetservices_marketing');
+Route::get('/targetservices_marketing', function () {
+    return view('targetservices.marketing');
+})->middleware(['auth'])->name('targetservices_marketing');
 
-Route::get('/dd_targetservices_video_4ch_player', [VideoPlayController::class, 'showVideo'
-])->middleware(['auth'])->name('dd_targetservices_video_4ch_player');
+Route::get('/targetservices_video_4ch_player', [VideoPlayController::class, 'showVideo'
+])->middleware(['auth'])->name('targetservices_video_4ch_player');
 
 
 
@@ -126,16 +150,53 @@ Route::get('/dd_targetservices_video_4ch_player', [VideoPlayController::class, '
 // detection
 //------------------------------------
 
+Route::get('/detection_overview', function () {
+    return view('detection.overview');
+})->middleware(['auth'])->name('detection_overview');
+
+Route::get('/detection_multimodal_embedding_vector', function () {
+    return view('detection.multimodal_embedding_vector');
+})->middleware(['auth'])->name('detection_multimodal_embedding_vector');
+
+Route::get('/detection_number_embedding_vector1', function () {
+    return view('detection.number_embedding_vector1');
+})->middleware(['auth'])->name('detection_number_embedding_vector1');
+
+Route::get('/detection_number_embedding_vector2', function () {
+    return view('detection.number_embedding_vector2');
+})->middleware(['auth'])->name('detection_number_embedding_vector2');
+
+Route::get('/detection_hangul_embedding_vector', function () {
+    return view('detection.hangul_embedding_vector');
+})->middleware(['auth'])->name('detection_hangul_embedding_vector');
+
+Route::get('/detection_cm1', function () {
+    return view('detection.cm1');
+})->middleware(['auth'])->name('detection_cm1');
+
+Route::get('/detection_weather', function () {
+    return view('detection.weather');
+})->middleware(['auth'])->name('detection_weather');
+
+
 Route::get('/detection1', function () {
-    return redirect('http://datadrift.kr:5151/datasets/quickstart');
+    return redirect('http://datadrift.kr/plotly/3d1.html');
 });
 
 Route::get('/detection2', function () {
-    return redirect('http://datadrift.kr/plotly/3d4.html');
+    return redirect('http://datadrift.kr/plotly/3d2.html');
 });
 
 Route::get('/detection3', function () {
-    return view('dd_detection.detection3');
+    return redirect('http://datadrift.kr/plotly/3d3.html');
+});
+
+Route::get('/detection4', function () {
+    return redirect('http://datadrift.kr/plotly/3d4.html');
+});
+
+Route::get('/detection33', function () {
+    return view('detection.detection3');
 })->middleware(['auth'])->name('detection3');
 
 
@@ -143,9 +204,38 @@ Route::get('/detection3', function () {
 // pipeline
 //------------------------------------
 
+Route::get('/pipeline_overview', function () {
+    return redirect('http://datadrift.kr:5151/datasets/quickstart');
+});
+
+Route::get('/pipeline_fiftyone5151', function () {
+    return view('pipeline.fiftyone5151');
+})->middleware(['auth'])->name('pipeline_fiftyone5151');
+
+Route::get('/pipeline_fiftyone5152', function () {
+    return view('pipeline.fiftyone5152');
+})->middleware(['auth'])->name('pipeline_fiftyone5152');
+
+//------------------------------------
+// deployment
+//------------------------------------
+
+Route::get('/deployment_overview', function () {
+    return view('deployment.overview');
+})->middleware(['auth'])->name('deployment_overview');
+
+//------------------------------------
+// deployment
+//------------------------------------
+
+Route::get('/management_overview', function () {
+    return view('management.overview');
+})->middleware(['auth'])->name('management_overview');
 
 
-
+//------------------------------------
+// etc
+//------------------------------------
 
 
 
@@ -202,6 +292,10 @@ Route::get('/pages_cm2', function () {
 Route::get('/pages_cm3', function () {
     return view('pages.cm3');
 })->middleware(['auth'])->name('pages_cm3');
+
+Route::get('/pages_cm3a', function () {
+    return view('pages.cm3a');
+})->middleware(['auth'])->name('pages_cm3a');
 
 Route::get('/pages_cm4', function () {
     return view('pages.cm4');
@@ -260,97 +354,97 @@ Route::get('/docs', function () {
     return view('docs');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_progress1', function () {
-    return view('/samples/dd_progress1');
+Route::get('/progress1', function () {
+    return view('/samples/progress1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_progress2', function () {
-    return view('/samples/dd_progress2');
+Route::get('/progress2', function () {
+    return view('/samples/progress2');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_timeseries1', function () {
-    return view('/samples/dd_timeseries1');
+Route::get('/timeseries1', function () {
+    return view('/samples/timeseries1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_timeseries2', function () {
-    return view('/samples/dd_timeseries2');
+Route::get('/timeseries2', function () {
+    return view('/samples/timeseries2');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_timeseries3', function () {
-    return view('/samples/dd_timeseries3');
+Route::get('/timeseries3', function () {
+    return view('/samples/timeseries3');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_embeddingvis', function () {
-    return view('/samples/dd_embeddingvis');
+Route::get('/embeddingvis', function () {
+    return view('/samples/embeddingvis');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_double_histogram', function () {
-    return view('/samples/dd_double_histogram');
+Route::get('/double_histogram', function () {
+    return view('/samples/double_histogram');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_ridgeline', function () {
-    return view('/samples/dd_ridgeline');
+Route::get('/ridgeline', function () {
+    return view('/samples/ridgeline');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_histogram1', function () {
-    return view('/samples/dd_histogram1');
+Route::get('/histogram1', function () {
+    return view('/samples/histogram1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_histogram2', function () {
-    return view('/samples/dd_histogram2');
+Route::get('/histogram2', function () {
+    return view('/samples/histogram2');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_confusion1', function () {
-    return view('/samples/dd_confusion1');
+Route::get('/confusion1', function () {
+    return view('/samples/confusion1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_sankey', function () {
-    return view('/samples/dd_sankey');
+Route::get('/sankey', function () {
+    return view('/samples/sankey');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_sankey_jpark1', function () {
-    return view('/samples/dd_sankey_jpark1');
+Route::get('/sankey_jpark1', function () {
+    return view('/samples/sankey_jpark1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_flare', function () {
-    return view('/samples/dd_flare');
+Route::get('/flare', function () {
+    return view('/samples/flare');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_map1', function () {
-    return view('/samples/dd_map1');
+Route::get('/map1', function () {
+    return view('/samples/map1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_map2', function () {
-    return view('/samples/dd_map2');
+Route::get('/map2', function () {
+    return view('/samples/map2');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_map3', function () {
-    return view('/samples/dd_map3');
+Route::get('/map3', function () {
+    return view('/samples/map3');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_map4', function () {
-    return view('/samples/dd_map4');
+Route::get('/map4', function () {
+    return view('/samples/map4');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_map5', function () {
-    return view('/samples/dd_map5');
+Route::get('/map5', function () {
+    return view('/samples/map5');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_weather1', function () {
-    return view('/samples/dd_weather1');
+Route::get('/weather1', function () {
+    return view('/samples/weather1');
 })->middleware(PasswordProtected::class);
 
-Route::get('/dd_wolframstyle1', function () {
-    return view('/samples/dd_wolframstyle1');
+Route::get('/wolframstyle1', function () {
+    return view('/samples/wolframstyle1');
 })->middleware(PasswordProtected::class);
 
 Route::post('/analyses/search', [AnalysisController::class, 'search']);  // 검색을 위한 라우트 추가
-Route::get('/dd_wolframstyle2', [AnalysisController::class, 'dd_wolframstyle2']);
-Route::get('/dd_wolframstyle3', [AnalysisController::class, 'dd_wolframstyle3']);
-Route::get('/dd_wolframstyle4', [AnalysisController::class, 'dd_wolframstyle4']); 
+Route::get('/wolframstyle2', [AnalysisController::class, 'wolframstyle2']);
+Route::get('/wolframstyle3', [AnalysisController::class, 'wolframstyle3']);
+Route::get('/wolframstyle4', [AnalysisController::class, 'wolframstyle4']); 
 
 Route::post('/analyses/search_wolframstyle5', [AnalysisController::class, 'search_wolframstyle5']);
-Route::get('/dd_wolframstyle5', [AnalysisController::class, 'dd_wolframstyle5']);
+Route::get('/wolframstyle5', [AnalysisController::class, 'wolframstyle5']);
 
 
 Route::get('/intro_controller', [IntroController::class, 'showIntro']);
@@ -369,8 +463,8 @@ Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData'
 //use App\Http\Controllers\UploadController;
 //Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
 //Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
-//Route::get('/dd_upload', function () {
-//    return view('dd_upload');
+//Route::get('/upload', function () {
+//    return view('upload');
 //});
 
 use App\Http\Controllers\ZipController;

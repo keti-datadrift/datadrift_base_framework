@@ -16,7 +16,7 @@ class VideoPlayController extends Controller
         $videoUrl3 = 'http://keticmr.iptime.org:22080/WorkDevCarAI/carai/api/web/static/20231002_follow02.mp4';
         $videoUrl4 = 'http://keticmr.iptime.org:22080/WorkDevCarAI/carai/api/web/static/20231002_follow02.mp4';
 
-        return view('dd_targetservices/video_4ch_player', [
+        return view('targetservices/video_4ch_player', [
             'videoUrl1' => $videoUrl1,
             'videoUrl2' => $videoUrl2,
             'videoUrl3' => $videoUrl3,
@@ -30,7 +30,7 @@ class VideoPlayController extends Controller
         $videoUrl1 = 'http://keticmr.iptime.org:22080/WorkDevCarAI/carai/api/web/static/20231002_follow02.mp4';
         $videoUrl2 = 'http://keticmr.iptime.org:22080/WorkDevCarAI/carai/api/web/static/20231002_follow02.mp4';
 
-        return view('dd_targetservices/lp_detection', [
+        return view('targetservices/lp_detection', [
             'videoUrl1' => $videoUrl1,
             'videoUrl2' => $videoUrl2
         ]);

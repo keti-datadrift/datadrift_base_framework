@@ -1,6 +1,11 @@
-window._ = require('lodash');
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
-try {
-    window.axios = require('axios');
-    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-} catch (e) {}
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+    ],
+});
