@@ -192,7 +192,6 @@ Route::get('/detection33', function () {
     return view('detection.detection3');
 })->middleware(['auth'])->name('detection3');
 
-
 //------------------------------------
 // pipeline
 //------------------------------------
