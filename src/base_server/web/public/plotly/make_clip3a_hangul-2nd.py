@@ -1,4 +1,3 @@
-
 data_dir = "/home/jpark/www/01_testseq/hangul-2nd"  # 이미지가 있는 디렉토리
 
 import os

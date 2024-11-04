@@ -56,14 +56,13 @@
         }
     </style>
 </head>
-<body>
 
+<body>
     <div class="container">
         <h1><font color="orange">(TODO)</font> 사용자 정보 </h1>
         <!--
         <img src="images/overview/ov1.png" alt="img">
         -->
     </div>
-
 </body>
 </html>

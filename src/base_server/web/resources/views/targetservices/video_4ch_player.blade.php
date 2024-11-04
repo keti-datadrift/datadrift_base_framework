@@ -56,8 +56,8 @@
         }
     </style>
 </head>
+    
 <body>
-
     <!-- 대시보드 상단 -->
     <div class="header">
         <p>4 Channel CCTV Video Dashboard</p>
