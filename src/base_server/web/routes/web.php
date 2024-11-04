@@ -448,7 +448,6 @@ use App\Http\Controllers\ZipController;
 Route::get('/zipupload', [ZipController::class, 'index']);
 Route::post('/upload', [ZipController::class, 'upload']);
 
-
 //-------------------------------------------
 // 그라파나 연동 페이지, 암호로 보호할 페이지
 //-------------------------------------------
