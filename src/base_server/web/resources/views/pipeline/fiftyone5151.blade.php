@@ -69,6 +69,7 @@
         }
     </style>
 </head>
+    
 <body onload="openNewPage()">
 
     <div class="container">
