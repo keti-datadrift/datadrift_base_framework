@@ -140,8 +140,6 @@ Route::get('/targetservices_marketing', function () {
 Route::get('/targetservices_video_4ch_player', [VideoPlayController::class, 'showVideo'
 ])->middleware(['auth'])->name('targetservices_video_4ch_player');
 
-
-
 //------------------------------------
 // detection
 //------------------------------------
