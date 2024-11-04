@@ -7,7 +7,7 @@ if [ x$1 == x ]; then
 fi
 
 echo ----------------------------------------
-echo e.g. sh run_query.sh \"wandb\"
+echo e.g. sh query_run.sh \"wandb\"
 echo ----------------------------------------
 echo ". Query = " $query
 echo ----------------------------------------
