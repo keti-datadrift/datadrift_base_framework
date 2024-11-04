@@ -9,7 +9,6 @@
             // 새로운 탭 또는 창에서 특정 URL을 엽니다
             // window.open('http://datadrift.kr:5152/datasets/lpnum_dataset_merged', '_blank');
         }
-        
     </script>
 
     <style>
