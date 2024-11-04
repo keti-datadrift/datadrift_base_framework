@@ -1,6 +1,6 @@
 # Global temperature trends
 
-https://observablehq.com/@d3/global-temperature-trends@142
+- https://observablehq.com/@d3/global-temperature-trends@142
 
 View this notebook in your browser by running a web server in this folder. For
 example:
