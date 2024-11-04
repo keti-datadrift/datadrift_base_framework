@@ -421,12 +421,7 @@
                 document.querySelectorAll('.dropdown').forEach(dd => dd.style.display = 'none');
             }
         });
-
-
-
-
     </script>
-
 
     <!-- 새로 추가된 헤더 영역 -->
     <div class="talk" id="talk-content">
