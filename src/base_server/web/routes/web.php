@@ -264,7 +264,6 @@ Route::get('/pages_confusion2', function () {
     return view('pages.confusion2');
 })->middleware(['auth'])->name('pages_confusion2');
 
-
 Route::get('/pages_confusion3', function () {
     return view('pages.confusion3');
 })->middleware(['auth'])->name('pages_confusion3');
