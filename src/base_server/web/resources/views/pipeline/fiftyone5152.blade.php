@@ -72,8 +72,7 @@
 </head>
 
 <body onload="openNewPage()">
-
-<div class="container">
+    <div class="container">
         <h1>차량번호판 인식을 위한 한글 데이터 분석 및 데이터 재구성</h1>
 
         <video controls autoplay muted loop>
