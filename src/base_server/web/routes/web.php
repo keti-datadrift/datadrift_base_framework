@@ -74,7 +74,6 @@ Route::get('/register', [RegisteredUserController::class, 'create'])
     ->middleware('guest')
     ->name('register');
 
-
 // Breeze에서 제공하는 인증 라우트
 require __DIR__.'/auth.php';
 
