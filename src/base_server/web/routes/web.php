@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\TimeSeriesController;
