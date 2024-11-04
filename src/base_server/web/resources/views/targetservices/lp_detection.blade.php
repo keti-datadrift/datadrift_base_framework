@@ -151,6 +151,5 @@
                 .attr("height", function(d) { return height - y(d.value); });
         }
     </script>
-
 </body>
 </html>
