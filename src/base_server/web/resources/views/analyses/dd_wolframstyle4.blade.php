@@ -191,6 +191,5 @@
             console.log('Chart rendered successfully');
         }
     </script>
-
 </body>
 </html>
