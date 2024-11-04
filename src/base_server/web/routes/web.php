@@ -224,7 +224,6 @@ Route::get('/management_overview', function () {
     return view('management.overview');
 })->middleware(['auth'])->name('management_overview');
 
-
 //------------------------------------
 // etc
 //------------------------------------
