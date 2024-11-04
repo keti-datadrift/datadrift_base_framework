@@ -225,10 +225,8 @@ Route::get('/management_overview', function () {
 })->middleware(['auth'])->name('management_overview');
 
 //------------------------------------
-// etc
+// under dev.
 //------------------------------------
-
-
 
 Route::get('/stats', function () {
     return view('pages.stats');
