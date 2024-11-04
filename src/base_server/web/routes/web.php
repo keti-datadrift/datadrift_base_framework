@@ -252,7 +252,6 @@ Route::get('/settings_security', function () {
     return view('pages.settings_security');
 })->middleware(['auth'])->name('settings_security');
 
-
 Route::get('/pages_demoui', function () {
     return view('pages.demoui');
 })->middleware(['auth'])->name('pages_demoui');
