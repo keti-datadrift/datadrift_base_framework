@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -437,5 +438,6 @@
             <img height=45px src='images/logo/all-logo.png'></img>&nbsp;
         </div>
     </div>
+    
 </body>
 </html>
