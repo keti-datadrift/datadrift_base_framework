@@ -432,12 +432,9 @@ Route::get('/api/time-series', [TimeSeriesController::class, 'index']);
 Route::get('/bar-chart-race', [BarChartRaceController::class, 'index']);
 Route::get('/api/bar-chart-race-data', [BarChartRaceController::class, 'getData']);
 
-
-
 //-------------------------------------------
 // 업로드 테스트
 //-------------------------------------------
-
 
 // upload
 //use App\Http\Controllers\UploadController;
