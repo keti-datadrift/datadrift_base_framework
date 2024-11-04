@@ -1,7 +1,8 @@
 # HTTPS 설정 방법
 
-## vite 예시
+- JPark and ChatGPT, 2024-09
 
+## vite 예시
 
 `server.key`와 `server.crt`는 각각 **SSL 인증서**와 **비밀키**를 의미하며, HTTPS로 웹 서버를 설정할 때 사용됩니다. Vite 개발 서버에서 HTTPS를 설정하려면 SSL 인증서(`.crt`)와 비밀키(`.key`) 파일을 생성하거나 획득해야 합니다. 다음은 SSL 인증서와 키 파일을 설정하는 방법입니다.
 
