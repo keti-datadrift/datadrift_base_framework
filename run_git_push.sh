@@ -8,4 +8,3 @@ git commit -m "docker refactoring"
 #git commit -m "EVC MariaDB container"
 #git commit -m "Documentation update"
 git push
-
