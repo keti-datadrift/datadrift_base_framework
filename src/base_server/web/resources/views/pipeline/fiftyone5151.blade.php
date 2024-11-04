@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centered Title and Image</title>
     <script>
-        
         function openNewPage() {
             // 새로운 탭 또는 창에서 특정 URL을 엽니다
             // window.open('http://datadrift.kr:5152/datasets/lpnum_dataset_merged', '_blank');
         }
-        
     </script>
 
     <style>
@@ -56,7 +54,6 @@
         }
 
         /* 이미지 스타일 */
-
         img {
             max-width: 70%;
             max-height: 70%;
@@ -72,8 +69,8 @@
         }
     </style>
 </head>
+    
 <body onload="openNewPage()">
-
     <div class="container">
         <h1>차량번호판 인식을 위한 숫자 데이터 분석 및 데이터 재구성</h1>
 
@@ -82,6 +79,5 @@
             브라우저가 video 태그를 지원하지 않습니다.
         </video>
     </div>
-
 </body>
 </html>
