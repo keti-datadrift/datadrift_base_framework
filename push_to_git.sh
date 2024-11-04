@@ -1,6 +1,7 @@
 git pull
 git add .
 git status
+
 git commit -m "Documentation"
 #git commit -m "DataDrift Framework Documentation"
 #git commit -m "Refactoring"
