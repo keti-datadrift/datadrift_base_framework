@@ -153,9 +153,10 @@ services:
             #- GF_SERVER_ROOT_URL=http://192.168.1.6:3000/grafana/
             - GF_SERVER_ROOT_URL=http://datadoctor.kr/grafana/
             - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
-            - GF_SECURITY_ADMIN_USER=admin
-            - GF_SECURITY_ADMIN_PASSWORD=admin
-            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_SECURITY_ADMIN_USER="$GRAFANA_ADMID"
+            - GF_SECURITY_ADMIN_PASSWORD="$GRAFANA_ADMPW"
+            - GF_AUTH_DISABLE_LOGIN_FROM=false
+            - GF_AUTH_ANONYMOUS_ENABLED=false
             - GF_SECURITY_ALLOW_EMBEDDING=true
             - GF_SECURITY_LOGIN_REMEMBER_DAYS=365
             - GF_DEFAULT_APP_MODE=development
@@ -198,8 +199,8 @@ services:
             - REDIS_HOST=redis
             - REDIS_PORT=6379
             #- REDIS_PASSWORD=$REDIS_PASSWORD
-            - HTTP_USER=dev
-            - HTTP_PASSWORD=dev
+            - HTTP_USER="$GRAFANA_ADMID"
+            - HTTP_PASSWORD="$GRAFANA_ADMPW"
         ports:
             - 8091:8081
         env_file:
