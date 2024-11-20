@@ -247,7 +247,7 @@
                 <i class="fa fa-paper-plane"></i> 능동적 배포
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                        <li data-link="https://8a64c077a969bdf9ba.gradio.live">모델 및 서비스 배포</li>
+                        <li data-link="https://59a01a94f8cc59fbab.gradio.live">모델 및 서비스 배포</li>
                         <!--
                         <li data-link="http://keticmr.iptime.org:22080/getip.php">test</li>
                         -->
@@ -259,7 +259,12 @@
                 <i class="fa fa-pie-chart"></i> 배포 서비스 예시
                 <div class="dropdown" id="dropdown-targetservices">
                     <ul>
-                    <li data-link="http://datadrift.kr:5160">번호판 인식기</li>
+                        <!--
+                        <li data-link="http://datadrift.kr:5160">번호판 인식기</li>
+                        -->
+                        <li data-link="https://5bbe6633fcf083b9ae.gradio.live">모델 및 서비스 배포</li>
+
+                        
                         <!--
                         <li data-link="http://keticmr.iptime.org:22080/getip.php">test</li>
                         -->
