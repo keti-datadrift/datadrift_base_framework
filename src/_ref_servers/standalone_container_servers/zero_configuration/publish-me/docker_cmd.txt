@@ -1,4 +1,0 @@
-docker run --rm --network host \
-  -e HOSTNAME=$(hostname) \
-  -e IP_ADDRESS=$(hostname -I | awk '{print $1}') \
-  evcrepo/publish-me
