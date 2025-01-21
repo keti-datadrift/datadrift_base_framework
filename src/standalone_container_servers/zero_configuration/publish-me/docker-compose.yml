@@ -1,0 +1,7 @@
+services:
+  avahi:
+    build: .
+    container_name: avahi-container
+    network_mode: "host"
+    volumes:
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
