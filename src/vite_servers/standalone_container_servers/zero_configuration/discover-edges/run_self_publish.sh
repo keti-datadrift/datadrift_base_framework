@@ -1,1 +1,0 @@
-avahi-publish -s 'evc_edge' _workstation._tcp 9
