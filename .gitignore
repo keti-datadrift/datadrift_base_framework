@@ -5,8 +5,6 @@ src/base_server/web/public/plotly/*.csv
 src/base_server/web/public/videos
 
 
-
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
