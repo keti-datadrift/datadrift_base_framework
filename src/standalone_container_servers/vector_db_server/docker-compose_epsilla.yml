@@ -1,9 +1,9 @@
 version: '3.8'
 services:
   vectordb:
-    image: semitechnologies/weaviate
+    image: epsilla/vectordb:latest
     ports:
-      - "8888:8080"
+      - "8888:8888"
     environment:
       VECTOR_DB_PASSWORD: "pw"
     volumes:
