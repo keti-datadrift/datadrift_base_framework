@@ -4,6 +4,14 @@ src/base_server/web/public/plotly/number-aug.csv
 src/base_server/web/public/plotly/*.csv
 src/base_server/web/public/videos
 
+src/standalone_container_servers/vector_db_server/volumes
+src/standalone_container_servers/vector_db_server/milvus_docs
+src/standalone_container_servers/vector_db_server/milvus_docs_ko
+
+volumes/*
+__MACOSX/*
+.ipynb_checkpoints/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
