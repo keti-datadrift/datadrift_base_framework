@@ -1,14 +1,14 @@
 # DVC
-src/containers/dvc/.git/*
-src/containers/dvc/.dvc/*
+src/containers/dvc/.git
+src/containers/dvc/.dvc
 src/containers/dvc/models/*
 src/containers/dvc/outputs/*
-src/containers/dvc/dvc.lock
-src/containers/dvc/.gitignore
-src/containers/dvc/.dvcignore
-src/containers/dvc/*.dvc
+src/containers/dvc/**/dvc.lock
+src/containers/dvc/**/.gitignore
+src/containers/dvc/**/.dvcignore
+src/containers/dvc/**/*.dvc
 
-
+*.swp
 src/base_server/web/public/d3
 src/base_server/web/node_modules
 src/base_server/web/public/plotly/number-aug.csv
