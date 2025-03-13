@@ -8,6 +8,10 @@ src/containers/dvc/**/.gitignore
 src/containers/dvc/**/.dvcignore
 src/containers/dvc/**/*.dvc
 
+## base_scaffolding
+src/scaffolding/dd_ml_pipeline
+
+
 *.swp
 src/base_server/web/public/d3
 src/base_server/web/node_modules
