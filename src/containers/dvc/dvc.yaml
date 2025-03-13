@@ -23,4 +23,4 @@ stages:
       - models/model.pkl
       - scripts/evaluate.py
     metrics:
-      - metrics.json
+      - outputs/metrics.json
