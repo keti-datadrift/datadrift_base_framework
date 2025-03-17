@@ -10,7 +10,10 @@ DIR_STRUCTURE = [
     "data/raw",
     "data/processed",
     "models",
-    "scripts"
+    "scripts",
+    "notebooks",
+    "outputs",
+    "docs",
 ]
 
 # 샘플 데이터 생성 함수
@@ -39,6 +42,7 @@ test.to_csv("data/processed/test.csv", index=False)
 
 print("✅ Data preprocessing complete!")
 """,
+    
     "scripts/train.py": """import pandas as pd
 import pickle
 from sklearn.linear_model import LogisticRegression
@@ -55,6 +59,7 @@ with open("models/model.pkl", "wb") as f:
 
 print("✅ Model training complete!")
 """,
+    
     "scripts/evaluate.py": """import pandas as pd
 import pickle
 import json
@@ -71,11 +76,12 @@ y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 
 metrics = {"accuracy": accuracy}
-with open("metrics.json", "w") as f:
+with open("outputs/metrics.json", "w") as f:
     json.dump(metrics, f)
 
 print(f"✅ Model evaluation complete! Accuracy: {accuracy:.4f}")
 """,
+    
     "dvc.yaml": """stages:
   preprocess:
     cmd: python scripts/preprocess.py
@@ -101,8 +107,28 @@ print(f"✅ Model evaluation complete! Accuracy: {accuracy:.4f}")
       - models/model.pkl
       - scripts/evaluate.py
     metrics:
-      - metrics.json
-"""
+      - outputs/metrics.json
+""",
+    
+    "run_pipeline.sh": """
+    # 1️⃣ git and DVC initialization
+    git init
+    dvc init
+        
+    # 2️⃣ 데이터 생성
+    python scripts/generate_data.py
+        
+    # 3️⃣ Data management (with Git)
+    dvc add data/raw/data.csv
+    git add data/.gitignore data/raw/data.csv.dvc
+    git commit -m "Add raw dataset"
+        
+    # 4️⃣ Run pipeline (preprocess → training → evaluation)
+    dvc repro
+        
+    # 5️⃣ Check result
+    cat outputs/metrics.json  # { "accuracy": 0.XX }
+""",
 }
 
 # .gitignore 파일 생성
@@ -111,7 +137,9 @@ GITIGNORE_CONTENT = """__pycache__/
 .DS_Store
 data/raw/*.dvc
 models/
-metrics.json
+**/metrics.json
+outputs/
+**/.ipynb_checkpoints
 """
 
 # 프로젝트 생성 함수
