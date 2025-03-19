@@ -1,4 +1,7 @@
 # DVC
+**/*.dvc
+**/*.dd
+
 src/containers/dvc/.git
 src/containers/dvc/.dvc
 src/containers/dvc/models/*
