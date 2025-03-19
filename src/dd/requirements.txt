@@ -5,3 +5,5 @@ pandas
 numpy
 scikit-learn
 pyyaml
+fpdf
+weasyprint
