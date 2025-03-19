@@ -1,0 +1,1 @@
+pip uninstall dd && pip install .
