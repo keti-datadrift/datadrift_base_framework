@@ -1,8 +1,11 @@
-# DVC
+# general
 **/*.dvc
 **/*.dd
 **/tmp
+**/build
+**/*.egg-info
 
+# DVC
 src/containers/dvc/.git
 src/containers/dvc/.dvc
 src/containers/dvc/models/*

@@ -13,7 +13,9 @@ setup(
     name="dd",
     version=config_info["version"],  # 🔹 버전 정보 설정
     packages=find_packages(include=["dd", "dd.*"]),
-    package_data={"dd": ["../config.json"]},  # 🔹 version.json 포함
+    package_data={"dd": ["fonts/NanumGothicCoding-Bold.ttf",
+                         "fonts/NanumGothicCoding-Regular.ttf", 
+                         "../config.json", ]}, 
     include_package_data=True,
     install_requires=[
         "fastapi",
@@ -22,7 +24,9 @@ setup(
         "pandas",
         "numpy",
         "scikit-learn",
-        "pyyaml"
+        "pyyaml",
+        "fpdf",
+        "weasyprint"
     ],
     entry_points={
         "console_scripts": [

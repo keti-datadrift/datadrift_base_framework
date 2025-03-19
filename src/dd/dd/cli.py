@@ -1,7 +1,7 @@
 import argparse
 import os
 import json
-from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse
+from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, visualize
 
 # 🔹 `version.json`을 패키지 내부에서 찾기
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "config.json")
@@ -59,19 +59,28 @@ def main():
     monitor_parser.add_argument("filepath", help="모니터링할 파일")
     monitor_parser.add_argument("--interval", type=int, default=7, help="모니터링 주기 (일)")
 
-    # ✅ --version 옵션 추가
+    # ✅ version 확인
     parser.add_argument("--version", "-v", action="store_true", help="현재 dd 버전 정보 출력")
 
+    # ✅ 상태 시각화
+    visualize_parser = subparsers.add_parser("visualize", help=".dd 상태 시각화")
+    visualize_parser.add_argument("--output", help="출력 파일명 (예: output.pdf, output.html)")
+
+
+    
     # 인자 파싱 및 실행
     args = parser.parse_args()
 
     if args.version:
         print(f"📌 dd Version: {version_info['version']} (Released: {version_info['release_date']})")
         return
-
-    if args.command == "init":
+        
+    elif args.command == "init":
         init.run()
-
+        
+    elif args.command == "visualize":
+        visualize.run(args.output if args.output else "output.pdf")
+  
     elif args.command == "push":
         push.run(args.filepath)
 
