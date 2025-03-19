@@ -1,6 +1,7 @@
 # DVC
 **/*.dvc
 **/*.dd
+**/tmp
 
 src/containers/dvc/.git
 src/containers/dvc/.dvc
