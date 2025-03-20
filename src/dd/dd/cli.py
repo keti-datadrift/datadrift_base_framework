@@ -1,9 +1,14 @@
+#------------------------------------------------------------------------------
+# data drift (dd) management module
+# jpark @ KETI
+#------------------------------------------------------------------------------
+
 import argparse
 import os
 import json
 from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, visualize
 
-# 🔹 `version.json`을 패키지 내부에서 찾기
+# 🔹 `config.json`을 패키지 내부에서 찾기
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "config.json")
 try:
     with open(CONFIG_FILE, "r") as f:
@@ -107,3 +112,7 @@ def main():
 
     elif args.command == "monitor":
         monitor.run(args.filepath, args.interval)
+
+#------------------------------------------------------------------------------
+# End of this file
+#------------------------------------------------------------------------------
