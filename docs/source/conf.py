@@ -25,13 +25,21 @@ release = 'document v0.1'
 # -- General configuration ---------------------------------------------------
 
 extensions = [    
-    'nbsphinx',  # jupyter notebook
-    'sphinx.ext.mathjax',  # For math rendering
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',  # Google style docstrings을 사용하는 경우 추가
+    'nbsphinx', # jupyter notebook
+    'myst_parser', # markdown
+    'sphinx.ext.mathjax', # For math rendering
+    'sphinx.ext.autodoc', # autodoc
+    'sphinx.ext.napoleon', # Google style docstrings을 사용하는 경우 추가
     'sphinx.ext.viewcode',  # 소스 코드 링크를 제공합니다.
 ]
 
+# MyST 설정 (선택적)
+myst_enable_extensions = [
+    "dollarmath",  # 달러 기호($)를 사용한 수학 표현식 활성화
+    "amsmath",  # 고급 수학 표현식
+    "deflist",  # 정의 리스트
+    # 다른 MyST 기능들...
+]
 
 templates_path = ['_templates']
 
