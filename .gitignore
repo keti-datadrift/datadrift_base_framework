@@ -1,9 +1,11 @@
 # general
+**/.venv
 **/*.dvc
 **/*.dd
 **/tmp
 **/build
 **/*.egg-info
+
 
 # DVC
 src/containers/dvc/.git
