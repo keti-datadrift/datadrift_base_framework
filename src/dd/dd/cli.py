@@ -6,7 +6,7 @@
 import argparse
 import os
 import json
-from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, visualize
+from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, visualize, embed, compare_folders
 
 # 🔹 `config.json`을 패키지 내부에서 찾기
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "config.json")
@@ -49,9 +49,9 @@ def main():
     lineage_parser.add_argument("filepath", help="추적할 데이터 또는 모델")
 
     # ✅ 모델 성능 비교
-    compare_parser = subparsers.add_parser("compare", help="두 개의 모델 성능 비교")
-    compare_parser.add_argument("model1", help="첫 번째 모델 파일")
-    compare_parser.add_argument("model2", help="두 번째 모델 파일")
+    compare_models_parser = subparsers.add_parser("compare_models", help="두 개의 모델 성능 비교")
+    compare_models_parser.add_argument("model1", help="첫 번째 모델 파일")
+    compare_models_parser.add_argument("model2", help="두 번째 모델 파일")
 
     # ✅ 모델 융합
     fuse_parser = subparsers.add_parser("fuse", help="두 개의 모델을 융합")
@@ -71,6 +71,15 @@ def main():
     visualize_parser = subparsers.add_parser("visualize", help=".dd 상태 시각화")
     visualize_parser.add_argument("--output", help="출력 파일명 (예: output.pdf, output.html)")
 
+    # ✅ embed
+    embed_parser = subparsers.add_parser("embed", help=".dd embedding")
+    embed_parser.add_argument("--folders", help="입력 폴더 (예: \"folder1 folder2 folder3\" )")
+
+    # ✅ embed
+    compare_folders_parser = subparsers.add_parser("compare_folders", help=".dd compare")
+    compare_folders_parser.add_argument("--folders", help="입력 폴더 (예: \"folder1 folder2 folder3\" )")
+    compare_folders_parser.add_argument("--dim_reduction_method", type=str, default="PCA", help="Reduction method: PCA, UMAP, KernelPCA, etc.")
+    compare_folders_parser.add_argument("--output_dir", type=str, default="outputs", help="Directory to save outputs.")
 
     
     # 인자 파싱 및 실행
@@ -104,15 +113,24 @@ def main():
     elif args.command == "lineage":
         lineage.run(args.filepath)
 
-    elif args.command == "compare":
-        compare.run(args.model1, args.model2)
+    elif args.command == "compare_models":
+        compare_models.run(args.model1, args.model2)
 
     elif args.command == "fuse":
         fuse.run(args.model1, args.model2, args.output)
 
     elif args.command == "monitor":
         monitor.run(args.filepath, args.interval)
+        
+    elif args.command == "embed":
+        embed.run(args.folders)
 
+    elif args.command == "compare_folders":
+        compare_folders.run(args.folders, 
+                            args.dim_reduction_method, 
+                            args.output_dir )
+
+        
 #------------------------------------------------------------------------------
 # End of this file
 #------------------------------------------------------------------------------
