@@ -3,7 +3,9 @@
 **/*.dvc
 **/*.dd
 **/tmp
+**/tmp2
 **/build
+**/outputs
 **/*.egg-info
 
 
