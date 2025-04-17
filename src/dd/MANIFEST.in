@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include dd/fonts *.ttf
+recursive-include dd/config *.json
+recursive-include dd/hub *.sh
