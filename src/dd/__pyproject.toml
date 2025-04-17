@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "keti-datadrift"
+version = "0.1.2"
+description = "Data Drift management module"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [{name = "J Park", email = "feynmanc@naver.com"}]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "pyyaml",
+    "fpdf",
+    "weasyprint"
+]
+requires-python = ">=3.8"
