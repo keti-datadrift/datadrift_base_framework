@@ -25,11 +25,11 @@ def main():
     subparsers.add_parser("init", help="프로젝트 초기화 및 .dd 설정 파일 생성")
 
     # ✅ 데이터/모델 업로드
-    push_parser = subparsers.add_parser("push", help="데이터/모델을 dd Hub에 업로드")
+    push_parser = subparsers.add_parser("push", help="데이터/모델을 dd remote repository에 업로드")
     push_parser.add_argument("filepath", help="업로드할 파일")
 
     # ✅ 데이터/모델 다운로드
-    pull_parser = subparsers.add_parser("pull", help="dd Hub에서 데이터/모델 다운로드")
+    pull_parser = subparsers.add_parser("pull", help="dd remote repository에서 데이터/모델 다운로드")
     pull_parser.add_argument("filename", help="다운로드할 파일 이름")
 
     # ✅ 데이터 품질 진단
