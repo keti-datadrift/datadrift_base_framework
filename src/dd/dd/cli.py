@@ -7,7 +7,7 @@ import argparse
 import os
 import json
 #from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, visualize
-from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse
+from dd.core import init, push, pull, diagnose, treat, train, monitor, lineage, compare, fuse, embed
 
 # 🔹 `config.json`을 패키지 내부에서 찾기
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config", "config.json")
@@ -65,6 +65,11 @@ def main():
     monitor_parser.add_argument("filepath", help="모니터링할 파일")
     monitor_parser.add_argument("--interval", type=int, default=7, help="모니터링 주기 (일)")
 
+    # ✅ 데이터 embedding
+    embed_parser = subparsers.add_parser("embed", help="embedding")
+    embed_parser.add_argument("folderpath", help="folder for embedding")
+    embed_parser.add_argument("datatype", help="datatype (e.g. img, text, timeseries)")
+
     # ✅ version 확인
     parser.add_argument("--version", "-v", action="store_true", help="현재 dd 버전 정보 출력")
 
@@ -72,8 +77,6 @@ def main():
     visualize_parser = subparsers.add_parser("visualize", help=".dd 상태 시각화")
     visualize_parser.add_argument("--output", help="출력 파일명 (예: output.pdf, output.html)")
 
-
-    
     # 인자 파싱 및 실행
     args = parser.parse_args()
 
@@ -111,6 +114,9 @@ def main():
 
     elif args.command == "fuse":
         fuse.run(args.model1, args.model2, args.output)
+
+    elif args.command == "embed":
+        embed.run(args.folderpath, args.datatype)
 
     elif args.command == "monitor":
         monitor.run(args.filepath, args.interval)
