@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    image: streamlit_app:latest  # Dockerfile로 빌드
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8501"
+    environment:
+      - BACKEND_URL=0.0.0.0:5000
+    depends_on:
+      - backend
+
+  backend:
+    image: backend_api:latest  # Dockerfile로 빌드
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000"
+    environment:
+      - VECTOR_DB_HOST=vectordb
+      - VECTOR_DB_PORT=6379 # 예시 Redis 포트
+      - FIFTYONE_URL=0.0.0.0:5171
+    depends_on:
+      - vectordb
+      - fiftyone
+
+  vectordb:
+    image: redis:latest  # 예시 Redis 벡터 DB
+    ports:
+      - "6379:6379"
+
+  fiftyone:
+    image: fiftyone/fiftyone:latest
+    ports:
+      - "5171:5171"
+    volumes:
+      - fiftyone-data:/fiftyone
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=your_admin_password # 실제 환경에서는 보안 설정 필요
+    depends_on:
+      - backend
+
+volumes:
+  fiftyone-data:
+  grafana-data:
