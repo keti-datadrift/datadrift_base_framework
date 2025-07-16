@@ -1,4 +1,4 @@
-# Vision Models
+# Vision Model Taxonomy
 
 - JPark with GPT4o, July 2025
 
