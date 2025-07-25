@@ -1,0 +1,240 @@
+version: '3.8' # Docker Compose 파일 형식 버전
+
+networks:
+  healthcare_network:
+    driver: bridge # 기본 브릿지 네트워크 사용. 온프레미스/클라우드 환경에 따라 overlay 등으로 변경 가능.
+
+volumes:
+  # 데이터 수집 및 전처리 모듈이 raw 데이터를 저장할 볼륨
+  raw_data_volume:
+  # 모델 학습 및 저장될 모델 아티팩트 (MLflow 등)
+  ml_models_volume:
+  # 데이터베이스 (PostgreSQL/MongoDB) 데이터
+  db_data_volume:
+  # 로깅 및 모니터링 데이터 (Elasticsearch 등)
+  logs_data_volume:
+  # 기타 필요한 영구 저장 공간
+
+services:
+  # 1. 데이터 수집 및 전처리 모듈 (Data Ingestion & Preprocessing Module)
+  data-ingestion-preprocessing:
+    build: ./data-ingestion-preprocessing # 해당 모듈의 Dockerfile 경로
+    # image: your-registry/data-ingestion-preprocessing:latest # 미리 빌드된 이미지 사용 시
+    container_name: data-ingestion-preprocessing-service
+    environment:
+      - KAFKA_BROKER=kafka:9092 # Kafka 브로커 주소
+      # - DB_HOST=db-service # DB 연결 정보 (필요시)
+    volumes:
+      - raw_data_volume:/app/data/raw # 수집된 원본 데이터 저장 경로
+    networks:
+      - healthcare_network
+    depends_on:
+      - kafka # 데이터 수집 전에 Kafka가 준비되어야 함
+      # - db-service # DB 사용 시
+
+  # 2. 기계학습 모델 관리 모듈 (ML Model Management Module) - MLflow 예시
+  mlflow-server:
+    image: bitnami/mlflow
+    container_name: mlflow-server
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000 # MLflow 서버 주소 (자체 참조)
+      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow_user:mlflow_password@postgres-db/mlflow_db # 백엔드 DB
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=s3://mlflow-artifacts # 아티팩트 저장소 (MinIO 사용 시)
+    ports:
+      - "5000:5000" # MLflow UI 포트
+    volumes:
+      - ml_models_volume:/mlflow/models # 모델 저장 경로
+    networks:
+      - healthcare_network
+    depends_on:
+      - postgres-db # MLflow 백엔드 DB
+      - minio # MLflow 아티팩트 저장소
+
+  # 3. 진단 및 예측 모듈 (Diagnosis & Prediction Module)
+  diagnosis-prediction-api:
+    build: ./diagnosis-prediction-api # 해당 모듈의 Dockerfile 경로
+    # image: your-registry/diagnosis-prediction-api:latest
+    container_name: diagnosis-prediction-api-service
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000 # MLflow 서버 주소
+      # - MODEL_NAME=latest_model # 서빙할 모델 이름 (환경 변수로 설정 가능)
+    ports:
+      - "8001:8001" # 진단 API 포트
+    networks:
+      - healthcare_network
+    depends_on:
+      - mlflow-server # 모델 로드를 위해 MLflow 서버 필요
+
+  # 4. 알람 및 알림 모듈 (Alarm & Notification Module)
+  alarm-notification-service:
+    build: ./alarm-notification-service # 해당 모듈의 Dockerfile 경로
+    # image: your-registry/alarm-notification-service:latest
+    container_name: alarm-notification-service
+    environment:
+      - KAFKA_BROKER=kafka:9092 # Kafka 브로커 주소 (알람 이벤트 수신)
+      # - EMAIL_SERVICE_API_KEY=your_key # 이메일/SMS 서비스 연동 키
+    networks:
+      - healthcare_network
+    depends_on:
+      - kafka # 알람 이벤트를 Kafka에서 수신
+
+  # 5. 처방 및 추천 모듈 (Prescription & Recommendation Module)
+  prescription-recommendation-api:
+    build: ./prescription-recommendation-api # 해당 모듈의 Dockerfile 경로
+    # image: your-registry/prescription-recommendation-api:latest
+    container_name: prescription-recommendation-api-service
+    environment:
+      # - DB_HOST=db-service # DB 연결 정보 (필요시)
+      - DIAGNOSIS_API_URL=http://diagnosis-prediction-api:8001 # 진단 API 연동
+    ports:
+      - "8002:8002" # 처방 API 포트
+    networks:
+      - healthcare_network
+    depends_on:
+      - diagnosis-prediction-api # 진단 결과를 기반으로 추천
+
+  # 6. 추적 관리 및 피드백 모듈 (Tracking & Feedback Module)
+  tracking-feedback-service:
+    build: ./tracking-feedback-service # 해당 모듈의 Dockerfile 경로
+    # image: your-registry/tracking-feedback-service:latest
+    container_name: tracking-feedback-service
+    environment:
+      - KAFKA_BROKER=kafka:9092 # Kafka 브로커 주소 (피드백 데이터 전송)
+      - LOGSTASH_HOST=logstash:5044 # 로깅 연동
+    networks:
+      - healthcare_network
+    depends_on:
+      - kafka
+      - elasticsearch # 로그/모니터링 데이터 저장
+
+  # 7. 보안 및 규정 준수 (Security & Compliance) - 별도 서비스 (예: Keycloak) 또는 각 서비스 내 통합
+  # 이 부분은 주로 각 서비스 내에서 구현되거나, IAM/인증 서버 같은 별도의 인프라 서비스로 구성될 수 있습니다.
+  # 여기서는 예시로 Keycloak 같은 인증 서버를 추가할 수 있음을 보여줍니다.
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:latest
+  #   container_name: keycloak-auth
+  #   environment:
+  #     - KEYCLOAK_ADMIN=admin
+  #     - KEYCLOAK_ADMIN_PASSWORD=admin
+  #     - DB_VENDOR=postgres # 또는 mysql
+  #     - DB_ADDR=postgres-db
+  #     - DB_DATABASE=keycloak_db
+  #     - DB_USER=keycloak_user
+  #     - DB_PASSWORD=keycloak_password
+  #   ports:
+  #     - "8080:8080" # Keycloak 관리 콘솔
+  #   networks:
+  #     - healthcare_network
+  #   depends_on:
+  #     - postgres-db
+
+  # 공통 인프라 서비스:
+
+  # 메시지 큐 (Kafka + Zookeeper)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    networks:
+      - healthcare_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    networks:
+      - healthcare_network
+    depends_on:
+      - zookeeper
+
+  # 데이터베이스 (PostgreSQL 예시)
+  postgres-db:
+    image: postgres:14
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=main_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - MLFLOW_DB=mlflow_db # MLflow용 DB
+      - MLFLOW_USER=mlflow_user
+      - MLFLOW_PASSWORD=mlflow_password
+      # - KEYCLOAK_DB=keycloak_db # Keycloak용 DB
+      # - KEYCLOAK_USER=keycloak_user
+      # - KEYCLOAK_PASSWORD=keycloak_password
+    volumes:
+      - db_data_volume:/var/lib/postgresql/data
+      # - ./init_db:/docker-entrypoint-initdb.d # 초기 DB 스키마/데이터 설정용 스크립트
+    ports:
+      - "5432:5432"
+    networks:
+      - healthcare_network
+
+  # 오브젝트 스토리지 (MinIO 예시 - MLflow 아티팩트 저장용)
+  minio:
+    image: minio/minio:latest
+    container_name: minio-server
+    ports:
+      - "9000:9000" # S3 API 포트
+      - "9001:9001" # MinIO Console 포트
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - ml_models_volume:/data/mlflow-artifacts # MLflow 아티팩트 저장
+    networks:
+      - healthcare_network
+
+  # 모니터링 및 로깅 (Elasticsearch, Kibana, Logstash - ELK Stack 예시)
+  elasticsearch:
+    image: elastic/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false # 개발용: 보안 비활성화
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - logs_data_volume:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - healthcare_network
+
+  kibana:
+    image: elastic/kibana:8.13.4
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - healthcare_network
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: elastic/logstash:8.13.4
+    container_name: logstash
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline # Logstash 설정 파일 경로
+    ports:
+      - "5044:5044" # Beats 입력 포트
+    networks:
+      - healthcare_network
+    depends_on:
+      - elasticsearch
+
+
+

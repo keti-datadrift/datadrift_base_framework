@@ -1,0 +1,2 @@
+Flask==2.3.3
+requests # 다른 API 호출용

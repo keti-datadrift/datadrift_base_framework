@@ -1,0 +1,4 @@
+Flask==2.3.3
+kafka-python==2.0.2
+# MLflow 클라이언트 (실제 모델 로딩 시 필요)
+# mlflow==2.13.0

@@ -1,0 +1,70 @@
+version: '3.8'
+
+networks:
+  elk_network:
+    driver: bridge
+
+volumes:
+  esdata: # Elasticsearch 데이터 저장용
+  logstash_data: # Logstash 데이터 저장용
+
+services:
+  # Elasticsearch Service
+  elasticsearch:
+    image: elasticsearch:8.13.4 # Elasticsearch 이미지 버전
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false # 개발/테스트용: 보안 비활성화 (프로덕션에서는 반드시 활성화)
+      - discovery.type=single-node # 단일 노드 클러스터 설정
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # JVM 힙 메모리 설정 (개발 환경에 따라 조절)
+    volumes:
+      - esdata:/usr/share/elasticsearch/data # 데이터 영구 저장
+    ports:
+      - "9200:9200" # Elasticsearch HTTP API 포트
+      - "9300:9300" # 노드 간 통신 포트
+    networks:
+      - elk_network
+    healthcheck: # Elasticsearch 헬스체크 설정
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health?wait_for_status=yellow || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # Logstash Service
+  logstash:
+    image: logstash:8.13.4 # Logstash 이미지 버전 (Elasticsearch와 동일 버전 권장)
+    container_name: logstash
+    environment:
+      - LOGSTASH_HOST=0.0.0.0 # Logstash 리스닝 호스트 (컨테이너 내부)
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m # JVM 힙 메모리 설정
+    volumes:
+      - logstash_data:/usr/share/logstash/data # Logstash 데이터 영구 저장
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro # Logstash 설정 파일 마운트 (읽기 전용)
+    ports:
+      - "5044:5044" # Beats (Filebeat 등) 입력 포트
+      - "5000:5000/tcp" # UDP 입력 (예: syslog)      
+      - "5000:5000/udp" # UDP 입력 (예: syslog)
+    networks:
+      - elk_network
+    depends_on:
+      elasticsearch: # Elasticsearch가 준비될 때까지 기다림
+        condition: service_healthy # Elasticsearch 헬스체크가 통과되면 시작
+    healthcheck: # Logstash 헬스체크 설정
+      test: ["CMD-SHELL", "curl -f http://localhost:9600 || exit 1"] # Logstash Monitoring API (기본 9600)
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # Kibana Service (선택 사항 - 시각화 및 테스트 편의를 위해 포함)
+  kibana:
+    image: kibana:8.13.4 # Kibana 이미지 버전 (Elasticsearch와 동일 버전 권장)
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # Elasticsearch 연결 주소
+    ports:
+      - "5601:5601" # Kibana 웹 UI 포트
+    networks:
+      - elk_network
+    depends_on:
+      elasticsearch: # Elasticsearch가 준비될 때까지 기다림
+        condition: service_healthy # Elasticsearch 헬스체크가 통과되면 시작

@@ -1,0 +1,2 @@
+kafka-python==2.0.2
+python-logstash==0.4.6 # Logstash 연동을 위한 라이브러리
