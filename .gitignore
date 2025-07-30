@@ -6,6 +6,7 @@
 **/tmp2
 **/build
 **/outputs
+**/data
 **/*.egg-info
 
 
