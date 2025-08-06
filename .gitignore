@@ -1,4 +1,6 @@
+
 # general
+**/.DS_Store
 **/.venv
 **/*.dvc
 **/*.dd
