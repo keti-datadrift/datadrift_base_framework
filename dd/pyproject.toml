@@ -1,0 +1,19 @@
+[project]
+name = "dd"
+version = "0.1.0"
+description = "dd: Data drift & lifecycle CLI"
+requires-python = ">=3.9"
+dependencies = [
+  "pluggy>=1.5.0",
+  "typer>=0.12",
+  "rich>=13.7",
+  "pydantic>=2.7",
+]
+
+[project.scripts]
+dd = "dd.cli.main:app"
+
+# External plugins discover this group via importlib.metadata entry points
+[project.entry-points."dd.plugins"]
+# Builtins are imported directly; you can also expose them here if you want.
+# dd_builtins = "dd.builtin_plugins:register"  # optional
