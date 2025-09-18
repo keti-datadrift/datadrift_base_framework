@@ -101,12 +101,15 @@ def run_flow(n_clicks, elements):
     final_output = None
     
     for node_id in execution_order:
+        print(f'node_id = {node_id}')
         node_type = G.nodes[node_id]['type']
         
         # 플러그인 후크 호출
         try:
             # pm.hook.<후크명>() 형식으로 호출
             result = pm.hook.run_module(data=data)
+            print('module = ', pm.hook.run_module)
+            print(result)
             
             data = result
             final_output = result
@@ -114,6 +117,7 @@ def run_flow(n_clicks, elements):
         except Exception as e:
             return html.Div(f"모듈 '{node_type}' 실행 중 오류 발생: {e}", style={'color': 'red'})
 
+    print(f'final_output = {final_output}')
     return final_output
 
 if __name__ == '__main__':
