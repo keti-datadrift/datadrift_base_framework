@@ -1,0 +1,9 @@
+[project]
+name = "dd-plugin-ks"
+version = "0.1.0"
+description = "KS-based drift detector for dd"
+requires-python = ">=3.9"
+dependencies = ["pluggy>=1.5.0"]
+
+[project.entry-points."dd.plugins"]
+dd_drift_ks = "dd_plugin_ks.ks_impl:register"
