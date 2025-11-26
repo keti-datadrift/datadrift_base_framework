@@ -1,28 +1,37 @@
 import pandas as pd
+#from evidently.report import Report
+#from evidently.metric_preset import DataDriftPreset
 
-def simple_drift(df_base: pd.DataFrame, df_target: pd.DataFrame):
-    """
-    매우 단순한 드리프트 계산 (컬럼별 평균 차이 비교)
-    향후 PSI, KS 등으로 변경 가능
-    """
-    results = []
-    numeric_cols = df_base.select_dtypes("number").columns
+def run_drift(base_path: str, target_path: str) -> dict:
+    df_base = pd.read_csv(base_path)
+    df_target = pd.read_csv(target_path)
 
-    for col in numeric_cols:
-        b = df_base[col].mean()
-        t = df_target[col].mean()
-        diff = abs(b - t)
+    '''
+    # Evidently DataDriftPreset 사용
+    report = Report(metrics=[DataDriftPreset()])
+    report.run(reference_data=df_base, current_data=df_target)
 
-        results.append({
+    result = report.as_dict()
+
+    # 간단한 요약 추출
+    overall = result["metrics"][0]["result"]["dataset_drift"]["share_of_drifted_columns"]
+    feature_results = result["metrics"][0]["result"]["drift_by_columns"]
+
+    feature_drift = []
+    for col, data in feature_results.items():
+        feature_drift.append({
             "feature": col,
-            "mean_base": float(b),
-            "mean_target": float(t),
-            "drift_score": float(diff)
+            "drift_score": data.get("drift_score", 0),
+            "drift_detected": data.get("drift_detected", False),
+            "stattest_name": data.get("stattest_name", ""),
         })
-
-    overall = sum([r["drift_score"] for r in results]) / len(results)
-
+    '''
+    overall = 'todo'
+    feature_drift = 'todo'
+    result = 'todo'
+    
     return {
-        "overall_drift": overall,
-        "features": results
+        "overall": overall,
+        "features": feature_drift,
+        "raw": result,  # 디버깅용
     }

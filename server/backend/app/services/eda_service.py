@@ -1,9 +1,8 @@
 import pandas as pd
 
-def simple_eda(df: pd.DataFrame):
-    """
-    가장 단순한 EDA - 추후 확장 쉬움(Evidently 등)
-    """
+def run_eda(file_path: str) -> dict:
+    df = pd.read_csv(file_path)
+
     summary = df.describe(include="all").fillna(0).to_dict()
     missing = df.isna().mean().to_dict()
 

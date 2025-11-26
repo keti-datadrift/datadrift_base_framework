@@ -1,91 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function DriftStudio({ dataset, goBack }) {
+export default function DriftStudio({ backend, dataset, onBack }) {
   const [datasets, setDatasets] = useState([]);
-  const [targetId, setTargetId] = useState(null);
+  const [targetId, setTargetId] = useState("");
   const [drift, setDrift] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/datasets")
-      .then(res => res.json())
+    fetch(`${backend}/datasets`)
+      .then((r) => r.json())
       .then(setDatasets);
-  }, []);
+  }, [backend]);
 
   const runDrift = () => {
-    fetch("http://localhost:8000/drift", {
+    fetch(`${backend}/drift`, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ base_id: dataset.id, target_id: targetId })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base_id: dataset.id, target_id: targetId }),
     })
-      .then(res => res.json())
+      .then((r) => r.json())
       .then(setDrift);
   };
 
-  const chartData = drift?.features?.map(f => ({
-    feature: f.feature,
-    value: Number(f.drift_score.toFixed(4))
-  })) ?? [];
+  const chartData =
+    drift?.features?.map((f) => ({
+      feature: f.feature,
+      value: f.drift_score ?? 0,
+    })) ?? [];
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-
-      <button onClick={goBack} className="px-3 py-2 bg-gray-200 rounded-lg mb-4">
-        ← Back
-      </button>
-
-      <h2 className="text-2xl font-bold mb-4">🔀 Drift Compare Studio</h2>
-
-      <p className="text-lg mb-2">
-        기준 데이터셋: <b>{dataset.name}</b>
-      </p>
-
-      <select
-        onChange={(e) => setTargetId(e.target.value)}
-        className="border p-2 rounded-lg mb-4"
-      >
-        <option>대상 데이터셋 선택</option>
-        {datasets.filter(d => d.id !== dataset.id).map(d => (
-          <option key={d.id} value={d.id}>{d.name}</option>
-        ))}
-      </select>
-
+    <div className="max-w-6xl mx-auto">
       <button
-        onClick={runDrift}
-        disabled={!targetId}
-        className="px-4 py-2 bg-purple-600 text-white rounded-lg mb-6 disabled:bg-gray-300"
+        onClick={onBack}
+        className="mb-4 px-3 py-2 bg-gray-200 rounded text-xs"
       >
-        Compare Drift
+        ← 뒤로
       </button>
+
+      <h2 className="text-xl font-semibold mb-2">🔀 Drift Compare Studio</h2>
+
+      <div className="mb-3 text-sm">
+        기준 데이터셋:{" "}
+        <span className="font-semibold">{dataset.name}</span>
+      </div>
+
+      <div className="flex items-center gap-2 mb-4">
+        <select
+          className="border rounded px-2 py-1 text-sm"
+          onChange={(e) => setTargetId(e.target.value)}
+        >
+          <option value="">대상 선택</option>
+          {datasets
+            .filter((d) => d.id !== dataset.id)
+            .map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+        </select>
+        <button
+          onClick={runDrift}
+          disabled={!targetId}
+          className="px-3 py-2 bg-purple-600 text-white rounded text-xs disabled:bg-gray-300"
+        >
+          Drift 분석 실행
+        </button>
+      </div>
 
       {drift && (
         <>
-          {/* Overall Drift */}
-          <div className="p-4 bg-white shadow rounded-lg mb-6">
-            <div className="text-gray-600">Overall Drift Score</div>
-            <div className="text-3xl font-bold text-purple-600">
-              {drift.overall_drift.toFixed(4)}
+          <div className="bg-white rounded shadow p-3 mb-4">
+            <div className="text-xs text-gray-500">
+              Overall share of drifted columns
+            </div>
+            <div className="text-3xl font-bold text-purple-700">
+              {drift.overall.toFixed(3)}
             </div>
           </div>
 
-          {/* Feature Drift Chart */}
-          <h3 className="text-xl font-semibold mb-2">📊 Feature Drift</h3>
-
-          <div className="h-80 bg-white shadow rounded-lg p-4">
+          <h3 className="text-sm font-semibold mb-1">
+            Feature Drift (Evidently 기반)
+          </h3>
+          <div className="bg-white rounded shadow p-3 h-80 mb-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <XAxis dataKey="feature" hide />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#c084fc" />
+                <Bar dataKey="value" />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Raw Debug Info */}
-          <h3 className="text-xl font-semibold mt-6 mb-2">Detail Data</h3>
-          <div className="bg-white shadow rounded-lg p-4">
-            <pre className="text-sm">{JSON.stringify(drift.features, null, 2)}</pre>
+          <h3 className="text-sm font-semibold mb-1">Raw detail</h3>
+          <div className="bg-white rounded shadow p-3 h-64 overflow-auto">
+            <pre className="text-xs">
+              {JSON.stringify(drift.features, null, 2)}
+            </pre>
           </div>
         </>
       )}

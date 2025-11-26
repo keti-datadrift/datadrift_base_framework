@@ -1,49 +1,59 @@
-import React, { useState, useEffect } from "react";
-import DatasetWorkspace from "./components/DatasetWorkspace";
+import React, { useEffect, useState } from "react";
+import Layout from "./components/Layout";
+import DatasetGrid from "./components/DatasetGrid";
 import EDAStudio from "./components/EDAStudio";
 import DriftStudio from "./components/DriftStudio";
 
+const BACKEND = "http://localhost:8000";
+
 export default function App() {
+  const [datasets, setDatasets] = useState([]);
   const [view, setView] = useState("workspace"); // workspace | eda | drift
   const [selectedDataset, setSelectedDataset] = useState(null);
-  const [datasets, setDatasets] = useState([]);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/datasets")
-      .then((res) => res.json())
-      .then(setDatasets);
-  }, []);
-
-  const refreshDatasets = () => {
-    fetch("http://localhost:8000/datasets")
-      .then((res) => res.json())
+  const fetchDatasets = () => {
+    fetch(`${BACKEND}/datasets`)
+      .then((r) => r.json())
       .then(setDatasets);
   };
 
+  useEffect(() => {
+    fetchDatasets();
+  }, []);
+
   return (
-    <div style={{ padding: 20 }}>
+    <Layout>
       {view === "workspace" && (
-        <DatasetWorkspace
+        <DatasetGrid
           datasets={datasets}
-          onUploaded={refreshDatasets}
-          onSelect={(ds) => {
+          backend={BACKEND}
+          refresh={fetchDatasets}
+          onEDA={(ds) => {
             setSelectedDataset(ds);
             setView("eda");
           }}
-          onCompare={(ds) => {
+          onDrift={(ds) => {
             setSelectedDataset(ds);
             setView("drift");
           }}
         />
       )}
 
-      {view === "eda" && (
-        <EDAStudio dataset={selectedDataset} goBack={() => setView("workspace")} />
+      {view === "eda" && selectedDataset && (
+        <EDAStudio
+          backend={BACKEND}
+          dataset={selectedDataset}
+          onBack={() => setView("workspace")}
+        />
       )}
 
-      {view === "drift" && (
-        <DriftStudio dataset={selectedDataset} goBack={() => setView("workspace")} />
+      {view === "drift" && selectedDataset && (
+        <DriftStudio
+          backend={BACKEND}
+          dataset={selectedDataset}
+          onBack={() => setView("workspace")}
+        />
       )}
-    </div>
+    </Layout>
   );
 }
