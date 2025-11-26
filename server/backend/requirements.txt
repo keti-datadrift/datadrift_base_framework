@@ -6,3 +6,5 @@ pandas
 python-multipart
 dvc
 evidently
+langdetect
+pdfkit

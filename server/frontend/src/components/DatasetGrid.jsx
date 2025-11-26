@@ -69,7 +69,15 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
                 </pre>
               </div>
             )}
-
+              
+            {ds.preview?.thumbnail && (
+              <img
+                src={`${backend}/report/download?path=${ds.preview.thumbnail}`}
+                alt="thumb"
+                className="w-full h-32 object-cover rounded"
+              />
+            )}
+              
             <div className="flex gap-1 mt-auto">
               <button
                 onClick={() => onEDA(ds)}
