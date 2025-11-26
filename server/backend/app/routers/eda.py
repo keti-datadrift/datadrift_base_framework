@@ -19,11 +19,10 @@ def get_db():
 @router.get("/{dataset_id}")
 def eda(dataset_id: str, db: Session = Depends(get_db)):
     ds = db.query(Dataset).filter(Dataset.id == dataset_id).first()
-
     if not ds:
         raise HTTPException(status_code=404, detail="Dataset not found")
 
-    return run_eda(ds.dvc_path, ds.type or "unknown")
+    return run_eda(ds.dvc_path, ds.type or "csv")
 
 from fastapi import BackgroundTasks
 

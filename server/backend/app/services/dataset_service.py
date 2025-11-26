@@ -1,7 +1,5 @@
 import os
 import uuid
-from typing import Optional, Dict, Any
-
 import pandas as pd
 from sqlalchemy.orm import Session
 from PIL import Image
@@ -9,32 +7,45 @@ from PIL import Image
 from app.models import Dataset
 from app.services.dvc_service import dvc_add_file
 from app.utils.json_sanitize import clean_json_value
+from app.services.zip_resolver import analyze_zip_dataset
 
 
-# -----------------------------------------------
-# 썸네일 생성 (현재는 이미지에만 적용)
-# -----------------------------------------------
-def create_thumbnail(dtype: str, file_path: str) -> Optional[str]:
-    """이미지 타입에 대해 128x128 썸네일 생성. 실패 시 None 반환."""
-    if dtype != "image":
-        return None
+# -----------------------------
+# 썸네일 생성 유틸 (이미지 전용)
+# -----------------------------
+def create_image_thumbnail(src_path: str, max_size=(128, 128)) -> str | None:
+    """
+    단일 이미지 파일에서 썸네일 생성.
+    src_path_thumbnail.jpg 형태로 저장 후 그 경로를 반환.
+    """
     try:
-        img = Image.open(file_path).convert("RGB")
-        img.thumbnail((128, 128))
-        thumb_path = f"{file_path}_thumbnail.jpg"
-        img.save(thumb_path, format="JPEG")
+        if not os.path.exists(src_path):
+            return None
+
+        img = Image.open(src_path).convert("RGB")
+        img.thumbnail(max_size)
+        thumb_path = f"{src_path}_thumbnail.jpg"
+        img.save(thumb_path)
         return thumb_path
     except Exception:
         return None
 
 
-# -----------------------------------------------
-# Dataset 생성 서비스
-# -----------------------------------------------
+# -----------------------------
+# Dataset 생성 서비스 (핵심)
+# -----------------------------
 def create_dataset(db: Session, uploaded_file) -> Dataset:
-    """파일을 data/에 저장 → DVC add → 메타데이터를 SQLite에 저장."""
+    """
+    파일을 data/에 저장 → DVC add → 타입별 메타 + 썸네일 생성 → SQLite에 저장
+    지원 포맷:
+      - csv
+      - text (.txt, .md, .json)
+      - image (.png, .jpg, .jpeg, .bmp)
+      - video (.mp4, .mov, .avi, .mkv)  → 메타만
+      - zip (YOLO/VOC/COCO/기타 번들)
+    """
 
-    # 1) 파일 저장 + DVC 등록
+    # 1) DVC를 통해 파일을 data/ 아래에 저장
     file_path, version_info = dvc_add_file(uploaded_file)
 
     filename = uploaded_file.filename
@@ -42,26 +53,30 @@ def create_dataset(db: Session, uploaded_file) -> Dataset:
     ext = ext.lower()
 
     # 2) 타입 분류
-    if ext in [".csv"]:
+    if ext == ".csv":
         dtype = "csv"
-    elif ext in [".txt", ".md", ".log", ".json"]:
+    elif ext in [".txt", ".md", ".json"]:
         dtype = "text"
-    elif ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif"]:
+    elif ext in [".png", ".jpg", ".jpeg", ".bmp"]:
         dtype = "image"
-    elif ext in [".mp4", ".mov", ".avi", ".mkv", ".webm"]:
+    elif ext in [".mp4", ".mov", ".avi", ".mkv"]:
         dtype = "video"
+    elif ext == ".zip":
+        dtype = "zip"
     else:
         dtype = "unknown"
 
-    rows: int = 0
-    cols: int = 0
-    missing_rate: Dict[str, Any] = {}
-    preview: Dict[str, Any] = {}
+    rows = 0
+    cols = 0
+    missing_rate: dict | None = {}
+    preview: dict | None = {}
 
-    # 3) 타입별 간단 EDA 메타
+    # 3) 타입별 메타 계산 및 preview 생성
     if dtype == "csv":
+        # ---- CSV: 기본적인 EDA 메타 ----
         df = pd.read_csv(file_path)
-        # NaN / inf 정리
+
+        # NaN / inf 제거 (JSON safe)
         df = df.replace([float("inf"), float("-inf")], None)
         df = df.fillna(None)
 
@@ -70,41 +85,76 @@ def create_dataset(db: Session, uploaded_file) -> Dataset:
         missing_dict = df.isna().mean().to_dict()
         missing_rate = clean_json_value(missing_dict)
 
-        head_records = df.head(5).to_dict(orient="records")
-        preview = clean_json_value({"head": head_records})
+        preview_head = df.head(5).to_dict(orient="records")
+        preview = clean_json_value({"head": preview_head})
 
     elif dtype == "text":
+        # ---- Text: 라인 수 + 처음 몇 줄 ----
         try:
             with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 lines = f.readlines()
             rows = len(lines)
             cols = 1
-            preview = {"first_lines": [ln.strip() for ln in lines[:5]]}
+            preview = {"first_lines": [line.strip() for line in lines[:5]]}
         except Exception:
             preview = {"first_lines": []}
 
     elif dtype == "image":
+        # ---- Image: 해상도 + 썸네일 ----
         try:
             img = Image.open(file_path)
             rows = img.height
             cols = img.width
             preview = {"info": f"{cols}x{rows}"}
         except Exception:
-            preview = {"info": "unreadable image"}
+            preview = {"info": "image"}
+
+        thumb = create_image_thumbnail(file_path)
+        if thumb:
+            if isinstance(preview, dict):
+                preview["thumbnail"] = thumb
+            else:
+                preview = {"thumbnail": thumb}
 
     elif dtype == "video":
-        # 가벼운 구조를 위해 외부 디펜던시(cv2 등)는 사용하지 않고,
-        # 현재는 파일 크기만 메타데이터로 사용.
+        # ---- Video: 가벼운 메타만 (fps, frame 수 등은 추후 확장) ----
+        # 여기서는 파일 크기/타입 정도만 기록
+        preview = {"info": "video file"}
         rows = 0
         cols = 0
-        preview = {"info": "video file", "note": "lightweight metadata only"}
+        # 비디오 썸네일은 OpenCV 의존성이 생기므로
+        # 향후 선택적으로 추가 (지금은 생략하여 안전성을 우선)
 
-    # 4) 썸네일 생성 (이미지)
-    thumbnail = create_thumbnail(dtype, file_path)
-    if thumbnail:
-        preview["thumbnail"] = thumbnail
+    elif dtype == "zip":
+        # ---- ZIP: 내부 구조 분석 (YOLO/VOC/COCO/Bundle 탐지) ----
+        info = analyze_zip_dataset(file_path)
 
-    # 5) Dataset 인스턴스 구성
+        # zip dataset은 "전체 파일 수"를 rows로 사용
+        stats = info.get("stats", {})
+        rows = stats.get("total_files", 0)
+        cols = 0
+
+        preview = {
+            "zip_type": info.get("zip_type", "unknown_zip"),
+            "stats": stats,
+        }
+
+        # 내부에서 뽑은 대표 이미지(sample_image)로 썸네일 생성
+        sample_image = info.get("sample_image")
+        if sample_image:
+            thumb = create_image_thumbnail(sample_image)
+            if thumb:
+                preview["thumbnail"] = thumb
+
+    else:
+        # 알 수 없는 타입: 그냥 파일 크기 정도만 기록
+        preview = {"info": "unknown file type"}
+
+    # JSON 직렬화 안전 처리
+    preview = clean_json_value(preview)
+    missing_rate = clean_json_value(missing_rate)
+
+    # 4) Dataset 엔티티 구성
     dataset = Dataset(
         id=str(uuid.uuid4()),
         name=filename,
@@ -115,11 +165,12 @@ def create_dataset(db: Session, uploaded_file) -> Dataset:
         missing_rate=missing_rate,
         preview=preview,
         dvc_path=file_path,
-        version="v1",  # DVC 버전 태깅은 추후 확장
+        version="v1",  # 버전 관리 고도화는 나중에
     )
 
-    # 6) DB 저장
+    # 5) DB 저장
     db.add(dataset)
     db.commit()
     db.refresh(dataset)
+
     return dataset

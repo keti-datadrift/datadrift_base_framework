@@ -1,51 +1,48 @@
 import React, { useState } from "react";
 
-export default function DatasetGrid({
-  datasets,
-  backend,
-  refresh,
-  onSelect,
-  onEDA,
-  onDrift,
-}) {
+export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift, onSelect }) {
   const [file, setFile] = useState(null);
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
   const upload = () => {
-    if (!file) return;
     const form = new FormData();
     form.append("file", file);
 
     fetch(`${backend}/datasets/upload`, {
       method: "POST",
       body: form,
-    })
-      .then(() => {
-        setFile(null);
-        refresh();
-      })
-      .catch((e) => console.error("Upload failed", e));
+    }).then(() => {
+      setFile(null);
+      refresh();
+    });
   };
 
   const totalPages = Math.max(1, Math.ceil(datasets.length / pageSize));
   const start = (page - 1) * pageSize;
   const pageData = datasets.slice(start, start + pageSize);
 
+  const typeLabel = (type, preview) => {
+    if (type === "csv") return "CSV";
+    if (type === "text") return "TEXT";
+    if (type === "image") return "IMAGE";
+    if (type === "video") return "VIDEO";
+    if (type === "zip") {
+      const zt = preview?.zip_type || "ZIP";
+      return `ZIP / ${zt}`;
+    }
+    return "FILE";
+  };
+
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
-      {/* 상단 헤더 + 업로드 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">데이터셋 워크스페이스</h2>
-          <p className="text-xs text-gray-500">
-            업로드된 데이터셋을 카드 형태로 관리하고, 선택해서 EDA/Drift 분석을 수행합니다.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+    <div className="max-w-6xl mx-auto">
+      {/* 업로드 영역 */}
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">데이터셋 목록</h2>
+        <div className="flex gap-2 items-center">
           <input
             type="file"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => setFile(e.target.files[0])}
             className="text-xs"
           />
           <button
@@ -59,78 +56,96 @@ export default function DatasetGrid({
       </div>
 
       {/* 카드 그리드 */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4 mb-4">
         {pageData.map((ds) => {
-          const typeLabel = (ds.type || "").toUpperCase();
-          const preview = ds.preview || {};
-          const head = preview.head;
-          const firstLines = preview.first_lines;
-          const thumb = preview.thumbnail;
+          const hasThumb = ds.preview && ds.preview.thumbnail;
+          const badge = typeLabel(ds.type, ds.preview);
 
           return (
             <div
               key={ds.id}
-              className="bg-white border border-gray-200 rounded-lg shadow-sm p-3 flex flex-col hover:shadow-md transition cursor-pointer"
+              className="bg-white border border-gray-200 rounded-lg shadow-sm p-3 flex flex-col cursor-pointer hover:border-blue-400 transition"
               onClick={() => onSelect && onSelect(ds)}
             >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                  {typeLabel || "UNKNOWN"}
-                </span>
-                <span className="text-[10px] text-gray-400">
-                  {ds.rows} rows · {ds.cols} cols
-                </span>
+              {/* 타입 뱃지 */}
+              <div className="text-[10px] text-gray-500 mb-1">
+                {badge}
               </div>
 
-              <div className="font-semibold text-sm truncate mb-2">
-                {ds.name}
-              </div>
-
-              {/* 썸네일 / 미리보기 */}
-              {thumb ? (
+              {/* 썸네일 (이미지/ZIP 공통) */}
+              {hasThumb && (
                 <div className="mb-2">
-                  {/* 백엔드 다운로드 엔드포인트를 재사용 */}
                   <img
                     src={`${backend}/files/raw?path=${encodeURIComponent(
-                      thumb
+                      ds.preview.thumbnail
                     )}`}
-                    alt="thumbnail"
-                    className="w-full h-24 object-cover rounded"
+                    alt="thumb"
+                    className="w-full h-24 object-cover rounded-md border border-gray-100"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      onSelect && onSelect(ds);
+                      e.stopPropagation(); // 카드 클릭으로 Detail로 가는 것과 분리
                     }}
                   />
                 </div>
-              ) : null}
-
-              {head && (
-                <div className="flex-1 bg-gray-50 rounded p-1 mb-2 overflow-hidden">
-                  <div className="text-[10px] text-gray-400 mb-1">
-                    preview (row 1)
-                  </div>
-                  <pre className="text-[10px] whitespace-pre-wrap">
-                    {JSON.stringify(head[0], null, 0).slice(0, 80)}…
-                  </pre>
-                </div>
               )}
 
-              {firstLines && !head && (
-                <div className="flex-1 bg-gray-50 rounded p-1 mb-2 overflow-hidden">
-                  <div className="text-[10px] text-gray-400 mb-1">
-                    preview (text)
-                  </div>
-                  <pre className="text-[10px] whitespace-pre-wrap">
-                    {firstLines.join("\n").slice(0, 80)}…
-                  </pre>
-                </div>
-              )}
+              {/* 이름 / 기본정보 */}
+              <div className="font-semibold text-sm truncate mb-1">
+                {ds.name}
+              </div>
+              <div className="text-[11px] text-gray-500 mb-2">
+                {ds.rows ?? 0} rows · {ds.cols ?? 0} cols
+              </div>
 
+              {/* 프리뷰 텍스트 */}
+              <div className="flex-1 text-[11px] text-gray-600 mb-2">
+                {ds.type === "csv" && ds.preview?.head && (
+                  <pre className="whitespace-pre-wrap">
+                    {JSON.stringify(ds.preview.head[0], null, 0).slice(0, 80)}…
+                  </pre>
+                )}
+
+                {ds.type === "text" && ds.preview?.first_lines && (
+                  <pre className="whitespace-pre-wrap">
+                    {ds.preview.first_lines.join(" ").slice(0, 80)}…
+                  </pre>
+                )}
+
+                {ds.type === "zip" && (
+                  <div>
+                    <div className="font-semibold text-[11px] mb-1">
+                      ZIP / {ds.preview?.zip_type}
+                    </div>
+                
+                    {/* Tree View: 상위 디렉토리만 요약 표시 */}
+                    {ds.preview?.tree && (
+                      <div className="text-[10px] text-gray-500 mt-1">
+                        {ds.preview.tree.children?.map((c) => (
+                          <div key={c.name}>📁 {c.name}</div>
+                        ))}
+                      </div>
+                    )}
+                
+                    {/* 파일 개수 정보 */}
+                    <div className="text-[10px] text-gray-500 mt-1">
+                      files: {ds.preview?.stats?.total_files ?? 0}, images:{" "}
+                      {ds.preview?.stats?.image_files ?? 0}
+                    </div>
+                  </div>
+                )}
+
+                {!["csv", "text", "zip"].includes(ds.type) && (
+                  <div className="text-[11px] text-gray-400">
+                    {ds.preview?.info || "미리보기 없음"}
+                  </div>
+                )}
+              </div>
+
+              {/* 액션 버튼들 */}
               <div className="flex gap-1 mt-auto">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onEDA && onEDA(ds);
+                    onEDA(ds);
                   }}
                   className="flex-1 px-2 py-1 text-[11px] bg-green-600 text-white rounded"
                 >
@@ -139,7 +154,7 @@ export default function DatasetGrid({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onDrift && onDrift(ds);
+                    onDrift(ds);
                   }}
                   className="flex-1 px-2 py-1 text-[11px] bg-purple-600 text-white rounded"
                 >

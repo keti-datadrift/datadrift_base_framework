@@ -1,32 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Layout from "./components/Layout";
 import DatasetGrid from "./components/DatasetGrid";
-import DatasetDetail from "./components/DatasetDetail";
 import EDAStudio from "./components/EDAStudio";
 import DriftStudio from "./components/DriftStudio";
+import ZipDetail from "./components/ZipDetail";
 
 const BACKEND = "http://localhost:8000";
 
 export default function App() {
   const [datasets, setDatasets] = useState([]);
-  const [view, setView] = useState("workspace"); // workspace | detail | eda | drift
+  const [view, setView] = useState("workspace"); // workspace | eda | drift | zipDetail
   const [selectedDataset, setSelectedDataset] = useState(null);
 
   const fetchDatasets = () => {
     fetch(`${BACKEND}/datasets`)
       .then((r) => r.json())
-      .then(setDatasets)
-      .catch((e) => console.error("Failed to load datasets", e));
+      .then(setDatasets);
   };
 
   useEffect(() => {
     fetchDatasets();
   }, []);
-
-  const handleSelect = (ds) => {
-    setSelectedDataset(ds);
-    setView("detail");
-  };
 
   return (
     <Layout>
@@ -35,7 +29,6 @@ export default function App() {
           datasets={datasets}
           backend={BACKEND}
           refresh={fetchDatasets}
-          onSelect={handleSelect}
           onEDA={(ds) => {
             setSelectedDataset(ds);
             setView("eda");
@@ -44,16 +37,16 @@ export default function App() {
             setSelectedDataset(ds);
             setView("drift");
           }}
-        />
-      )}
-
-      {view === "detail" && selectedDataset && (
-        <DatasetDetail
-          backend={BACKEND}
-          dataset={selectedDataset}
-          onBack={() => setView("workspace")}
-          onOpenEDA={() => setView("eda")}
-          onOpenDrift={() => setView("drift")}
+          onSelect={(ds) => {
+            if (ds.type === "zip") {
+              setSelectedDataset(ds);
+              setView("zipDetail");
+            } else {
+              // 추후 일반 Detail Page 추가 가능
+              setSelectedDataset(ds);
+              setView("eda");
+            }
+          }}
         />
       )}
 
@@ -61,7 +54,7 @@ export default function App() {
         <EDAStudio
           backend={BACKEND}
           dataset={selectedDataset}
-          onBack={() => setView("detail")}
+          onBack={() => setView("workspace")}
         />
       )}
 
@@ -69,7 +62,15 @@ export default function App() {
         <DriftStudio
           backend={BACKEND}
           dataset={selectedDataset}
-          onBack={() => setView("detail")}
+          onBack={() => setView("workspace")}
+        />
+      )}
+
+      {view === "zipDetail" && selectedDataset && (
+        <ZipDetail
+          backend={BACKEND}
+          dataset={selectedDataset}
+          onBack={() => setView("workspace")}
         />
       )}
     </Layout>
