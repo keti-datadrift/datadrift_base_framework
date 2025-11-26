@@ -1,6 +1,6 @@
-
 # general
 **/.DS_Store
+**/venv
 **/.venv
 **/*.dvc
 **/*.dd
@@ -9,7 +9,11 @@
 **/build
 **/outputs
 **/data
+**/dvcstore
 **/*.egg-info
+**/node_modules
+
+
 
 
 # DVC
