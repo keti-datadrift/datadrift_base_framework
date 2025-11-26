@@ -1,13 +1,23 @@
-from fastapi import APIRouter, UploadFile
-from app.services.dataset_store import store
+from fastapi import APIRouter, UploadFile, Depends
+from sqlalchemy.orm import Session
+from ..database import SessionLocal
+from ..services.dataset_service import create_dataset
+from ..models import Dataset
 
-router = APIRouter(prefix="/datasets", tags=["datasets"])
+router = APIRouter(prefix="/datasets")
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @router.post("/upload")
-async def upload_dataset(file: UploadFile):
-    ds_id = store.add_dataset(file)
-    return {"dataset_id": ds_id, "name": file.filename}
+def upload_dataset(file: UploadFile, db: Session = Depends(get_db)):
+    dataset = create_dataset(db, file)
+    return dataset
 
 @router.get("/")
-async def list_datasets():
-    return store.list_datasets()
+def list_datasets(db: Session = Depends(get_db)):
+    return db.query(Dataset).all()
