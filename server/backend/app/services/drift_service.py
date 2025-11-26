@@ -80,3 +80,38 @@ def run_drift(base_path: str, target_path: str) -> dict:
         "overall": overall,
         "features": feature_results,
     }
+
+def run_zip_drift(base_info, target_info):
+    drift = {
+        "class_distribution": {},
+        "split_distribution": {},
+        "structure_changes": {},
+    }
+
+    # 1. split 변화
+    for split in ["train", "valid", "test"]:
+        b = base_info["splits"].get(split, {})
+        t = target_info["splits"].get(split, {})
+        drift["split_distribution"][split] = {
+            "base_images": b.get("num_images", 0),
+            "target_images": t.get("num_images", 0),
+            "delta": (t.get("num_images", 0) - b.get("num_images", 0)),
+        }
+
+    # 2. class distribution 변화
+    for cls in base_info["classes"]:
+        b = sum([s["class_counts"].get(cls, 0) for s in base_info["splits"].values()])
+        t = sum([s["class_counts"].get(cls, 0) for s in target_info["splits"].values()])
+        drift["class_distribution"][cls] = {
+            "base": b,
+            "target": t,
+            "delta": t - b
+        }
+
+    # 3. 구조 변경
+    drift["structure_changes"] = {
+        "base_dirs": base_info["stats"]["subdirs"],
+        "target_dirs": target_info["stats"]["subdirs"]
+    }
+
+    return drift

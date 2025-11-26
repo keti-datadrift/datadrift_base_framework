@@ -22,7 +22,10 @@ def eda(dataset_id: str, db: Session = Depends(get_db)):
     if not ds:
         raise HTTPException(status_code=404, detail="Dataset not found")
 
-    return run_eda(ds.dvc_path, ds.type or "csv")
+    return run_eda(
+        file_path=ds.dvc_path,
+        dtype=ds.type.lower() if ds.type else "csv"
+    )
 
 from fastapi import BackgroundTasks
 
