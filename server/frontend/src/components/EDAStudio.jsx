@@ -28,6 +28,21 @@ export default function EDAStudio({ backend, dataset, onBack }) {
         ← 뒤로
       </button>
 
+
+        <button
+          onClick={() => {
+            fetch(`${backend}/report/eda/${dataset.id}`)
+              .then(r => r.json())
+              .then(info => {
+                window.open(`${backend}/report/download?path=${info.pdf}`);
+              });
+          }}
+          className="px-3 py-2 bg-blue-600 text-white rounded text-xs"
+        >
+          EDA 리포트 다운로드(PDF)
+        </button>
+
+        
       <h2 className="text-xl font-semibold mb-2">
         🧪 EDA Studio — {dataset.name}
       </h2>
@@ -61,6 +76,7 @@ export default function EDAStudio({ backend, dataset, onBack }) {
           {JSON.stringify(eda.summary, null, 2)}
         </pre>
       </div>
+
     </div>
   );
 }

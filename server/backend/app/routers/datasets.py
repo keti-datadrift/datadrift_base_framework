@@ -4,6 +4,9 @@ from ..database import SessionLocal
 from ..models import Dataset
 from ..services.dataset_service import create_dataset
 
+from app.schemas import DatasetSchema
+
+    
 router = APIRouter(prefix="/datasets", tags=["datasets"])
 
 def get_db():
@@ -18,6 +21,8 @@ async def upload_dataset(file: UploadFile, db: Session = Depends(get_db)):
     dataset = create_dataset(db, file)
     return dataset
 
-@router.get("/")
+
+@router.get("/", response_model=list[DatasetSchema])
 def list_datasets(db: Session = Depends(get_db)):
-    return db.query(Dataset).order_by(Dataset.created_at.desc()).all()
+    items = db.query(Dataset).order_by(Dataset.created_at.desc()).all()
+    return items  # Pydantic이 자동 변환 + sanitize

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine
 from .routers import datasets, eda, drift
+from .routers import report
 
 # 테이블 생성
 Base.metadata.create_all(bind=engine)

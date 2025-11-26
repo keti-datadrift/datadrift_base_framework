@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>EDA Report - {{ name }}</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    h1 { color: #333; }
+    pre { background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>EDA Report for {{ name }}</h1>
+
+  <h2>Dataset Info</h2>
+  <ul>
+    <li>Rows: {{ rows }}</li>
+    <li>Cols: {{ cols }}</li>
+  </ul>
+
+  <h2>Missing Rate</h2>
+  <pre>{{ missing | safe }}</pre>
+
+  <h2>Summary</h2>
+  <pre>{{ summary | safe }}</pre>
+</body>
+</html>

@@ -10,6 +10,8 @@ services:
       - ./backend:/app
     working_dir: /app
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      - redis
 
   frontend:
     build: ./frontend
@@ -20,3 +22,13 @@ services:
       - ./frontend:/app
     working_dir: /app
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+  redis:
+    image: redis:alpine
+
+  worker:
+    build: ./backend
+    command: celery -A app.services.tasks worker --loglevel=info
+    depends_on:
+      - backend
+      - redis
