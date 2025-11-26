@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function DriftStudio({ backend, dataset, onBack }) {
   const [datasets, setDatasets] = useState([]);
@@ -9,17 +16,20 @@ export default function DriftStudio({ backend, dataset, onBack }) {
   useEffect(() => {
     fetch(`${backend}/datasets`)
       .then((r) => r.json())
-      .then(setDatasets);
+      .then(setDatasets)
+      .catch((e) => console.error("datasets load failed", e));
   }, [backend]);
 
   const runDrift = () => {
+    if (!targetId) return;
     fetch(`${backend}/drift`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ base_id: dataset.id, target_id: targetId }),
     })
       .then((r) => r.json())
-      .then(setDrift);
+      .then(setDrift)
+      .catch((e) => console.error("drift failed", e));
   };
 
   const chartData =
@@ -29,17 +39,17 @@ export default function DriftStudio({ backend, dataset, onBack }) {
     })) ?? [];
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto space-y-4">
       <button
         onClick={onBack}
-        className="mb-4 px-3 py-2 bg-gray-200 rounded text-xs"
+        className="mb-2 px-3 py-2 bg-gray-200 rounded text-xs"
       >
         ← 뒤로
       </button>
 
-      <h2 className="text-xl font-semibold mb-2">🔀 Drift Compare Studio</h2>
+      <h2 className="text-xl font-semibold">🔀 Drift Compare Studio</h2>
 
-      <div className="mb-3 text-sm">
+      <div className="mb-2 text-sm">
         기준 데이터셋:{" "}
         <span className="font-semibold">{dataset.name}</span>
       </div>
@@ -48,6 +58,7 @@ export default function DriftStudio({ backend, dataset, onBack }) {
         <select
           className="border rounded px-2 py-1 text-sm"
           onChange={(e) => setTargetId(e.target.value)}
+          value={targetId}
         >
           <option value="">대상 선택</option>
           {datasets
@@ -74,7 +85,7 @@ export default function DriftStudio({ backend, dataset, onBack }) {
               Overall share of drifted columns
             </div>
             <div className="text-3xl font-bold text-purple-700">
-              {drift.overall.toFixed(3)}
+              {drift.overall != null ? drift.overall.toFixed(3) : "-"}
             </div>
           </div>
 

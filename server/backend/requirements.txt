@@ -8,3 +8,5 @@ dvc
 evidently
 langdetect
 pdfkit
+pillow
+jinja2

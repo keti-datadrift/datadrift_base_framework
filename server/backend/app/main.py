@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine
 from .routers import datasets, eda, drift
 from .routers import report
+from .routers import files
 
 # 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -19,6 +20,7 @@ app.add_middleware(
 app.include_router(datasets.router)
 app.include_router(eda.router)
 app.include_router(drift.router)
+app.include_router(files.router)
 
 @app.get("/")
 def root():
