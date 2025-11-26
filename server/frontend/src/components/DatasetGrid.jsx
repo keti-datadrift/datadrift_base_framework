@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 
-export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift, onSelect }) {
+export default function DatasetGrid({
+  datasets,
+  backend,
+  refresh,
+  onEDA,
+  onDrift,
+  onSelect,
+  driftMode = false,
+  compareBase = null,
+  onSelectTarget,
+  onBack,
+  title = "데이터셋 목록",
+}) {
   const [file, setFile] = useState(null);
   const [page, setPage] = useState(1);
   const pageSize = 8;
@@ -36,23 +48,35 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* 업로드 영역 */}
+      {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">데이터셋 목록</h2>
-        <div className="flex gap-2 items-center">
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="text-xs"
-          />
+        <h2 className="text-xl font-semibold">{title}</h2>
+
+        {!driftMode && (
+          <div className="flex gap-2 items-center">
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="text-xs"
+            />
+            <button
+              onClick={upload}
+              disabled={!file}
+              className="px-3 py-2 bg-blue-600 text-white rounded-md text-xs disabled:bg-gray-300"
+            >
+              업로드
+            </button>
+          </div>
+        )}
+
+        {driftMode && (
           <button
-            onClick={upload}
-            disabled={!file}
-            className="px-3 py-2 bg-blue-600 text-white rounded-md text-xs disabled:bg-gray-300"
+            className="px-4 py-2 bg-gray-500 text-white rounded"
+            onClick={onBack}
           >
-            업로드
+            ← 뒤로가기
           </button>
-        </div>
+        )}
       </div>
 
       {/* 카드 그리드 */}
@@ -65,14 +89,12 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
             <div
               key={ds.id}
               className="bg-white border border-gray-200 rounded-lg shadow-sm p-3 flex flex-col cursor-pointer hover:border-blue-400 transition"
-              onClick={() => onSelect && onSelect(ds)}
+              onClick={() => !driftMode && onSelect && onSelect(ds)}
             >
               {/* 타입 뱃지 */}
-              <div className="text-[10px] text-gray-500 mb-1">
-                {badge}
-              </div>
+              <div className="text-[10px] text-gray-500 mb-1">{badge}</div>
 
-              {/* 썸네일 (이미지/ZIP 공통) */}
+              {/* 썸네일 */}
               {hasThumb && (
                 <div className="mb-2">
                   <img
@@ -81,14 +103,12 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
                     )}`}
                     alt="thumb"
                     className="w-full h-24 object-cover rounded-md border border-gray-100"
-                    onClick={(e) => {
-                      e.stopPropagation(); // 카드 클릭으로 Detail로 가는 것과 분리
-                    }}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
               )}
 
-              {/* 이름 / 기본정보 */}
+              {/* 이름 */}
               <div className="font-semibold text-sm truncate mb-1">
                 {ds.name}
               </div>
@@ -98,25 +118,24 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
 
               {/* 프리뷰 텍스트 */}
               <div className="flex-1 text-[11px] text-gray-600 mb-2">
+                {/* CSV */}
                 {ds.type === "csv" && ds.preview?.head && (
                   <pre className="whitespace-pre-wrap">
                     {JSON.stringify(ds.preview.head[0], null, 0).slice(0, 80)}…
                   </pre>
                 )}
-
+                {/* TEXT */}
                 {ds.type === "text" && ds.preview?.first_lines && (
                   <pre className="whitespace-pre-wrap">
                     {ds.preview.first_lines.join(" ").slice(0, 80)}…
                   </pre>
                 )}
-
+                {/* ZIP */}
                 {ds.type === "zip" && (
                   <div>
                     <div className="font-semibold text-[11px] mb-1">
                       ZIP / {ds.preview?.zip_type}
                     </div>
-                
-                    {/* Tree View: 상위 디렉토리만 요약 표시 */}
                     {ds.preview?.tree && (
                       <div className="text-[10px] text-gray-500 mt-1">
                         {ds.preview.tree.children?.map((c) => (
@@ -124,8 +143,6 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
                         ))}
                       </div>
                     )}
-                
-                    {/* 파일 개수 정보 */}
                     <div className="text-[10px] text-gray-500 mt-1">
                       files: {ds.preview?.stats?.total_files ?? 0}, images:{" "}
                       {ds.preview?.stats?.image_files ?? 0}
@@ -133,6 +150,7 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
                   </div>
                 )}
 
+                {/* 그 외 */}
                 {!["csv", "text", "zip"].includes(ds.type) && (
                   <div className="text-[11px] text-gray-400">
                     {ds.preview?.info || "미리보기 없음"}
@@ -140,44 +158,56 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
                 )}
               </div>
 
-              {/* 액션 버튼들 */}
+              {/* 액션 버튼 */}
               <div className="flex gap-1 mt-auto">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEDA(ds);
-                  }}
-                  className="flex-1 px-2 py-1 text-[11px] bg-green-600 text-white rounded"
-                >
-                  EDA
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDrift(ds);
-                  }}
-                  className="flex-1 px-2 py-1 text-[11px] bg-purple-600 text-white rounded"
-                >
-                  Drift
-                </button>
+                {!driftMode && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEDA(ds);
+                      }}
+                      className="flex-1 px-2 py-1 text-[11px] bg-green-600 text-white rounded"
+                    >
+                      EDA
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDrift(ds);
+                      }}
+                      className="flex-1 px-2 py-1 text-[11px] bg-purple-600 text-white rounded"
+                    >
+                      Drift
+                    </button>
+                  </>
+                )}
+
+                {driftMode && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectTarget(ds);
+                    }}
+                    disabled={ds.id === compareBase?.id}
+                    className="flex-1 px-2 py-1 text-[11px] bg-blue-600 text-white rounded disabled:bg-gray-300"
+                  >
+                    이 데이터셋과 비교하기
+                  </button>
+                )}
               </div>
             </div>
           );
         })}
-
-        {pageData.length === 0 && (
-          <div className="col-span-4 text-sm text-gray-400">
-            아직 업로드된 데이터셋이 없습니다.
-          </div>
-        )}
       </div>
 
       {/* 페이지네이션 */}
       <div className="flex justify-center gap-2 text-xs">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="px-2 py-1 border rounded disabled:opacity-50"
           disabled={page === 1}
+          className="px-2 py-1 border rounded disabled:opacity-50"
         >
           이전
         </button>
@@ -186,8 +216,8 @@ export default function DatasetGrid({ datasets, backend, refresh, onEDA, onDrift
         </span>
         <button
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          className="px-2 py-1 border rounded disabled:opacity-50"
           disabled={page === totalPages}
+          className="px-2 py-1 border rounded disabled:opacity-50"
         >
           다음
         </button>

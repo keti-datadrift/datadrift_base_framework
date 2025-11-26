@@ -247,3 +247,119 @@ def analyze_zip_dataset(zip_path: str) -> dict:
         "tree": tree,
         "sample_image": sample_image,
     }
+
+# ---------------------------------------------------------------------
+# YOLO / VOC / COCO 분석기 (EDA 상세)
+# ---------------------------------------------------------------------
+
+def analyze_yolo(info):
+    """
+    YOLO format:
+        extracted/
+            images/
+            labels/
+            data.yaml
+    """
+    tree = info.get("tree", {})
+    stats = info.get("stats", {})
+    classes = []
+
+    # data.yaml 분석 (클래스 이름)
+    yaml_path = None
+    for f in stats.get("all_files", []):
+        if f.endswith("data.yaml"):
+            yaml_path = f
+            break
+
+    if yaml_path and os.path.exists(yaml_path):
+        import yaml
+        with open(yaml_path, "r") as y:
+            ydata = yaml.safe_load(y)
+            classes = ydata.get("names", []) or ydata.get("names", {})
+
+    return {
+        "format": "yolo",
+        "classes": classes,
+        "num_images": stats.get("image_files", 0),
+        "num_labels": stats.get("text_files", 0),
+        "tree": tree,
+    }
+
+
+def analyze_voc(info):
+    """
+    VOC format:
+        extracted/
+            Annotations/*.xml
+            JPEGImages/*.jpg
+            ImageSets/Main/*.txt
+    """
+    stats = info.get("stats", {})
+    tree = info.get("tree", {})
+
+    # VOC XML 파싱으로 class 통계
+    import xml.etree.ElementTree as ET
+
+    class_count = {}
+
+    for f in stats.get("all_files", []):
+        if f.endswith(".xml"):
+            try:
+                tree_xml = ET.parse(f)
+                root = tree_xml.getroot()
+
+                for obj in root.findall("object"):
+                    name = obj.find("name").text.strip()
+                    class_count[name] = class_count.get(name, 0) + 1
+            except Exception:
+                pass
+
+    return {
+        "format": "voc",
+        "num_annotations": sum(class_count.values()),
+        "class_distribution": class_count,
+        "num_images": stats.get("image_files", 0),
+        "tree": tree,
+    }
+
+
+def analyze_coco(info):
+    """
+    COCO format:
+        extracted/
+            annotations/*.json
+            train2017/
+            val2017/
+    """
+    stats = info.get("stats", {})
+    tree = info.get("tree", {})
+
+    import json
+
+    class_count = {}
+    total_annotations = 0
+
+    # COCO annotation 파일 찾기
+    for f in stats.get("all_files", []):
+        if f.endswith(".json") and "annotation" in f.lower():
+            try:
+                with open(f, "r") as j:
+                    data = json.load(j)
+
+                categories = {c["id"]: c["name"] for c in data.get("categories", [])}
+
+                for ann in data.get("annotations", []):
+                    cls_id = ann["category_id"]
+                    cls_name = categories.get(cls_id, "unknown")
+                    class_count[cls_name] = class_count.get(cls_name, 0) + 1
+                    total_annotations += 1
+            except Exception:
+                pass
+
+    return {
+        "format": "coco",
+        "num_annotations": total_annotations,
+        "class_distribution": class_count,
+        "num_images": stats.get("image_files", 0),
+        "tree": tree,
+    }

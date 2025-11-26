@@ -9,7 +9,13 @@ const BACKEND = "http://localhost:8000";
 
 export default function App() {
   const [datasets, setDatasets] = useState([]);
-  const [view, setView] = useState("workspace"); // workspace | eda | drift | zipDetail
+
+  // Drift
+  const [compareBase, setCompareBase] = useState(null);
+  const [compareTarget, setCompareTarget] = useState(null);
+
+  // view modes: workspace | eda | drift | zipDetail | selectTarget
+  const [view, setView] = useState("workspace");
   const [selectedDataset, setSelectedDataset] = useState(null);
 
   const fetchDatasets = () => {
@@ -34,19 +40,35 @@ export default function App() {
             setView("eda");
           }}
           onDrift={(ds) => {
-            setSelectedDataset(ds);
-            setView("drift");
+            setCompareBase(ds);
+            setView("selectTarget");
           }}
           onSelect={(ds) => {
             if (ds.type === "zip") {
               setSelectedDataset(ds);
               setView("zipDetail");
             } else {
-              // 추후 일반 Detail Page 추가 가능
               setSelectedDataset(ds);
               setView("eda");
             }
           }}
+          driftMode={false} // 일반 Workspace 모드
+        />
+      )}
+
+      {/* 비교 대상 선택 */}
+      {view === "selectTarget" && (
+        <DatasetGrid
+          datasets={datasets}
+          backend={BACKEND}
+          title="비교 대상 데이터셋 선택"
+          driftMode={true}
+          compareBase={compareBase}
+          onSelectTarget={(ds) => {
+            setCompareTarget(ds);
+            setView("drift");
+          }}
+          onBack={() => setView("workspace")}
         />
       )}
 
@@ -58,10 +80,11 @@ export default function App() {
         />
       )}
 
-      {view === "drift" && selectedDataset && (
+      {view === "drift" && compareBase && compareTarget && (
         <DriftStudio
           backend={BACKEND}
-          dataset={selectedDataset}
+          baseDataset={compareBase}
+          targetDataset={compareTarget}
           onBack={() => setView("workspace")}
         />
       )}
