@@ -1,159 +1,133 @@
 import os
 import uuid
+import shutil
 import pandas as pd
 from sqlalchemy.orm import Session
-from PIL import Image
-import cv2
 
 from app.models import Dataset
-from app.services.dvc_service import dvc_add_file
-from app.services.utils.json_sanitize import clean_json_value
-
-# -----------------------------------------------
-# 이미지 & 비디오 썸네일 생성기
-# -----------------------------------------------
-def create_thumbnail(dtype: str, file_path: str) -> str | None:
-    """이미지/비디오 타입에 대해 128x128 썸네일을 생성"""
-    try:
-        # ----- Image -----
-        if dtype == "image":
-            img = Image.open(file_path).convert("RGB")
-            img.thumbnail((128, 128))
-            thumb_path = f"{file_path}_thumbnail.jpg"
-            img.save(thumb_path)
-            return thumb_path
-
-        # ----- Video -----
-        if dtype == "video":
-            cap = cv2.VideoCapture(file_path)
-            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-            ok, frame = cap.read()
-            cap.release()
-
-            if ok:
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                img = Image.fromarray(frame_rgb)
-                img.thumbnail((128, 128))
-                thumb_path = f"{file_path}_thumbnail.jpg"
-                img.save(thumb_path)
-                return thumb_path
-
-        return None
-
-    except Exception:
-        return None
+from app.services.dvc_service import (
+    dvc_add_file,
+    save_uploaded_dataset,
+    process_zip_dataset
+)
+from app.utils.json_sanitize import clean_json_value
 
 
-# -----------------------------------------------
-# Dataset 생성 서비스
-# -----------------------------------------------
-def create_dataset(db: Session, uploaded_file) -> Dataset:
-    """
-    파일을 data/에 저장 → DVC add → 메타DB 저장까지 처리하는 핵심 서비스
-    """
+def create_dataset(db: Session, uploaded_file):
+    # 1) 공통 저장 로직 (dataset 폴더만 생성)
+    dataset_id, raw_original_path = save_uploaded_dataset(uploaded_file)
 
-    # -----------------------------
-    # 1) 파일 로컬저장 + DVC 등록
-    # -----------------------------
-    file_path, version_info = dvc_add_file(uploaded_file)
-
-    # 파일 확장자 판별
     filename = uploaded_file.filename
-    _, ext = os.path.splitext(filename)
-    ext = ext.lower()
+    ext = os.path.splitext(filename)[1].lower()
 
-    # -----------------------------
-    # 2) 데이터 타입 분류
-    # -----------------------------
-    if ext in [".csv"]:
-        dtype = "csv"
-    elif ext in [".txt", ".md", ".json"]:
-        dtype = "text"
-    elif ext in [".png", ".jpg", ".jpeg", ".bmp"]:
-        dtype = "image"
-    elif ext in [".mp4", ".mov", ".avi", ".mkv"]:
-        dtype = "video"
-    else:
-        dtype = "unknown"
+    dtype = {
+        ".zip": "zip",
+        ".csv": "csv",
+        ".txt": "text",
+        ".json": "text",
+        ".png": "image",
+        ".jpg": "image",
+        ".jpeg": "image",
+    }.get(ext, "unknown")
 
-    # -----------------------------
-    # 3) CSV면 pandas EDA 일부 수행
-    # -----------------------------
-    rows = 0
-    cols = 0
-    missing_rate = {}
     preview = {}
+    rows, cols = 0, 0
 
-    if dtype == "csv":
-        df = pd.read_csv(file_path)
+    dataset_dir = os.path.dirname(raw_original_path)
 
-        # NaN → safe JSON
-        try:
-            df = df.replace([float("inf"), float("-inf")], None)
-            df = df.fillna(None)
-        except:
-            pass
-            
+    # ============================================================
+    # ZIP 처리
+    # ============================================================
+    if dtype == "zip":
+        info = process_zip_dataset(dataset_id, raw_original_path)
+
+        preview = {
+            "zip_type": info["zip_type"],
+            "tree": info["tree"],
+            "stats": info["stats"],
+            "images": info.get("images", [])
+        }
+
+        dvc_path = dataset_dir  # ZIP은 전체 폴더를 관리
+
+    # ============================================================
+    # CSV 처리 (단일 파일)
+    # ============================================================
+    elif dtype == "csv":
+        # raw.csv 로 고정 저장
+        csv_path = os.path.join(dataset_dir, "raw.csv")
+        shutil.move(raw_original_path, csv_path)
+
+        # DVC ADD (단일 파일만 추적)
+        dvc_add_file(csv_path)
+
+        # CSV 분석
+        df = pd.read_csv(csv_path)
         rows, cols = df.shape
+        preview = {"head": df.head(5).replace([float("inf"), -float("inf")], None).to_dict(orient="records")}
 
-        missing_dict = df.isna().mean().to_dict()
-        missing_rate = clean_json_value(missing_dict)
+        dvc_path = csv_path  # CSV는 파일 경로만 dvc_path로 저장
 
-        preview_head = df.head(5).to_dict(orient="records")
-        preview = clean_json_value({"head": preview_head})
-
+    # ============================================================
+    # TEXT / JSON 처리
+    # ============================================================
     elif dtype == "text":
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+        text_path = os.path.join(dataset_dir, "raw.txt")
+        shutil.move(raw_original_path, text_path)
+
+        # DVC ADD
+        dvc_add_file(text_path)
+
+        with open(text_path, "r", errors="ignore") as f:
             lines = f.readlines()
-            preview = {"first_lines": lines[:5]}
-            rows = len(lines)
-            cols = 1
 
+        preview = {"first_lines": lines[:20]}
+
+        dvc_path = text_path
+
+    # ============================================================
+    # IMAGE 처리 (png/jpg/jpeg)
+    # ============================================================
     elif dtype == "image":
-        img = Image.open(file_path)
-        rows = img.height
-        cols = img.width
-        preview = {"info": f"{cols}x{rows}"}
+        img_path = os.path.join(dataset_dir, filename)
+        shutil.move(raw_original_path, img_path)
 
-    elif dtype == "video":
-        cap = cv2.VideoCapture(file_path)
-        rows = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        cols = int(cap.get(cv2.CAP_PROP_FPS))
-        preview = {"frames": rows, "fps": cols}
-        cap.release()
+        dvc_add_file(img_path)
 
-    # -----------------------------
-    # 4) 썸네일 생성 (image/video)
-    # -----------------------------
-    thumbnail = create_thumbnail(dtype, file_path)
-    if thumbnail:
-        if isinstance(preview, dict):
-            preview["thumbnail"] = thumbnail
-        else:
-            preview = {"thumbnail": thumbnail}
+        preview = {
+            "image_path": img_path,
+            "info": "single image dataset"
+        }
 
-    # -----------------------------
-    # 5) Dataset 엔티티 구성
-    # -----------------------------
+        dvc_path = img_path
+
+    # ============================================================
+    # 기타 포맷
+    # ============================================================
+    else:
+        # 그래도 파일은 그대로 저장해둔다
+        dvc_add_file(raw_original_path)
+        preview = {"info": f"unsupported file type: {ext}"}
+        dvc_path = raw_original_path
+
+    # ============================================================
+    # Dataset DB 저장
+    # ============================================================
+
     dataset = Dataset(
-        id=str(uuid.uuid4()),
+        id=dataset_id,
         name=filename,
         type=dtype,
-        size=os.path.getsize(file_path),
+        dvc_path=dvc_path,    # ← 여기! 타입별로 저장된 dvc_path 사용
+        version="v1",
+        preview=clean_json_value(preview),
         rows=rows,
         cols=cols,
-        missing_rate=missing_rate,
-        preview=preview,
-        dvc_path=file_path,
-        version="v1",
     )
 
-    # -----------------------------
-    # 6) DB 저장
-    # -----------------------------
     db.add(dataset)
     db.commit()
     db.refresh(dataset)
 
     return dataset
+

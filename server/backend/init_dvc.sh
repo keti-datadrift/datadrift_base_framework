@@ -17,6 +17,6 @@ if [ ! -f "data.dvc" ]; then
 fi
 
 # 로컬 remote를 기본으로 설정
-dvc remote add -d localstore ./dvcstore || true
+dvc remote add -d localstore ./dvc_storage || true
 
 echo "DVC initialized."
