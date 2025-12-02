@@ -4,6 +4,7 @@ from .database import Base, engine
 from .routers import datasets, eda, drift
 from .routers import report
 from .routers import files
+from .routers import ws
 
 # 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -21,6 +22,7 @@ app.include_router(datasets.router)
 app.include_router(eda.router)
 app.include_router(drift.router)
 app.include_router(files.router)
+app.include_router(ws.router)
 
 @app.get("/")
 def root():

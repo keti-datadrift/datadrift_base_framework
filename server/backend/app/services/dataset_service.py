@@ -4,11 +4,11 @@ import shutil
 import pandas as pd
 from sqlalchemy.orm import Session
 
-from app.models import Dataset
+from app.models import Dataset, EDAResult, DriftResult
 from app.services.dvc_service import (
-    dvc_add_file,
     save_uploaded_dataset,
-    process_zip_dataset
+    process_zip_dataset,
+    BASE_DATA_DIR
 )
 from app.utils.json_sanitize import clean_json_value
 
@@ -58,15 +58,12 @@ def create_dataset(db: Session, uploaded_file):
         csv_path = os.path.join(dataset_dir, "raw.csv")
         shutil.move(raw_original_path, csv_path)
 
-        # DVC ADD (단일 파일만 추적)
-        dvc_add_file(csv_path)
-
         # CSV 분석
         df = pd.read_csv(csv_path)
         rows, cols = df.shape
         preview = {"head": df.head(5).replace([float("inf"), -float("inf")], None).to_dict(orient="records")}
 
-        dvc_path = csv_path  # CSV는 파일 경로만 dvc_path로 저장
+        dvc_path = csv_path
 
     # ============================================================
     # TEXT / JSON 처리
@@ -74,9 +71,6 @@ def create_dataset(db: Session, uploaded_file):
     elif dtype == "text":
         text_path = os.path.join(dataset_dir, "raw.txt")
         shutil.move(raw_original_path, text_path)
-
-        # DVC ADD
-        dvc_add_file(text_path)
 
         with open(text_path, "r", errors="ignore") as f:
             lines = f.readlines()
@@ -92,8 +86,6 @@ def create_dataset(db: Session, uploaded_file):
         img_path = os.path.join(dataset_dir, filename)
         shutil.move(raw_original_path, img_path)
 
-        dvc_add_file(img_path)
-
         preview = {
             "image_path": img_path,
             "info": "single image dataset"
@@ -105,8 +97,6 @@ def create_dataset(db: Session, uploaded_file):
     # 기타 포맷
     # ============================================================
     else:
-        # 그래도 파일은 그대로 저장해둔다
-        dvc_add_file(raw_original_path)
         preview = {"info": f"unsupported file type: {ext}"}
         dvc_path = raw_original_path
 
@@ -118,7 +108,7 @@ def create_dataset(db: Session, uploaded_file):
         id=dataset_id,
         name=filename,
         type=dtype,
-        dvc_path=dvc_path,    # ← 여기! 타입별로 저장된 dvc_path 사용
+        dvc_path=dvc_path,
         version="v1",
         preview=clean_json_value(preview),
         rows=rows,
@@ -131,3 +121,52 @@ def create_dataset(db: Session, uploaded_file):
 
     return dataset
 
+
+def delete_dataset(db: Session, dataset_id: str):
+    """
+    데이터셋과 관련된 모든 데이터를 삭제합니다.
+    
+    1. 관련 EDA 결과 삭제
+    2. 관련 Drift 결과 삭제 (base 또는 target으로 사용된 경우)
+    3. 파일 시스템에서 데이터셋 폴더 삭제
+    4. Dataset DB 레코드 삭제
+    """
+    # 1) 데이터셋 존재 확인
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        return {"success": False, "message": "데이터셋을 찾을 수 없습니다."}
+
+    deleted_info = {
+        "dataset_id": dataset_id,
+        "dataset_name": dataset.name,
+        "eda_results_deleted": 0,
+        "drift_results_deleted": 0,
+        "files_deleted": False
+    }
+
+    # 2) 관련 EDA 결과 삭제
+    eda_count = db.query(EDAResult).filter(EDAResult.dataset_id == dataset_id).delete()
+    deleted_info["eda_results_deleted"] = eda_count
+
+    # 3) 관련 Drift 결과 삭제 (base_id 또는 target_id가 해당 dataset_id인 경우)
+    drift_count = db.query(DriftResult).filter(
+        (DriftResult.base_id == dataset_id) | (DriftResult.target_id == dataset_id)
+    ).delete(synchronize_session='fetch')
+    deleted_info["drift_results_deleted"] = drift_count
+
+    # 4) 파일 시스템에서 데이터셋 폴더 삭제
+    dataset_dir = os.path.join(BASE_DATA_DIR, dataset_id)
+    if os.path.exists(dataset_dir):
+        try:
+            shutil.rmtree(dataset_dir)
+            deleted_info["files_deleted"] = True
+        except Exception as e:
+            # 파일 삭제 실패해도 DB는 삭제 진행
+            deleted_info["files_deleted"] = False
+            deleted_info["file_error"] = str(e)
+
+    # 5) Dataset 레코드 삭제
+    db.delete(dataset)
+    db.commit()
+
+    return {"success": True, "deleted": deleted_info}

@@ -1,13 +1,22 @@
+# Core dependencies
 fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
 pandas
 python-multipart
-dvc
 evidently
 langdetect
 pdfkit
 pillow
 jinja2
 pyyaml
+celery[redis]
+
+# Analysis dependencies (Fallback 분석기용)
+numpy>=1.21.0
+scipy>=1.7.0
+scikit-learn>=1.0.0
+
+# Note: ddoc-plugin-vision은 Docker 빌드 시 wheel로 설치됩니다.
+# 로컬 개발 시: pip install -e ../ddoc-plugin-vision

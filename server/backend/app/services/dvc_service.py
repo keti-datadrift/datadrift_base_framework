@@ -2,6 +2,7 @@ import os
 import uuid
 import shutil
 import subprocess
+from pathlib import Path
 
 BASE_DATA_DIR = "dvc_storage/datasets"
 
@@ -61,26 +62,18 @@ def dvc_add_file(file_path: str):
 def process_zip_dataset(dataset_id: str, zip_path: str):
     """
     ZIP 파일을 처리:
-      1) extracted/ 로 압축 해제
-      2) 전체 dataset_dir 을 DVC로 관리
-      3) ZIP 구조 분석 결과 반환
+      1) zip_resolver를 통해 압축 해제 + 정리 + 평탄화
+      2) ZIP 구조 분석 결과 반환
+    
+    Note: 
+      - 압축 해제, 불필요한 파일 제거(__MACOSX, .DS_Store 등), 
+        이중 구조 평탄화 로직은 zip_resolver._extract_zip에서 처리됨
+      - DVC는 현재 사용하지 않음 (2차 작업에서 ddoc 연동 시 처리)
     """
-    import zipfile
     from app.services.zip_resolver import analyze_zip_dataset
 
-    dataset_dir = os.path.dirname(zip_path)
-    extracted_dir = os.path.join(dataset_dir, "extracted")
-    ensure_dir(extracted_dir)
-
-    # 압축 해제
-    with zipfile.ZipFile(zip_path, "r") as z:
-        z.extractall(extracted_dir)
-
-    # ZIP 구조 분석
+    # ZIP 분석 (내부적으로 압축 해제 + 정리 + 평탄화 수행)
     info = analyze_zip_dataset(zip_path)
-
-    # ZIP은 폴더 전체 dvc 관리
-    run_dvc(["dvc", "add", dataset_dir])
 
     return info
 

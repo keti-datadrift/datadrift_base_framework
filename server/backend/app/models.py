@@ -39,3 +39,21 @@ class DriftResult(Base):
     feature_drift = Column(JSON)
     overall = Column(Float)
     created_at = Column(DateTime, server_default=func.now())
+
+
+class AnalysisTask(Base):
+    """분석 작업 상태 추적 테이블"""
+    __tablename__ = "analysis_tasks"
+
+    id = Column(String, primary_key=True)
+    dataset_id = Column(String, index=True)
+    target_id = Column(String, nullable=True, index=True)  # drift 분석용
+    task_type = Column(String)  # eda, image_analysis, clustering, drift
+    status = Column(String, default="pending")  # pending/in_progress/completed/failed
+    progress = Column(Float, default=0.0)  # 0.0 ~ 1.0
+    message = Column(String, nullable=True)
+    error = Column(String, nullable=True)
+    task_metadata = Column(JSON, nullable=True)  # ETA, 처리 파일 수 등
+    created_at = Column(DateTime, server_default=func.now())
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
