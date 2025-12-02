@@ -3,9 +3,9 @@ set -e
 
 cd "$(dirname "$0")"
 
-# dvc 초기화
+# dvc 초기화 (Docker 환경에서는 --no-scm 사용)
 if [ ! -d ".dvc" ]; then
-  dvc init
+  dvc init --no-scm
 fi
 
 mkdir -p data

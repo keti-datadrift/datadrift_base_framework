@@ -1,15 +1,18 @@
-version: "3.9"
-
 services:
   backend:
-    build: ./backend
+    build:
+      context: .                          # server/ 폴더를 context로
+      dockerfile: ./backend/Dockerfile    # Dockerfile 경로 명시
     container_name: analyzer-backend
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./backend/app:/app/app            # 개발 시 핫리로드용
+      - ./dvc_storage:/app/dvc_storage    # DVC 스토리지
     working_dir: /app
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      - DDOC_ENABLED=${DDOC_ENABLED:-false}
     depends_on:
       - redis
 
@@ -20,6 +23,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+      - /app/node_modules              # node_modules 제외
     working_dir: /app
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
@@ -27,8 +31,15 @@ services:
     image: redis:alpine
 
   worker:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    container_name: analyzer-worker
     command: celery -A app.services.tasks worker --loglevel=info
+    volumes:
+      - ./dvc_storage:/app/dvc_storage
+    environment:
+      - DDOC_ENABLED=${DDOC_ENABLED:-false}
     depends_on:
       - backend
       - redis

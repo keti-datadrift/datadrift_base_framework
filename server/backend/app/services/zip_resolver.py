@@ -1,4 +1,5 @@
 import os
+import shutil
 import zipfile
 import glob
 import yaml  # pip install pyyaml
@@ -8,31 +9,196 @@ TEXT_EXT = {".txt", ".md", ".jsonl"}
 CSV_EXT = {".csv", ".tsv"}
 VIDEO_EXT = {".mp4", ".mov", ".avi", ".mkv"}
 
+# 제거할 불필요한 파일/폴더
+JUNK_FOLDERS = {"__MACOSX", ".git", ".svn", "__pycache__", ".idea"}
+JUNK_FILES = {".DS_Store", "Thumbs.db", ".gitkeep", ".gitignore"}
+JUNK_PREFIXES = ("._",)  # macOS 리소스 포크 파일
+
+
+def _is_junk(name: str) -> bool:
+    """불필요한 파일/폴더인지 확인"""
+    if name in JUNK_FOLDERS or name in JUNK_FILES:
+        return True
+    if any(name.startswith(prefix) for prefix in JUNK_PREFIXES):
+        return True
+    return False
+
 
 # ------------------------------------------------------------
-# ZIP 해제
+# ZIP 해제 + 정리 + 평탄화
 # ------------------------------------------------------------
-def _extract_zip(zip_path: str) -> str:
-    dest = f"{zip_path}_extracted"
+def _extract_zip(zip_path: str, dest: str = None) -> str:
+    """
+    ZIP 파일을 압축 해제하고 정리합니다.
+    
+    Args:
+        zip_path: ZIP 파일 경로
+        dest: 압축 해제 대상 디렉토리 (None이면 자동 생성)
+    
+    Returns:
+        압축 해제된 디렉토리 경로
+    """
+    if dest is None:
+        dest = f"{zip_path}_extracted"
+    
     if not os.path.exists(dest):
         os.makedirs(dest, exist_ok=True)
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(dest)
+        
+        # 압축 해제 후 정리
+        _cleanup_extracted(dest)
+        _flatten_structure(dest, os.path.splitext(os.path.basename(zip_path))[0])
+    
     return dest
 
 
+def _cleanup_extracted(directory: str):
+    """
+    압축 해제된 디렉토리에서 불필요한 파일/폴더 제거
+    
+    제거 대상:
+    - __MACOSX/ 폴더
+    - .DS_Store 파일
+    - ._ 로 시작하는 파일 (macOS 리소스 포크)
+    - Thumbs.db (Windows)
+    """
+    # 1. 루트 레벨 불필요한 폴더 먼저 제거
+    for item in os.listdir(directory):
+        item_path = os.path.join(directory, item)
+        if item in JUNK_FOLDERS and os.path.isdir(item_path):
+            shutil.rmtree(item_path)
+            print(f"🧹 Removed junk folder: {item}")
+    
+    # 2. 재귀적으로 불필요한 파일/폴더 제거
+    for root, dirs, files in os.walk(directory, topdown=False):
+        # 불필요한 폴더 제거
+        for d in dirs:
+            if d in JUNK_FOLDERS:
+                dir_path = os.path.join(root, d)
+                if os.path.exists(dir_path):
+                    shutil.rmtree(dir_path)
+        
+        # 불필요한 파일 제거
+        for f in files:
+            if _is_junk(f):
+                file_path = os.path.join(root, f)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+
+
+def _flatten_structure(directory: str, zip_stem: str):
+    """
+    이중 중첩 구조를 평탄화합니다.
+    
+    예시:
+        Before: extracted/archive/archive/train/
+        After:  extracted/train/
+    
+    Args:
+        directory: 압축 해제된 디렉토리
+        zip_stem: ZIP 파일 이름 (확장자 제외)
+    """
+    # 숨김 파일/불필요한 파일 제외한 항목 목록
+    items = [
+        item for item in os.listdir(directory) 
+        if not item.startswith('.') and item not in JUNK_FOLDERS
+    ]
+    
+    # 정확히 하나의 폴더만 있는 경우 평탄화 검토
+    if len(items) == 1:
+        single_item = os.path.join(directory, items[0])
+        if os.path.isdir(single_item):
+            # ZIP 파일명과 같거나, 이중 중첩인 경우 평탄화
+            if items[0] == zip_stem or _is_double_nested(single_item):
+                print(f"📂 Flattening nested structure: {items[0]}/")
+                _move_contents_up(single_item, directory)
+
+
+def _is_double_nested(folder: str) -> bool:
+    """
+    이중 중첩 구조인지 확인합니다.
+    
+    폴더 안에 하나의 폴더만 있고, 그 폴더가 실제 데이터를 담고 있는지 확인
+    """
+    items = [
+        item for item in os.listdir(folder) 
+        if not item.startswith('.') and item not in JUNK_FOLDERS
+    ]
+    
+    if len(items) == 1 and os.path.isdir(os.path.join(folder, items[0])):
+        # 하위 폴더에 실제 데이터가 있는지 확인
+        sub_folder = os.path.join(folder, items[0])
+        sub_items = [
+            item.lower() for item in os.listdir(sub_folder) 
+            if not item.startswith('.')
+        ]
+        data_indicators = ['images', 'labels', 'train', 'valid', 'test', 'data.yaml', 'annotations']
+        return any(indicator in sub_items for indicator in data_indicators)
+    
+    return False
+
+
+def _move_contents_up(source_dir: str, target_dir: str):
+    """
+    source_dir의 내용물을 target_dir로 이동하고 source_dir 삭제
+    """
+    import uuid
+    
+    # 임시 디렉토리로 먼저 이동 (이름 충돌 방지)
+    temp_name = f"_temp_{uuid.uuid4().hex[:8]}"
+    temp_dir = os.path.join(os.path.dirname(source_dir), temp_name)
+    os.rename(source_dir, temp_dir)
+    
+    # 내용물을 상위로 이동
+    for item in os.listdir(temp_dir):
+        src = os.path.join(temp_dir, item)
+        dst = os.path.join(target_dir, item)
+        
+        # 충돌 시 덮어쓰기
+        if os.path.exists(dst):
+            if os.path.isdir(dst):
+                shutil.rmtree(dst)
+            else:
+                os.remove(dst)
+        
+        shutil.move(src, dst)
+    
+    # 빈 임시 디렉토리 제거
+    if os.path.exists(temp_dir):
+        try:
+            os.rmdir(temp_dir)
+        except OSError:
+            shutil.rmtree(temp_dir)
+
+
 # ------------------------------------------------------------
-# Tree view 생성기
+# Tree view 생성기 (불필요한 파일/폴더 필터링)
 # ------------------------------------------------------------
 def _build_tree(path: str) -> dict:
+    """
+    디렉토리 트리 구조를 생성합니다.
+    불필요한 파일/폴더(__MACOSX, .DS_Store 등)는 제외합니다.
+    """
     name = os.path.basename(path)
+    
+    # 불필요한 항목 필터링
+    if _is_junk(name):
+        return None
+    
     if os.path.isfile(path):
         return {"name": name}
 
     children = []
     for item in sorted(os.listdir(path)):
+        # 불필요한 항목 스킵
+        if _is_junk(item):
+            continue
+        
         full = os.path.join(path, item)
-        children.append(_build_tree(full))
+        child = _build_tree(full)
+        if child is not None:
+            children.append(child)
 
     return {"name": name, "children": children}
 
@@ -142,12 +308,21 @@ def analyze_zip_dataset(zip_path: str) -> dict:
     sample_image = None
 
     for root, dirs, files in os.walk(extracted):
+        # 불필요한 디렉토리 탐색 스킵 (in-place 수정)
+        dirs[:] = [d for d in dirs if not _is_junk(d)]
+        
         rel = os.path.relpath(root, extracted)
         if rel != ".":
             top = rel.split(os.sep)[0]
-            stats["subdirs"].add(top)
+            # 불필요한 폴더 제외
+            if not _is_junk(top):
+                stats["subdirs"].add(top)
 
         for f in files:
+            # 불필요한 파일 스킵
+            if _is_junk(f):
+                continue
+            
             stats["total_files"] += 1
             ext = os.path.splitext(f)[1].lower()
             full = os.path.join(root, f)

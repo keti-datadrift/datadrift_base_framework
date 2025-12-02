@@ -94,6 +94,7 @@ export default function App() {
           backend={BACKEND}
           dataset={selectedDataset}
           onBack={() => setView("workspace")}
+          onOpenEDA={() => setView("eda")}
         />
       )}
     </Layout>
