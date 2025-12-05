@@ -63,6 +63,7 @@ class AnalyzerService:
     
     @property
     def emb_analyzer(self):
+
         """EmbeddingAnalyzer 인스턴스를 반환합니다 (지연 로딩)"""
         if self._emb_analyzer is None:
             if self.use_ddoc_plugin:
@@ -201,7 +202,7 @@ class FallbackEmbeddingAnalyzer:
         self.device = device
         self.model = None
     
-    def load_model(self, model_name: str = "ViT-B/16"):
+    def load_model(self, model_name: str = "ViT-B/16"): # ViT-B/16
         print(f"⚠️ FallbackEmbeddingAnalyzer: CLIP 모델 로드 건너뜀")
         print(f"   (ddoc-plugin-vision 설치 시 실제 CLIP 모델 사용 가능)")
     
