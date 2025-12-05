@@ -317,6 +317,7 @@ def run_image_clustering(directory: str, save_embeddings: bool = True) -> Option
     Returns:
         dict: 클러스터링 결과 (save_embeddings=True면 원본 임베딩 포함)
     """
+
     try:
         image_files = collect_image_files(directory)
         
