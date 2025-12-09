@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ComposedChart, Area, Line,
@@ -21,12 +22,21 @@ const CHART_COLORS = {
   delta: "#F59E0B",
 };
 
-export default function DriftStudio({ backend, baseDataset, targetDataset, onBack }) {
+// 리버스 프록시 환경: API 경로에 이미 /workspace/ 포함되어 있음
+const WORKSPACE_API = "";
+
+export default function DriftStudio({ backend, baseDataset, targetDataset, onBack, onOpenWorkspace }) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [drift, setDrift] = useState(null);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [taskId, setTaskId] = useState(null);
+  
+  // 워크스페이스 생성 관련 상태
+  const [selectedBase, setSelectedBase] = useState(true);   // 기본적으로 base 선택
+  const [selectedTarget, setSelectedTarget] = useState(false);
+  const [creatingWorkspace, setCreatingWorkspace] = useState(false);
 
   // 비동기 드리프트 분석 시작
   const startDriftAnalysis = useCallback(async () => {
@@ -96,6 +106,57 @@ export default function DriftStudio({ backend, baseDataset, targetDataset, onBac
 
     setLoading(false);
   }, [backend, baseDataset, targetDataset]);
+
+  // 워크스페이스 생성 핸들러
+  const handleCreateWorkspaces = async () => {
+    if (!selectedBase && !selectedTarget) {
+      alert("최소 하나의 데이터셋을 선택해주세요.");
+      return;
+    }
+
+    setCreatingWorkspace(true);
+    setError(null);
+
+    try {
+      const workspaceIds = [];
+
+      // Base 워크스페이스 생성
+      if (selectedBase && baseDataset) {
+        console.log("Base 워크스페이스 생성 중...");
+        const baseRes = await axios.post(`${WORKSPACE_API}/workspace/create`, {
+          dataset_id: baseDataset.id,
+          dataset_type: "base",
+          source_path: baseDataset.path || `/data/${baseDataset.id}`,
+          name: `${baseDataset.name}_workspace`,
+        });
+        workspaceIds.push(baseRes.data.workspace_id);
+        console.log("✅ Base 워크스페이스 생성 완료:", baseRes.data.workspace_id);
+      }
+
+      // Target 워크스페이스 생성
+      if (selectedTarget && targetDataset) {
+        console.log("Target 워크스페이스 생성 중...");
+        const targetRes = await axios.post(`${WORKSPACE_API}/workspace/create`, {
+          dataset_id: targetDataset.id,
+          dataset_type: "target",
+          source_path: targetDataset.path || `/data/${targetDataset.id}`,
+          name: `${targetDataset.name}_workspace`,
+        });
+        workspaceIds.push(targetRes.data.workspace_id);
+        console.log("✅ Target 워크스페이스 생성 완료:", targetRes.data.workspace_id);
+      }
+
+      // 워크스페이스 페이지로 이동
+      const baseId = selectedBase ? baseDataset.id : null;
+      const targetId = selectedTarget ? targetDataset.id : null;
+      navigate(`/workspace?base=${baseId || ""}&target=${targetId || ""}`);
+    } catch (err) {
+      console.error("❌ 워크스페이스 생성 실패:", err);
+      setError(`워크스페이스 생성 중 오류가 발생했습니다: ${err.response?.data?.detail || err.message}`);
+    } finally {
+      setCreatingWorkspace(false);
+    }
+  };
 
   useEffect(() => {
     startDriftAnalysis();
@@ -191,55 +252,110 @@ export default function DriftStudio({ backend, baseDataset, targetDataset, onBac
 
       <h1 className="text-xl font-semibold mb-2">Dataset Drift 분석</h1>
 
-      {/* 메타 정보 */}
-      <div className="mb-4 p-4 border rounded bg-gray-50 flex gap-8">
-        <div>
-          <div className="text-xs text-gray-500">Base</div>
-          <div className="font-medium">{drift.meta?.base?.name || baseDataset?.name}</div>
+      {/* 메타 정보 & 워크스페이스 생성 */}
+      <div className="mb-4 p-4 border rounded bg-gray-50">
+        <div className="flex gap-8 items-center mb-4">
+          <div>
+            <div className="text-xs text-gray-500">Base</div>
+            <div className="font-medium">{drift.meta?.base?.name || baseDataset?.name}</div>
+          </div>
+          <div className="text-2xl text-gray-300">→</div>
+          <div>
+            <div className="text-xs text-gray-500">Target</div>
+            <div className="font-medium">{drift.meta?.target?.name || targetDataset?.name}</div>
+          </div>
         </div>
-        <div className="text-2xl text-gray-300">→</div>
-        <div>
-          <div className="text-xs text-gray-500">Target</div>
-          <div className="font-medium">{drift.meta?.target?.name || targetDataset?.name}</div>
+        
+        {/* 워크스페이스 생성 섹션 */}
+        <div className="border-t pt-4 flex items-center gap-6">
+          <div className="text-sm font-medium text-gray-700">워크스페이스 생성:</div>
+          
+          {/* Base 선택 */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selectedBase}
+              onChange={(e) => setSelectedBase(e.target.checked)}
+              className="w-4 h-4 text-blue-600 rounded"
+            />
+            <span className="text-sm">Base ({baseDataset?.name})</span>
+          </label>
+          
+          {/* Target 선택 */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selectedTarget}
+              onChange={(e) => setSelectedTarget(e.target.checked)}
+              className="w-4 h-4 text-purple-600 rounded"
+            />
+            <span className="text-sm">Target ({targetDataset?.name})</span>
+          </label>
+          
+          <div className="flex-1"></div>
+          
+          {/* 생성 버튼 */}
+          <button
+            onClick={handleCreateWorkspaces}
+            disabled={creatingWorkspace || (!selectedBase && !selectedTarget)}
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {creatingWorkspace ? (
+              <>
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                <span>생성 중...</span>
+              </>
+            ) : (
+              <>
+                <span>📦</span>
+                <span>워크스페이스 생성</span>
+              </>
+            )}
+          </button>
+        </div>
+        
+        {/* 안내 메시지 */}
+        <div className="mt-3 text-xs text-gray-500">
+          💡 선택한 데이터셋에 대해 워크스페이스가 생성됩니다. 생성 후 데이터 탐색, 변형, 분석, 실험을 수행할 수 있습니다.
         </div>
       </div>
 
-      {/* 탭 네비게이션 */}
-      {hasAdvancedDrift && (
-        <div className="flex gap-2 mb-4 border-b">
-          <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
-            개요
-          </TabButton>
-          <TabButton active={activeTab === "attributes"} onClick={() => setActiveTab("attributes")}>
-            속성 드리프트
-          </TabButton>
-          <TabButton active={activeTab === "embedding"} onClick={() => setActiveTab("embedding")}>
-            임베딩 드리프트
-          </TabButton>
-          <TabButton active={activeTab === "details"} onClick={() => setActiveTab("details")}>
-            상세 정보
-          </TabButton>
-        </div>
-      )}
+          {/* 탭 네비게이션 */}
+          {hasAdvancedDrift && (
+            <div className="flex gap-2 mb-4 border-b">
+              <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")}>
+                개요
+              </TabButton>
+              <TabButton active={activeTab === "attributes"} onClick={() => setActiveTab("attributes")}>
+                속성 드리프트
+              </TabButton>
+              <TabButton active={activeTab === "embedding"} onClick={() => setActiveTab("embedding")}>
+                임베딩 드리프트
+              </TabButton>
+              <TabButton active={activeTab === "details"} onClick={() => setActiveTab("details")}>
+                상세 정보
+              </TabButton>
+            </div>
+          )}
 
-      {/* ZIP vs ZIP */}
-      {type === "zip_zip" && (
-        <>
-          {activeTab === "overview" && <ZipOverviewTab result={result} advancedDrift={advancedDrift} />}
-          {activeTab === "attributes" && advancedDrift && <AttributeDriftTab advancedDrift={advancedDrift} />}
-          {activeTab === "embedding" && advancedDrift && <EmbeddingDriftTab advancedDrift={advancedDrift} />}
-          {activeTab === "details" && <DetailsTab result={result} advancedDrift={advancedDrift} />}
-        </>
-      )}
+          {/* ZIP vs ZIP */}
+          {type === "zip_zip" && (
+            <>
+              {activeTab === "overview" && <ZipOverviewTab result={result} advancedDrift={advancedDrift} />}
+              {activeTab === "attributes" && advancedDrift && <AttributeDriftTab advancedDrift={advancedDrift} />}
+              {activeTab === "embedding" && advancedDrift && <EmbeddingDriftTab advancedDrift={advancedDrift} />}
+              {activeTab === "details" && <DetailsTab result={result} advancedDrift={advancedDrift} />}
+            </>
+          )}
 
-      {/* CSV vs CSV */}
-      {type === "csv_csv" && <CSVDriftView result={result} />}
+          {/* CSV vs CSV */}
+          {type === "csv_csv" && <CSVDriftView result={result} />}
 
-      {/* Unsupported */}
-      {type === "unsupported" && (
-        <div className="p-4 text-red-500 bg-red-50 rounded">
-          ⚠ 이 조합의 Drift 분석은 현재 지원되지 않습니다.
-        </div>
+          {/* Unsupported */}
+          {type === "unsupported" && (
+            <div className="p-4 text-red-500 bg-red-50 rounded">
+              ⚠ 이 조합의 Drift 분석은 현재 지원되지 않습니다.
+            </div>
       )}
     </div>
   );

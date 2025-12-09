@@ -28,6 +28,13 @@ Thumbs.db
 dvc_storage/
 *.dvc
 
+# Workspace data (Docker volume mounted)
+workspaces/
+mlruns/
+
+# Cursor IDE assets
+assets/
+
 # Database
 *.db
 *.sqlite

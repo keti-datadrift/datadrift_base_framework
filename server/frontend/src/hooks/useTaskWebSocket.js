@@ -43,7 +43,7 @@ export function useTaskWebSocket(backend, taskId, options = {}) {
   // taskId와 backend 변경 시에만 연결/해제
   useEffect(() => {
     // taskId가 없으면 연결 안 함
-    if (!backend || !taskId) {
+    if (!taskId) {
       return;
     }
 
@@ -57,10 +57,19 @@ export function useTaskWebSocket(backend, taskId, options = {}) {
       wsRef.current = null;
     }
     
-    // WebSocket URL 생성
-    const wsProtocol = backend.startsWith('https') ? 'wss' : 'ws';
-    const wsBase = backend.replace(/^https?/, wsProtocol);
-    const wsUrl = `${wsBase}/ws/task/${taskId}`;
+    // WebSocket URL 생성 (상대 경로 지원)
+    const getWsUrl = () => {
+      // 상대 경로인 경우 현재 호스트 기준으로 생성
+      if (!backend || backend.startsWith('/')) {
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${wsProtocol}//${window.location.host}/ws/task/${taskId}`;
+      }
+      // 절대 경로인 경우 기존 방식
+      const wsProtocol = backend.startsWith('https') ? 'wss' : 'ws';
+      const wsBase = backend.replace(/^https?/, wsProtocol);
+      return `${wsBase}/ws/task/${taskId}`;
+    };
+    const wsUrl = getWsUrl();
 
     // 연결 함수 (재연결용)
     const createConnection = () => {
@@ -152,7 +161,7 @@ export function useTaskWebSocket(backend, taskId, options = {}) {
       }
       setIsConnected(false);
     };
-  }, [backend, taskId, autoReconnect]); // 콜백 의존성 제거!
+  }, [taskId, autoReconnect]); // backend는 상대 경로로 고정, 콜백 의존성 제거!
 
   // 수동 연결 해제
   const disconnect = useCallback(() => {
@@ -190,11 +199,19 @@ export function useDatasetTasksWebSocket(backend, datasetId) {
   const wsRef = useRef(null);
 
   useEffect(() => {
-    if (!backend || !datasetId) return;
+    if (!datasetId) return;
 
-    const wsProtocol = backend.startsWith('https') ? 'wss' : 'ws';
-    const wsBase = backend.replace(/^https?/, wsProtocol);
-    const wsUrl = `${wsBase}/ws/dataset/${datasetId}`;
+    // WebSocket URL 생성 (상대 경로 지원)
+    const getWsUrl = () => {
+      if (!backend || backend.startsWith('/')) {
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${wsProtocol}//${window.location.host}/ws/dataset/${datasetId}`;
+      }
+      const wsProtocol = backend.startsWith('https') ? 'wss' : 'ws';
+      const wsBase = backend.replace(/^https?/, wsProtocol);
+      return `${wsBase}/ws/dataset/${datasetId}`;
+    };
+    const wsUrl = getWsUrl();
 
     try {
       const ws = new WebSocket(wsUrl);
@@ -232,7 +249,7 @@ export function useDatasetTasksWebSocket(backend, datasetId) {
         wsRef.current = null;
       }
     };
-  }, [backend, datasetId]);
+  }, [datasetId]); // backend는 상대 경로로 고정
 
   return {
     tasks,
