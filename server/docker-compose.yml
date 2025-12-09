@@ -1,35 +1,59 @@
 services:
+  # ========================================
+  # Nginx 리버스 프록시 (진입점)
+  # ========================================
+  nginx:
+    image: nginx:alpine
+    container_name: analyzer-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - ddoc-workspace
+    restart: unless-stopped
+    networks:
+      - app-network
+
   backend:
     build:
-      context: .                          # server/ 폴더를 context로
-      dockerfile: ./backend/Dockerfile    # Dockerfile 경로 명시
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: analyzer-backend
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     volumes:
-      - ./backend/app:/app/app            # 개발 시 핫리로드용
-      - ./dvc_storage:/app/dvc_storage    # DVC 스토리지
+      - ./backend/app:/app/app
+      - ./dvc_storage:/app/dvc_storage
     working_dir: /app
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     environment:
       - DDOC_ENABLED=${DDOC_ENABLED:-false}
     depends_on:
       - redis
+    networks:
+      - app-network
 
 
   frontend:
     build: ./frontend
     container_name: analyzer-frontend
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     volumes:
       - ./frontend:/app
-      - /app/node_modules              # node_modules 제외
+      - /app/node_modules
     working_dir: /app
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    networks:
+      - app-network
 
   redis:
     image: redis:alpine
+    networks:
+      - app-network
 
   worker:
     build:
@@ -44,3 +68,59 @@ services:
     depends_on:
       - backend
       - redis
+    networks:
+      - app-network
+
+  ddoc-workspace:
+    build:
+      context: .
+      dockerfile: ./ddoc-workspace/Dockerfile
+    container_name: ddoc-workspace
+    expose:
+      - "5000"
+      - "8159"
+    volumes:
+      - workspaces_data:/workspaces
+      - mlruns_data:/mlruns
+      - ./dvc_storage:/dvc_storage
+      - ./ddoc-workspace/app:/app/app
+    working_dir: /app
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5050
+      - WORKSPACES_ROOT=/workspaces
+      - FIFTYONE_DATABASE_URI=mongodb://fiftyone-mongo:27017
+      - FIFTYONE_DEFAULT_DATASET_DIR=/workspaces
+    depends_on:
+      - mlflow
+      - fiftyone-mongo
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+    networks:
+      - app-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow-server
+    expose:
+      - "5050"
+    volumes:
+      - mlruns_data:/mlruns
+    command: mlflow server --host 0.0.0.0 --port 5050 --backend-store-uri sqlite:///mlruns/mlflow.db --default-artifact-root /mlruns
+    networks:
+      - app-network
+
+  fiftyone-mongo:
+    image: mongo:6
+    container_name: fiftyone-mongo
+    volumes:
+      - fiftyone_db:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  workspaces_data:
+  mlruns_data:
+  fiftyone_db:

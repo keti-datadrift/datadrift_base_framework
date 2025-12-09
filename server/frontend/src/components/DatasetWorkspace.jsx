@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-export default function DatasetWorkspace({ datasets, onUploaded, onSelect, onCompare }) {
+export default function DatasetWorkspace({ datasets, backend = "/api", onUploaded, onSelect, onCompare }) {
   const [file, setFile] = useState(null);
 
   const upload = () => {
     const form = new FormData();
     form.append("file", file);
 
-    fetch("http://localhost:8000/datasets/upload", {
+    fetch(`${backend}/datasets/upload`, {
       method: "POST",
       body: form,
     }).then(() => {
