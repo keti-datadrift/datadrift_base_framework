@@ -21,6 +21,7 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
+    image: analyzer-backend:latest
     container_name: analyzer-backend
     expose:
       - "8000"
@@ -56,6 +57,7 @@ services:
       - app-network
 
   worker:
+    image: analyzer-backend:latest
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -75,6 +77,7 @@ services:
     build:
       context: .
       dockerfile: ./ddoc-workspace/Dockerfile
+    image: analyzer-ddoc-workspace:latest
     container_name: ddoc-workspace
     expose:
       - "5000"
