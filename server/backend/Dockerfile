@@ -15,8 +15,9 @@ ENV PIP_RETRIES=5
 RUN pip install --no-cache-dir build wheel setuptools>=61.0
 
 # PyPI 미러 설정 (Kakao - 한국에서 빠름)
-RUN pip config set global.index-url https://mirror.kakao.com/pypi/simple && \
-    pip config set global.trusted-host mirror.kakao.com
+# ⚠️ Kakao 미러에 일부 패키지(fpdf 등)가 없어 기본 PyPI 사용
+# RUN pip config set global.index-url https://mirror.kakao.com/pypi/simple && \
+#     pip config set global.trusted-host mirror.kakao.com
 
 # ddoc-plugin-vision 소스 복사 (ddoc submodule에서)
 COPY ./ddoc/plugins/ddoc-plugin-vision /build/ddoc-plugin-vision
@@ -49,8 +50,9 @@ RUN pip install --upgrade pip && \
     pip config set global.default-timeout 300
 
 # PyPI 미러 설정 (Kakao - 한국에서 빠름)
-RUN pip config set global.index-url https://mirror.kakao.com/pypi/simple && \
-    pip config set global.trusted-host mirror.kakao.com
+# ⚠️ Kakao 미러에 일부 패키지(fpdf 등)가 없어 기본 PyPI 사용
+# RUN pip config set global.index-url https://mirror.kakao.com/pypi/simple && \
+#     pip config set global.trusted-host mirror.kakao.com
 
 # ddoc-plugin-vision wheel 복사
 COPY --from=builder /build/wheels/*.whl /tmp/wheels/
