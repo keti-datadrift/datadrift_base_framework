@@ -48,6 +48,35 @@ def _emit_error(message: str, *, code: str, json_out: bool) -> None:
         rprint(f"[red]❌ {message}[/red]")
 
 
+def emit_progress(
+    progress: float,
+    stage: str,
+    message: str = "",
+    *,
+    enabled: bool = False,
+) -> None:
+    """Emit one NDJSON progress line on stderr (Phase 6 — orchestrator).
+
+    Schema (per `_specs/ddoc_orchestrator_pattern.md`):
+        {"progress": 0.0..1.0, "stage": "<short id>", "message": "..."}
+
+    Stderr is the channel because stdout is reserved for the final
+    ``--json`` envelope. ``enabled=False`` makes this a no-op so callers
+    can sprinkle invocations unconditionally.
+    """
+    if not enabled:
+        return
+    try:
+        line = json.dumps(
+            {"progress": float(progress), "stage": stage, "message": message},
+            ensure_ascii=False,
+        )
+    except (TypeError, ValueError):
+        return
+    sys.stderr.write(line + "\n")
+    sys.stderr.flush()
+
+
 def _merge_plugin_results(valid_results: list, hook_name: str) -> dict:
     """Collapse multi-plugin output into a single dict (single-modality
     case is hoisted for backward compatibility)."""
@@ -106,6 +135,10 @@ def analyze_drift_command(
         False, "--json",
         help="Emit machine-readable JSON envelope to stdout (no rich formatting).",
     ),
+    ndjson_progress: bool = typer.Option(
+        False, "--ndjson-progress",
+        help="Emit NDJSON progress lines on stderr (orchestrator streaming).",
+    ),
 ):
     """Detect drift between two snapshots or two data paths.
 
@@ -136,6 +169,7 @@ def analyze_drift_command(
 
     # Path mode: skip snapshot resolution entirely.
     if path_mode:
+        emit_progress(0.05, "start", "drift path mode init", enabled=ndjson_progress)
         if not json_out:
             rprint(f"[cyan]🔍 Drift Analysis (path mode)[/cyan]")
             rprint(f"   Ref:  {data_path_ref}")
@@ -147,6 +181,8 @@ def analyze_drift_command(
             "baseline_metadata": None,
             "current_metadata": None,
         }
+        emit_progress(0.2, "plugin_call", "invoking drift_detect hook",
+                      enabled=ndjson_progress)
         try:
             hook_results = get_pmgr().hook.drift_detect(
                 snapshot_id_ref="__path__",
@@ -162,7 +198,11 @@ def analyze_drift_command(
         except Exception as e:
             _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
             raise typer.Exit(code=1)
-        return _finish_drift(hook_results, json_out=json_out)
+        emit_progress(0.9, "merge", "merging plugin results",
+                      enabled=ndjson_progress)
+        result = _finish_drift(hook_results, json_out=json_out)
+        emit_progress(1.0, "complete", "done", enabled=ndjson_progress)
+        return result
 
     # ── Snapshot mode (legacy interactive path) ──
     snapshot_service = get_snapshot_service()
@@ -230,6 +270,8 @@ def analyze_drift_command(
         rprint(f"   Baseline: {baseline_id} ({snap_baseline.data.dvc_hash[:7]})")
         rprint(f"   Current:  {current_id} ({snap_current.data.dvc_hash[:7]})\n")
 
+    emit_progress(0.2, "plugin_call", "invoking drift_detect hook",
+                  enabled=ndjson_progress)
     try:
         hook_results = get_pmgr().hook.drift_detect(
             snapshot_id_ref=baseline_id,
@@ -246,7 +288,11 @@ def analyze_drift_command(
         _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
         raise typer.Exit(code=1)
 
-    return _finish_drift(hook_results, json_out=json_out)
+    emit_progress(0.9, "merge", "merging plugin results",
+                  enabled=ndjson_progress)
+    result = _finish_drift(hook_results, json_out=json_out)
+    emit_progress(1.0, "complete", "done", enabled=ndjson_progress)
+    return result
 
 
 def _finish_drift(hook_results, *, json_out: bool) -> None:
