@@ -1,5 +1,20 @@
+"""Legacy in-process drift analysis (pre-Phase 3 — orchestrator pivot).
+
+This module duplicates analytical logic that the ``ddoc-plugin-vision`` /
+``ddoc-plugin-yolo`` pluggy hooks already provide. It is kept behind the
+``BACKEND_USE_DDOC_CLI`` feature flag for one release so operators can
+fall back if the subprocess path regresses, and will be removed once the
+flag flips to default-on.
+
+Set ``BACKEND_USE_DDOC_CLI=true`` in the backend env to route ``/drift``
+through ``ddoc analyze drift --data-path-ref ... --data-path-cur ...
+--json`` instead of ``run_drift`` here. See
+``_specs/architecture_consolidation.md`` Round-2 for the rationale.
+"""
 import os
 import json
+import warnings
+
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, List, Optional, Tuple
@@ -8,6 +23,16 @@ from scipy import stats
 from app.services.zip_resolver import analyze_zip_dataset, analyze_roboflow
 from app.utils.json_sanitize import clean_json_value
 from app.services.eda_service import run_image_analysis, collect_image_files
+
+# Phase 3 — module-load DeprecationWarning so the migration nudge surfaces
+# once in container logs (DeprecationWarning is silent by default; backend
+# main.py / pytest config can enable it).
+warnings.warn(
+    "drift_service.run_drift is the legacy in-process path. "
+    "Set BACKEND_USE_DDOC_CLI=true to route /drift via the ddoc CLI subprocess.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 from app.services.analyzer_init import get_analyzer_service
 
 
