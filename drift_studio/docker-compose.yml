@@ -12,11 +12,13 @@ services:
     depends_on:
       - frontend
       - backend
-      - ddoc-workspace
     restart: unless-stopped
     networks:
       - app-network
 
+  # ========================================
+  # 통합 Backend (분석 + 워크스페이스 + 필드에이전트)
+  # ========================================
   backend:
     build:
       context: .
@@ -27,15 +29,26 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./dvc_storage:/app/dvc_storage
+      - workspaces_data:/workspaces
+      - mlruns_data:/mlruns
     working_dir: /app
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     environment:
-      - DDOC_ENABLED=${DDOC_ENABLED:-false}
+      - DDOC_ENABLED=${DDOC_ENABLED:-true}
+      - MLFLOW_TRACKING_URI=http://mlflow:5050
+      - WORKSPACES_ROOT=/workspaces
+      - FIFTYONE_DATABASE_URI=mongodb://fiftyone-mongo:27017
+      - FIFTYONE_DEFAULT_DATASET_DIR=/workspaces
     depends_on:
       - redis
+      - mlflow
+      - fiftyone-mongo
     networks:
       - app-network
 
+  # ========================================
+  # Frontend (React)
+  # ========================================
   frontend:
     build: ./frontend
     container_name: analyzer-frontend
@@ -48,8 +61,10 @@ services:
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     networks:
       - app-network
-      
-      
+
+  # ========================================
+  # Celery Worker (비동기 분석 태스크)
+  # ========================================
   redis:
     image: redis:alpine
     networks:
@@ -63,40 +78,21 @@ services:
     command: celery -A app.services.tasks worker --loglevel=info
     volumes:
       - ./dvc_storage:/app/dvc_storage
+      - workspaces_data:/workspaces
+      - mlruns_data:/mlruns
     environment:
-      - DDOC_ENABLED=${DDOC_ENABLED:-false}
+      - DDOC_ENABLED=${DDOC_ENABLED:-true}
+      - MLFLOW_TRACKING_URI=http://mlflow:5050
+      - WORKSPACES_ROOT=/workspaces
     depends_on:
       - backend
       - redis
     networks:
       - app-network
 
-  ddoc-workspace:
-    build:
-      context: .
-      dockerfile: ./ddoc-workspace/Dockerfile
-    container_name: ddoc-workspace
-    expose:
-      - "5000"
-      - "8159"
-    volumes:
-      - workspaces_data:/workspaces
-      - mlruns_data:/mlruns
-      - ./dvc_storage:/dvc_storage
-      - ./ddoc-workspace/app:/app/app
-    working_dir: /app
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5050
-      - WORKSPACES_ROOT=/workspaces
-      - FIFTYONE_DATABASE_URI=mongodb://fiftyone-mongo:27017
-      - FIFTYONE_DEFAULT_DATASET_DIR=/workspaces
-    depends_on:
-      - mlflow
-      - fiftyone-mongo
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
-    networks:
-      - app-network
-
+  # ========================================
+  # MLflow (실험 추적)
+  # ========================================
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     container_name: mlflow-server
@@ -108,6 +104,9 @@ services:
     networks:
       - app-network
 
+  # ========================================
+  # FiftyOne MongoDB (데이터셋 시각화)
+  # ========================================
   fiftyone-mongo:
     image: mongo:6
     container_name: fiftyone-mongo

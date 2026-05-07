@@ -8,7 +8,7 @@ from typing import List, Optional
 import os
 import json
 
-from ..schemas import (
+from .schemas import (
     SnapshotCreateRequest,
     SnapshotInfo,
     SnapshotRestoreRequest,

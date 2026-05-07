@@ -1,5 +1,5 @@
 """
-Sampling Service for ddoc-workspace
+Sampling Service for the ddoc-backed workspace.
 Provides data exploration, modification, sampling strategies, and export functionality.
 """
 from pathlib import Path

@@ -24,6 +24,9 @@ from .snapshot import snapshot_app
 # Import analyze commands
 from .analyze import analyze_eda_command, analyze_drift_command
 
+# Import ingest command (Phase 2 — keti_veritas envelope bridge)
+from .ingest import ingest_command
+
 # Import system commands
 from .plugin import plugin_list_command, plugin_info_command
 from .vis import vis
@@ -94,6 +97,11 @@ def register(app: typer.Typer) -> None:
     analyze_app.command("eda")(analyze_eda_command)
     analyze_app.command("drift")(analyze_drift_command)
     app.add_typer(analyze_app, name="analyze")
+
+    # ========================================================================
+    # Ingest Command (keti_veritas envelope bridge — Phase 2)
+    # ========================================================================
+    app.command(name="ingest", help="Ingest keti_veritas-style envelope JSON files into the workspace inbox")(ingest_command)
     
     # ========================================================================
     # Experiment Commands

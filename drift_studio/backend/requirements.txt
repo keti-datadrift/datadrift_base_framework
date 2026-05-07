@@ -18,5 +18,21 @@ numpy>=1.21.0
 scipy>=1.7.0
 scikit-learn>=1.0.0
 
-# Note: ddoc-plugin-vision은 Docker 빌드 시 wheel로 설치됩니다.
-# 로컬 개발 시: pip install -e ../ddoc-plugin-vision
+# Workspace integration (ddoc-backed; consumed by routers/workspace/*)
+# These are installed when DDOC_ENABLED=true
+mlflow>=2.8.0
+dvc>=3.30.0
+# torch/torchvision: installed separately in Dockerfile with --index-url .../whl/cpu
+# to avoid NVIDIA CUDA deps (~2GB, fails on ARM64)
+aiofiles>=23.0.0
+httpx>=0.25.0
+
+# FiftyOne for dataset visualization (workspace feature)
+fiftyone>=0.23.0
+pymongo>=4.0.0
+
+# YOLO training (experiment feature)
+ultralytics>=8.0.0
+
+# Note: ddoc core + plugin wheels are installed during Docker build.
+# For local dev: pip install -e ../ddoc && pip install -e ../ddoc/plugins/ddoc-plugin-vision

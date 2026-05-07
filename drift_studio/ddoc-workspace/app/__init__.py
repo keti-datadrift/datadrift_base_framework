@@ -1,1 +1,0 @@
-# ddoc-workspace application package

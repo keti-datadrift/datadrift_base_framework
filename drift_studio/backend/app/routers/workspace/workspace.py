@@ -10,7 +10,7 @@ import shutil
 import json
 from datetime import datetime
 
-from ..schemas import (
+from .schemas import (
     WorkspaceCreateRequest,
     WorkspaceInfo,
     WorkspaceStatus,
@@ -30,7 +30,7 @@ WORKSPACES_ROOT = Path(os.getenv("WORKSPACES_ROOT", "/workspaces"))
 # Container path mappings for cross-container compatibility
 CONTAINER_PATH_MAPPINGS = {
     "/app/dvc_storage": "/dvc_storage",
-    "/app/data": "/dvc_storage/datasets",  # Backend's /app/data maps to ddoc-workspace's /dvc_storage/datasets
+    "/app/data": "/dvc_storage/datasets",  # Backend's /app/data maps to the shared dvc_storage/datasets root
     "/data": "/dvc_storage/datasets",      # Alternative path format
 }
 
