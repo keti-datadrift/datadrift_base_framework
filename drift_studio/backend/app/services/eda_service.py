@@ -1,5 +1,17 @@
+"""Legacy in-process EDA analysis (pre-Phase 3 — orchestrator pivot).
+
+Duplicates logic provided by ddoc plugin hooks (``ddoc-plugin-vision``
+etc.). Kept behind the ``BACKEND_USE_DDOC_CLI`` feature flag so
+operators can fall back if the subprocess path regresses; will be
+removed once the flag flips to default-on.
+
+Set ``BACKEND_USE_DDOC_CLI=true`` to route ``/eda`` via ``ddoc analyze
+eda --data-path <p> --json`` instead of the in-process ``run_eda`` here.
+"""
 import os
 import json
+import warnings
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -12,6 +24,14 @@ from app.services.zip_resolver import (
     analyze_yolo,
     analyze_voc,
     analyze_coco,
+)
+
+# Phase 3 — module-load DeprecationWarning (silent by default).
+warnings.warn(
+    "eda_service.run_eda is the legacy in-process path. "
+    "Set BACKEND_USE_DDOC_CLI=true to route /eda via the ddoc CLI subprocess.",
+    DeprecationWarning,
+    stacklevel=2,
 )
 from app.services.analyzer_init import get_analyzer_service
 
