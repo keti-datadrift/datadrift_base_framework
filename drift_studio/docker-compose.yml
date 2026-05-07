@@ -39,6 +39,15 @@ services:
       - WORKSPACES_ROOT=/workspaces
       - FIFTYONE_DATABASE_URI=mongodb://fiftyone-mongo:27017
       - FIFTYONE_DEFAULT_DATASET_DIR=/workspaces
+      # ── Phase 3 (Round-2 Orchestrator Pivot) ──
+      - BACKEND_USE_DDOC_CLI=${BACKEND_USE_DDOC_CLI:-false}
+      - DDOC_RUNNER_DEFAULT_TIMEOUT_SEC=${DDOC_RUNNER_DEFAULT_TIMEOUT_SEC:-600}
+      - DDOC_DRIFT_DETECTOR=${DDOC_DRIFT_DETECTOR:-mmd}
+      # ── Phase 4 — DVC sync ──
+      - DVC_REMOTE_URL=${DVC_REMOTE_URL:-}
+      - DVC_REMOTE_NAME=${DVC_REMOTE_NAME:-origin}
+      - DVC_SITE_ID=${DVC_SITE_ID:-default}
+      - DVC_WORKDIR=${DVC_WORKDIR:-/app}
     depends_on:
       - redis
       - mlflow

@@ -99,6 +99,88 @@ ddoc exp best train_data  # 최고 성능 실험 찾기
 ddoc analyze drift baseline production
 ```
 
+### Multi-site / 사이트-간 통합 (`ingest` + DVC)
+
+Round-2 (2026-05-07) 부터 ddoc 는 **다른 사이트 / 다른 시스템에서 떨군
+envelope JSON** 을 직접 받아 분석에 쓸 수 있습니다.
+
+**예시 — keti_veritas 의 audit export 를 ddoc 로 끌어오기:**
+
+```bash
+# 사이트에서 keti_veritas 가 envelope JSON 을 떨굼
+# (DD_EXPORT_DIR=/mnt/share/site_a/audit)
+
+# ddoc 로 ingest
+ddoc ingest \
+    --from-dir /mnt/share/site_a/audit \
+    --site-id site_a \
+    --workspace ~/ddoc-workspace
+
+# 결과:
+#   ~/ddoc-workspace/.ddoc/inbox/site_a/decisions/decisions_<ts>.csv
+#   ~/ddoc-workspace/.ddoc/inbox/site_a/_manifest.jsonl
+#   원본은 .processed/ 로 이동 (재실행 idempotent)
+
+# 머신러닝 친화적 JSON 출력 (스크립트 / 백엔드 orchestrator 용)
+ddoc ingest --from-dir /tmp/export --json | jq '.decision_rows'
+
+# DVC 통한 자동 pull (사이트-간 sync)
+ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
+```
+
+**Envelope contract** — protocol 1.1 (keti_veritas 의
+`app/services/audit/envelope.py` 와 mirror). frozen dataclass:
+
+```jsonc
+{
+  "protocol_version": "1.1",
+  "source": {"app_id": "...", "app_type": "...", "instance_id": null},
+  "payload_kinds": ["decision_batch"] | ["drift_report"],
+  "decision_batch": [{"id":"...", "decision_type":"...", ...}, ...],
+  "drift_report": {...},
+  "sent_at": "2026-05-07T00:00:00Z"
+}
+```
+
+**On-disk inbox layout:**
+
+```
+<workspace>/.ddoc/inbox/<site_id>/
+├── decisions/decisions_<UTC ts>.csv      (or .parquet w/ --parquet)
+├── drift_reports/drift_<UTC ts>_<src>.json
+├── _manifest.jsonl                       (one line per ingest run)
+└── .processed/<original_envelope>.json
+```
+
+### DVC remote layout (multi-site sync)
+
+`drift_studio` backend (orchestrator) 는 시작 시점에 `DVC_REMOTE_URL` +
+`DVC_SITE_ID` 환경변수가 있으면 자동으로 default remote 를 설정합니다.
+권장 layout:
+
+```
+<DVC_REMOTE_URL>/
+├── site_a/
+│   ├── datasets/    # raw / curated input data
+│   ├── models/      # trained model artifacts
+│   └── audit/       # keti_veritas envelope JSON exports
+└── site_b/
+    └── ...
+```
+
+`s3://`, `gs://`, `azure://`, `ssh://`, 또는 로컬 마운트 NAS 경로 모두
+지원. `ddoc ingest --dvc-pull` 이 `dvc pull <from-dir>` 을 선행 실행해
+원격 → 로컬 → ingest 한 줄로 처리합니다.
+
+### Backend orchestrator 와의 관계
+
+`drift_studio/backend/` 는 ddoc 를 *Python library* 로 import 하는 대신
+**subprocess 로 호출** 합니다 (Round-2 reframe). 환경변수
+`BACKEND_USE_DDOC_CLI=true` 일 때 backend 의 `/drift`, `/eda` 엔드포인트
+가 `ddoc analyze drift|eda --json` 을 fork 합니다. 자세한 contract 는
+[`_specs/ddoc_orchestrator_pattern.md`](../../_specs/ddoc_orchestrator_pattern.md)
+참조.
+
 ## 🤝 기여
 
 기여를 환영합니다! 기여 가이드는 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.

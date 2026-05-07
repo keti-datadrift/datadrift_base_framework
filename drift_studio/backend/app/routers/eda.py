@@ -80,6 +80,8 @@ def eda(
         result = _run_eda_via_cli(ds)
     else:
         # legacy in-process path
+        from app.services.ddoc_runner import increment_counter as _bump
+        _bump("legacy_calls_eda")
         result = run_eda(
             file_path=ds.dvc_path,
             dtype=ds.type.lower() if ds.type else "csv",

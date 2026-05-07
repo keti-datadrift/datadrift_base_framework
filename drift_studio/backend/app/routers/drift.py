@@ -200,6 +200,8 @@ def _get_or_create_drift_result(
         # directly and returns a richer dict than the CLI envelope. Kept
         # behind the feature flag for one release; deprecation warning
         # lives at module load time.
+        from app.services.ddoc_runner import increment_counter as _bump
+        _bump("legacy_calls_drift")
         result = run_drift(
             base.dvc_path,
             target.dvc_path,
