@@ -22,7 +22,7 @@ from typing import Optional
 from ..utils import get_pmgr, _pretty
 from ddoc.core.snapshot_service import get_snapshot_service
 from ddoc.core.cache_service import get_cache_service
-from .drift import _emit, _emit_error, _merge_plugin_results
+from .drift import _emit, _emit_error, _merge_plugin_results, emit_progress
 
 
 def analyze_eda_command(

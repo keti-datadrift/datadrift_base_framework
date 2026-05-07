@@ -17,6 +17,22 @@ authors = [
   { name = "JPark", email = "feynmanc@naver.com" }
 ]
 
+# Core dependencies — kept light intentionally so `pip install ddoc` works
+# for the orchestrator + ingest workflow without pulling MLflow, torch, etc.
+# Heavier deps live in optional-dependencies extras (see below).
+#
+# What `pip install ddoc` (no extras) gives you:
+#   - init / add / snapshot — workspace + DVC integration
+#   - ingest — keti_veritas envelope JSON consumer
+#   - analyze drift / eda (path mode + --json) — orchestrator-friendly
+#     subprocess interface; the actual analysis still requires a domain
+#     plugin (e.g. ddoc-plugin-vision) installed separately
+#   - plugin list / info, vis, snapshot management
+#
+# What it does NOT give you (deliberate):
+#   - exp train / eval / best         → install with [exp]
+#   - parquet writer in inbox/         → install with [ingest]
+#   - vision / yolo / vis plugins      → install [vision] / [yolo] / [vis]
 dependencies = [
   "fastapi",
   "uvicorn",
@@ -33,10 +49,27 @@ dependencies = [
   "pydantic>=2.7",
   "networkx",
   "dotenv",
-  "mlflow>=2.0.0",
 ]
 
 [project.optional-dependencies]
+# Round-2 (2026-05-07) — `mlflow` moved out of core and into [exp].
+# `experiment/run_train.py` etc. import mlflow; the CLI's commands/__init__.py
+# already wraps that import in try/except so the CLI itself works without it.
+exp = [
+  "mlflow>=2.0.0",
+]
+
+# Round-2 — pyarrow for the parquet writer in `core/ingest_service.py`.
+# CSV remains the default; --parquet flag opt-in.
+ingest = [
+  "pyarrow>=14.0.0",
+]
+
+# Round-2 — alias for backend orchestrator deployments. Currently no
+# additional deps beyond core; defined so deployment manifests can pin
+# `pip install ddoc[orchestrator]==2.x.y` and survive future tightening.
+orchestrator = []
+
 vision = [
   "torch>=2.0.0",
   "torchvision>=0.15.0",
@@ -61,7 +94,14 @@ nlp = [
 vis = [
   "streamlit>=1.28.0",
 ]
+# NOTE: the `all` extras's plugin entries below use file:// paths bound to
+# a developer's local checkout. They will NOT resolve on a fresh PyPI
+# install. Leaving the spec here as documentation of the intended bundle;
+# fix-up to a real Plugin index (or PEP 508 git+ URLs) is a separate round.
 all = [
+  # Subsumes other extras for end-to-end install
+  "mlflow>=2.0.0",
+  "pyarrow>=14.0.0",
   # Vision dependencies
   "torch>=2.0.0",
   "torchvision>=0.15.0",
@@ -78,7 +118,8 @@ all = [
   "opencv-python>=4.6.0",
   # Visualization dependencies
   "streamlit>=1.28.0",
-  # Plugin packages
+  # Plugin packages — file:// paths only valid in the original developer
+  # workspace. Replace with PyPI / git+https URLs before a public release.
   "ddoc-plugin-vision @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-vision",
   "ddoc-plugin-yolo @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-yolo",
   "ddoc-plugin-vis @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-vis",

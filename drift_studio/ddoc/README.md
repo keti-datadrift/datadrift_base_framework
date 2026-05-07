@@ -17,8 +17,34 @@
 ### 설치
 
 ```bash
+# 가벼운 코어 — init / add / snapshot / ingest / analyze (path mode)
 pip install ddoc
+
+# Use-case 별 extras (Round-2 정리, 2026-05-07)
+pip install ddoc[ingest]        # parquet writer (pyarrow)
+pip install ddoc[exp]           # exp train / eval / best (mlflow)
+pip install ddoc[orchestrator]  # backend subprocess orchestrator alias
+pip install ddoc[vision]        # CLIP / torch / image stack
+pip install ddoc[yolo]          # ultralytics / opencv
+pip install ddoc[vis]           # Streamlit GUI
+
+# 모두
+pip install ddoc[all]           # ⚠️ all 의 plugin file:// 경로는 개발자
+                                # local checkout 에 묶임 — 일반 사용자는
+                                # 위 개별 extras 조합 권장
 ```
+
+**install matrix** — 어떤 명령어가 어떤 extras 를 요구하는지:
+
+| 명령어 / 사용 사례 | core | ingest | exp | vision/yolo | vis |
+|---|:---:|:---:|:---:|:---:|:---:|
+| `ddoc init / add / snapshot` | ✓ | | | | |
+| `ddoc ingest` (CSV) | ✓ | | | | |
+| `ddoc ingest --parquet` | ✓ | ✓ | | | |
+| `ddoc analyze drift|eda` (path mode + plugin) | ✓ | | | ✓ | |
+| `ddoc exp train / eval / best` | ✓ | | ✓ | ✓ (trainer 의존) | |
+| `ddoc vis` (Streamlit GUI) | ✓ | | | | ✓ |
+| `drift_studio` backend subprocess orchestrator | ✓ | | | | |
 
 ### 5분 튜토리얼
 
