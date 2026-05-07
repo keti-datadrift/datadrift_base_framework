@@ -57,7 +57,7 @@ def analyze_eda_command(
             )
             raise typer.Exit(code=2)
         if not json_out:
-            r_log(f"[cyan]📊 EDA Analysis (path mode)[/cyan]")
+            rprint(f"[cyan]📊 EDA Analysis (path mode)[/cyan]")
             rprint(f"   Path: {data_path}\n")
         try:
             hook_results = get_pmgr().hook.eda_run(
