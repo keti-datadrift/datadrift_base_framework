@@ -37,6 +37,10 @@ def analyze_eda_command(
         False, "--json",
         help="Emit machine-readable JSON envelope to stdout (no rich formatting, no interactive prompts).",
     ),
+    ndjson_progress: bool = typer.Option(
+        False, "--ndjson-progress",
+        help="Emit NDJSON progress lines on stderr (orchestrator streaming).",
+    ),
 ):
     """
     Run EDA analysis on a snapshot, current workspace, or arbitrary data path.
@@ -56,9 +60,12 @@ def analyze_eda_command(
                 code="incompatible_options", json_out=json_out,
             )
             raise typer.Exit(code=2)
+        emit_progress(0.05, "start", "eda path mode init", enabled=ndjson_progress)
         if not json_out:
             rprint(f"[cyan]📊 EDA Analysis (path mode)[/cyan]")
             rprint(f"   Path: {data_path}\n")
+        emit_progress(0.2, "plugin_call", "invoking eda_run hook",
+                      enabled=ndjson_progress)
         try:
             hook_results = get_pmgr().hook.eda_run(
                 snapshot_id="__path__",
@@ -70,7 +77,11 @@ def analyze_eda_command(
         except Exception as e:
             _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
             raise typer.Exit(code=1)
-        return _finish_eda(hook_results, json_out=json_out)
+        emit_progress(0.9, "merge", "merging plugin results",
+                      enabled=ndjson_progress)
+        result = _finish_eda(hook_results, json_out=json_out)
+        emit_progress(1.0, "complete", "done", enabled=ndjson_progress)
+        return result
 
     # JSON mode silences noisy progress logging (stdout would otherwise
     # carry both rich-formatted lines and the final JSON envelope, breaking
