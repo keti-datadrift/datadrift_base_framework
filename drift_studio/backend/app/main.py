@@ -62,6 +62,35 @@ else:
     logger.info("[DD] Workspace routers disabled (DDOC_ENABLED=false)")
 
 
+# ── Phase 4 — DVC remote bootstrap ──────────────────────────
+# Opportunistic. Backend startup never fails because of remote config —
+# the setup script logs and exits 0 on its own.
+@app.on_event("startup")
+def _dvc_remote_bootstrap():
+    if not os.getenv("DVC_REMOTE_URL"):
+        return
+    import subprocess
+    script = Path(__file__).resolve().parent.parent / "scripts" / "dvc_remote_setup.sh"
+    if not script.exists():
+        logger.warning("[DVC] setup script missing: %s", script)
+        return
+    try:
+        proc = subprocess.run(
+            ["bash", str(script)],
+            cwd=Path(os.getenv("DVC_WORKDIR", str(Path.cwd()))),
+            capture_output=True, text=True, timeout=30,
+        )
+        if proc.returncode == 0:
+            logger.info("[DVC] remote bootstrap done\n%s", proc.stdout.strip())
+        else:
+            logger.warning(
+                "[DVC] remote bootstrap returned %d\n%s\n%s",
+                proc.returncode, proc.stdout, proc.stderr,
+            )
+    except Exception as e:
+        logger.warning("[DVC] remote bootstrap failed: %s", e)
+
+
 @app.get("/")
 def root():
     return {
@@ -69,6 +98,8 @@ def root():
         "service": "drift-studio",
         "version": "2.0.0",
         "workspace_enabled": _ddoc_enabled,
+        "ddoc_cli_orchestrator": os.getenv("BACKEND_USE_DDOC_CLI", "false").lower()
+                                  in ("1", "true", "yes"),
     }
 
 
