@@ -10,7 +10,7 @@ import json
 import shutil
 from datetime import datetime
 
-from ..schemas import (
+from .schemas import (
     CodeUploadResponse,
     CodeTemplate,
     ExperimentRunRequest,

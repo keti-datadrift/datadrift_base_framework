@@ -9,7 +9,7 @@ import os
 import json
 from datetime import datetime
 
-from ..schemas import (
+from .schemas import (
     AnalysisRequest,
     EmbeddingAnalysisParams,
     AttributeAnalysisParams,

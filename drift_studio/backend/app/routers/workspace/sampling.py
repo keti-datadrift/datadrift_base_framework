@@ -10,7 +10,7 @@ import os
 import base64
 import io
 
-from ..schemas import (
+from .schemas import (
     DataItem,
     DataItemsResponse,
     DatasetStats,
@@ -27,7 +27,7 @@ from ..schemas import (
     ExportFormat,
     SuccessResponse,
 )
-from ..services.sampling_service import (
+from ...services.sampling_service import (
     SamplingService,
     SamplingStrategy as SamplingStrategyEnum,
 )

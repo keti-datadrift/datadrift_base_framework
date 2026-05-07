@@ -1,6 +1,7 @@
 # general
 **/.DS_Store
 **/venv
+**/_specs
 **/.venv
 **/*.dvc
 **/*.dd

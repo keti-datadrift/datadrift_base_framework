@@ -1,5 +1,5 @@
 """
-Pydantic schemas for ddoc-workspace API
+Pydantic schemas for the ddoc-backed workspace API.
 """
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
