@@ -41,6 +41,32 @@ DEFAULT_TIMEOUT_SEC = int(os.getenv("DDOC_RUNNER_DEFAULT_TIMEOUT_SEC", "600"))
 STDERR_TAIL_BYTES = 4096
 
 
+# ── Phase 6 — invocation counter (orchestrator pivot rollout telemetry) ──
+#
+# Tracks how often the subprocess (ddoc CLI) path is hit vs the legacy
+# in-process path. Surfaced via /healthz so operators can decide when to
+# flip BACKEND_USE_DDOC_CLI default to true (and eventually delete the
+# legacy services). In-memory; resets on process restart.
+_INVOCATIONS: dict[str, int] = {
+    "ddoc_cli_calls": 0,
+    "ddoc_cli_errors": 0,
+    "ddoc_cli_total_elapsed_ms": 0,
+    "legacy_calls_drift": 0,
+    "legacy_calls_eda": 0,
+}
+
+
+def increment_counter(key: str, delta: int = 1) -> None:
+    """Bump an invocation counter (no-op for unknown keys)."""
+    if key in _INVOCATIONS:
+        _INVOCATIONS[key] = _INVOCATIONS[key] + delta
+
+
+def get_counters() -> dict[str, int]:
+    """Snapshot of invocation counters for /healthz."""
+    return dict(_INVOCATIONS)
+
+
 # ── Errors ────────────────────────────────────────────────────────────
 
 
@@ -166,6 +192,7 @@ def run_ddoc(
         )
     except subprocess.TimeoutExpired as e:
         elapsed_ms = int((time.monotonic() - t0) * 1000)
+        increment_counter("ddoc_cli_errors")
         raise DdocError(
             f"ddoc subprocess timed out after {timeout_eff}s",
             error_type="timeout",
@@ -176,8 +203,11 @@ def run_ddoc(
 
     elapsed_ms = int((time.monotonic() - t0) * 1000)
     stderr_tail = _tail(proc.stderr or "")
+    increment_counter("ddoc_cli_calls")
+    increment_counter("ddoc_cli_total_elapsed_ms", elapsed_ms)
 
     if proc.returncode != 0:
+        increment_counter("ddoc_cli_errors")
         raise DdocError(
             f"ddoc subprocess exited {proc.returncode}",
             error_type="nonzero_exit",

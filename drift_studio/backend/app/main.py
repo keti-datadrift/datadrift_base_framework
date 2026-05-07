@@ -1,9 +1,16 @@
 import logging
 import os
+import warnings
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Phase 6 (Round-2 Orchestrator Pivot) — surface DeprecationWarning from
+# legacy services (drift_service / eda_service module-load warnings).
+# Default Python filter hides them; we explicitly enable so the migration
+# nudge appears once in container logs.
+warnings.simplefilter("default", DeprecationWarning)
 
 from .database import Base, engine
 from .routers import datasets, eda, drift, report, files, ws, field_agents, training, model_registry
@@ -106,3 +113,26 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
+
+
+@app.get("/healthz")
+def healthz():
+    """Operational health endpoint with orchestrator-pivot telemetry.
+
+    Returns invocation counters distinguishing the ddoc CLI subprocess
+    path from the legacy in-process path. Operators flip
+    ``BACKEND_USE_DDOC_CLI=true`` permanently once ``ddoc_cli_calls`` >>
+    ``legacy_calls_*`` over a release window. Phase 6 of the
+    orchestrator pivot — see ``_specs/ddoc_orchestrator_pattern.md``.
+    """
+    try:
+        from .services.ddoc_runner import get_counters
+        counters = get_counters()
+    except Exception:
+        counters = {}
+    use_cli = os.getenv("BACKEND_USE_DDOC_CLI", "false").lower() in ("1", "true", "yes")
+    return {
+        "status": "healthy",
+        "ddoc_cli_orchestrator": use_cli,
+        "invocations": counters,
+    }
