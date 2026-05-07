@@ -3,11 +3,18 @@
 This is the receiving side of the keti_veritas → ddoc bridge described in
 `_specs/ddoc_orchestrator_pattern.md` (Phase 2). The CLI is intentionally
 thin — all parsing / writing logic lives in :mod:`ddoc.core.ingest_service`.
+
+Phase 4 adds a ``--dvc-pull`` flag that runs ``dvc pull`` against the
+source directory before scanning, so air-gapped sites can drop their
+envelopes into a DVC remote and let the receiving site pull them in one
+command.
 """
 
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Optional
@@ -69,6 +76,12 @@ def ingest_command(
         "--parquet",
         help="Write parquet alongside CSV (requires pyarrow).",
     ),
+    dvc_pull: bool = typer.Option(
+        False,
+        "--dvc-pull",
+        help="Run 'dvc pull <from-dir>' before scanning (Phase 4 — pulls "
+             "envelope files from the configured DVC remote first).",
+    ),
     json_out: bool = typer.Option(
         False,
         "--json",
@@ -92,6 +105,27 @@ def ingest_command(
     if mode not in {"move", "delete"}:
         rprint(f"[red]error:[/red] --mode must be 'move' or 'delete', got {mode!r}")
         raise typer.Exit(code=2)
+
+    # Phase 4 — opportunistic DVC pull. If `dvc` is on PATH and the cwd
+    # has a `.dvc/` directory, pull the target dir; otherwise warn and
+    # carry on (the local from_dir might still have content).
+    if dvc_pull:
+        dvc_bin = shutil.which("dvc")
+        if not dvc_bin:
+            rprint("[yellow]warn:[/yellow] --dvc-pull requested but 'dvc' not on PATH; skipping")
+        else:
+            try:
+                # Pull just this target dir if possible; fall back to a full pull.
+                proc = subprocess.run(
+                    [dvc_bin, "pull", str(from_dir)],
+                    capture_output=True, text=True, timeout=300,
+                )
+                if proc.returncode != 0:
+                    rprint(f"[yellow]warn:[/yellow] dvc pull returned {proc.returncode}; continuing")
+                    if proc.stderr:
+                        rprint(f"  stderr: {proc.stderr.strip()[:300]}")
+            except Exception as e:
+                rprint(f"[yellow]warn:[/yellow] dvc pull failed: {e}; continuing")
 
     try:
         outcome = ingest_directory(
