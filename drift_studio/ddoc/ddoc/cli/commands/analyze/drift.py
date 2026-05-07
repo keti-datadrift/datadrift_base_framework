@@ -228,16 +228,23 @@ def analyze_drift_command(
         _emit_error(f"Failed to load snapshot {current_id}", code="snapshot_load_failed", json_out=json_out)
         raise typer.Exit(code=1)
 
-    cache_baseline_attr = cache_service.load_analysis_cache(
-        snapshot_id=baseline_id,
-        data_hash=snap_baseline.data.dvc_hash,
-        cache_type="attributes",
-    )
-    cache_current_attr = cache_service.load_analysis_cache(
-        snapshot_id=current_id,
-        data_hash=snap_current.data.dvc_hash,
-        cache_type="attributes",
-    )
+    # Cache lookup must accept modality-suffixed cache types
+    # (``attributes_timeseries`` / ``attributes_image`` / …) — plugins
+    # write those, not the bare ``attributes`` key, so the legacy single-
+    # type lookup quietly produced ``cache_missing`` even after a
+    # successful EDA. ``find_attribute_caches`` returns every variant on
+    # disk; we pick generic first if present, otherwise the first
+    # available modality.
+    def _pick_attr_cache(snapshot_id: str, data_hash: str):
+        caches = cache_service.find_attribute_caches(
+            snapshot_id=snapshot_id, data_hash=data_hash,
+        )
+        if not caches:
+            return None
+        return caches.get("attributes") or next(iter(caches.values()))
+
+    cache_baseline_attr = _pick_attr_cache(baseline_id, snap_baseline.data.dvc_hash)
+    cache_current_attr = _pick_attr_cache(current_id, snap_current.data.dvc_hash)
 
     if not cache_baseline_attr:
         _emit_error(

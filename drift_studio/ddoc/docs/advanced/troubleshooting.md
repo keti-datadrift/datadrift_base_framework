@@ -116,7 +116,7 @@ git status
 dvc status
 
 # 문제 해결 후 재시도
-ddoc snapshot -m "message"
+ddoc snapshot create -m "message"
 ```
 
 ### Q: 스냅샷 복원 후 데이터가 없음

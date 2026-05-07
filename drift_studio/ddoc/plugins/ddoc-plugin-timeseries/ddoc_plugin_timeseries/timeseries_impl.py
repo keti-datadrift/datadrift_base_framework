@@ -113,70 +113,42 @@ class DOCTimeSeriesPlugin:
             'unique_count': len(value_counts)
         }
     
-    @hookimpl
-    def eda_run(self, snapshot_id, data_path, data_hash, output_path, invalidate_cache=False):
-        """Run EDA for time series datasets"""
-        from ddoc.core.cache_service import get_cache_service
-        
-        cache_service = get_cache_service()
+    def _compute_attributes_from_path(self, data_path) -> Dict[str, Any]:
+        """Walk ``data_path`` for ``ddoc.yaml`` -declared timeseries
+        datasets and compute the per-column attributes dict in-process.
+
+        Round-6 (2026-05-08) — extracted from ``eda_run`` so that
+        ``drift_detect`` path mode (where no analysis cache exists) can
+        reuse the exact same attribute computation. Returns the same
+        ``{<dataset>/<col>: {...metrics...}}`` shape that the cache
+        would normally hold; empty dict when no datasets are found.
+        """
         input_path = Path(data_path)
-        output_path = Path(output_path)
-        
-        print(f"🚀 Time Series EDA Analysis Started")
-        print(f"=" * 80)
-        
-        output_path.mkdir(parents=True, exist_ok=True)
-        
-        metrics = {
-            'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S'),
-            'snapshot_id': snapshot_id,
-            'data_hash': data_hash,
-            'modality': 'timeseries'
-        }
-        
-        # Find time series datasets
+        if not input_path.exists() or not input_path.is_dir():
+            return {}
+
         ts_datasets = []
         for item in input_path.iterdir():
-            if item.is_dir():
-                yaml_path = item / "ddoc.yaml"
-                if yaml_path.exists():
-                    try:
-                        config = self._load_ddoc_yaml(item)
-                        if config.get('modality') == 'timeseries':
-                            ts_datasets.append((item, config))
-                    except Exception as e:
-                        print(f"⚠️ Skipping {item}: {e}")
-        
-        if not ts_datasets:
-            print("⚠️ No time series datasets found")
-            return None
-        
-        # Load cache
-        attr_cache = {}
-        if not invalidate_cache:
-            attr_cache_data = cache_service.load_analysis_cache(
-                snapshot_id=snapshot_id,
-                data_hash=data_hash,
-                cache_type="attributes_timeseries"
-            )
-            if attr_cache_data:
-                attr_cache = attr_cache_data
-        
-        # Process each dataset
-        all_attributes = {}
-        
+            if not item.is_dir():
+                continue
+            yaml_path = item / "ddoc.yaml"
+            if not yaml_path.exists():
+                continue
+            try:
+                config = self._load_ddoc_yaml(item)
+                if config.get('modality') == 'timeseries':
+                    ts_datasets.append((item, config))
+            except Exception as e:
+                print(f"⚠️ Skipping {item}: {e}")
+
+        all_attributes: Dict[str, Any] = {}
         for dataset_path, config in ts_datasets:
-            print(f"\n📊 Processing dataset: {dataset_path.name}")
-            
             csv_file = dataset_path / config['csv_file']
             if not csv_file.exists():
                 continue
-            
             timestamp_col = config['timestamp_column']
-            id_col = config.get('id_column', None)
             numeric_cols = config.get('numeric_columns', [])
             categorical_cols = config.get('categorical_columns', [])
-            
             try:
                 df = pd.read_csv(csv_file)
                 df[timestamp_col] = pd.to_datetime(df[timestamp_col])
@@ -184,22 +156,45 @@ class DOCTimeSeriesPlugin:
             except Exception as e:
                 print(f"⚠️ Error loading CSV: {e}")
                 continue
-            
-            # Analyze each column
             for col in numeric_cols:
                 if col in df.columns:
-                    series = df[col]
-                    col_key = f"{dataset_path.name}/{col}"
-                    all_attributes[col_key] = self._analyze_numeric_series(series)
-            
+                    key = f"{dataset_path.name}/{col}"
+                    all_attributes[key] = self._analyze_numeric_series(df[col])
             for col in categorical_cols:
                 if col in df.columns:
-                    series = df[col]
-                    col_key = f"{dataset_path.name}/{col}"
-                    all_attributes[col_key] = self._analyze_categorical_series(series)
-        
-        # Save cache
-        if all_attributes:
+                    key = f"{dataset_path.name}/{col}"
+                    all_attributes[key] = self._analyze_categorical_series(df[col])
+        return all_attributes
+
+    @hookimpl
+    def eda_run(self, snapshot_id, data_path, data_hash, output_path, invalidate_cache=False):
+        """Run EDA for time series datasets"""
+        from ddoc.core.cache_service import get_cache_service
+
+        cache_service = get_cache_service()
+        output_path = Path(output_path)
+
+        print(f"🚀 Time Series EDA Analysis Started")
+        print(f"=" * 80)
+
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        metrics = {
+            'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S'),
+            'snapshot_id': snapshot_id,
+            'data_hash': data_hash,
+            'modality': 'timeseries'
+        }
+
+        all_attributes = self._compute_attributes_from_path(data_path)
+        if not all_attributes:
+            print("⚠️ No time series datasets found")
+            return None
+
+        # Save cache (only when we have a real data_hash — path mode
+        # passes empty hash because no snapshot context exists, in
+        # which case caching is the orchestrator's job).
+        if all_attributes and data_hash:
             cache_service.save_analysis_cache(
                 snapshot_id=snapshot_id,
                 data_hash=data_hash,
@@ -242,19 +237,37 @@ class DOCTimeSeriesPlugin:
         output_path = Path(output_path)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        # Load caches
-        baseline_attr = cfg.get('baseline_cache') or cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_ref,
-            data_hash=data_hash_ref,
-            cache_type="attributes_timeseries"
+        # Resolve baseline/current attribute dicts in three tiers:
+        # 1. Explicit caches passed in cfg (snapshot mode, when the CLI
+        #    pre-loaded them).
+        # 2. Cache service lookup keyed by data_hash (works for both
+        #    snapshot mode and warm path-mode caches).
+        # 3. **Path-mode fallback (Round-6)** — compute attributes
+        #    inline from data_path_*. This is what makes
+        #    ``ddoc analyze drift --data-path-ref X --data-path-cur Y``
+        #    actually work without any project / snapshot context.
+        def _resolve(cfg_key, snap_id, data_hash, data_path):
+            attrs = cfg.get(cfg_key)
+            if attrs:
+                return attrs
+            attrs = cache_service.load_analysis_cache(
+                snapshot_id=snap_id,
+                data_hash=data_hash,
+                cache_type="attributes_timeseries",
+            )
+            if attrs:
+                return attrs
+            if data_path:
+                return self._compute_attributes_from_path(data_path)
+            return None
+
+        baseline_attr = _resolve(
+            'baseline_cache', snapshot_id_ref, data_hash_ref, data_path_ref,
         )
-        
-        current_attr = cfg.get('current_cache') or cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_cur,
-            data_hash=data_hash_cur,
-            cache_type="attributes_timeseries"
+        current_attr = _resolve(
+            'current_cache', snapshot_id_cur, data_hash_cur, data_path_cur,
         )
-        
+
         if not baseline_attr or not current_attr:
             return None
         

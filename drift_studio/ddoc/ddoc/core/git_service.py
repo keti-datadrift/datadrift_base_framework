@@ -330,11 +330,27 @@ class GitService:
             }
             
         except subprocess.CalledProcessError as e:
+            # ``git commit`` writes "nothing to commit" to stdout, not
+            # stderr, and exits non-zero. The previous implementation only
+            # captured stderr, so callers saw an empty error string and
+            # fell into the generic failure branch — breaking the typical
+            # ``ddoc snapshot create`` flow on a clean tree. Treat the
+            # nothing-to-commit case as a benign skip; surface the
+            # combined output otherwise.
+            combined = f"{e.stdout or ''}\n{e.stderr or ''}".strip()
+            if "nothing to commit" in (e.stdout or "").lower() or \
+               "nothing to commit" in (e.stderr or "").lower():
+                return {
+                    "success": True,
+                    "skipped": True,
+                    "message": "Nothing to commit",
+                    "commit_hash": self.get_current_commit(),
+                }
             return {
                 "success": False,
-                "error": f"Git commit failed: {e.stderr}"
+                "error": f"Git commit failed: {combined}",
             }
-    
+
     def diff(self, commit1: str, commit2: str, paths: Optional[List[str]] = None) -> Dict[str, Any]:
         """
         Get diff between two commits

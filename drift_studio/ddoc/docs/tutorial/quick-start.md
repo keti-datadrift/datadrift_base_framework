@@ -45,7 +45,7 @@ git add .
 git commit -m "Initial setup"
 
 # ddoc 스냅샷 생성 (데이터 + 코드 + 실험 상태)
-ddoc snapshot -m "baseline model" -a baseline
+ddoc snapshot create -m "baseline model" -a baseline
 ```
 
 스냅샷은 다음을 포함합니다:

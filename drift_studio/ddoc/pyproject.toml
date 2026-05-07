@@ -70,6 +70,12 @@ ingest = [
 # `pip install ddoc[orchestrator]==2.x.y` and survive future tightening.
 orchestrator = []
 
+# Test extras — used by `11_install_pytest.sh` and CI. Kept tiny so the
+# core install path is uncontaminated.
+test = [
+  "pytest>=7.0",
+]
+
 vision = [
   "torch>=2.0.0",
   "torchvision>=0.15.0",

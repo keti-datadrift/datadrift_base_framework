@@ -67,9 +67,9 @@ ddoc snapshot -n 10                      # 최근 10개만
 
 **스냅샷 생성:**
 ```bash
-ddoc snapshot -m "message"               # 스냅샷 생성
-ddoc snapshot -m "message" -a alias      # Alias와 함께 생성
-ddoc snapshot -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
+ddoc snapshot create -m "message"               # 스냅샷 생성
+ddoc snapshot create -m "message" -a alias      # Alias와 함께 생성
+ddoc snapshot create -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
 ```
 
 **스냅샷 상세 조회:**
@@ -237,7 +237,7 @@ ddoc exp best yolo_reference --metric precision
 
 다음 명령어들은 v2.0.3에서 deprecated되었습니다:
 
-- `ddoc commit` → `ddoc snapshot -m`
+- `ddoc commit` → `ddoc snapshot create -m`
 - `ddoc checkout` → `ddoc snapshot --restore`
 - `ddoc log` → `ddoc snapshot --list`
 - `ddoc diff` → `ddoc snapshot --diff`

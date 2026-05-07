@@ -213,11 +213,11 @@ def analyze_eda_command(
         final_data_hash = snapshot_service._get_dvc_data_hash() or "unknown"
         if final_data_hash != data_hash and data_hash != "unknown":
             if not json_out:
-                r_log(f"[yellow]⚠️  Data hash changed during analysis![/yellow]")
+                _log(f"[yellow]⚠️  Data hash changed during analysis![/yellow]")
                 rprint(f"   Before: {data_hash[:8]}...")
                 rprint(f"   After:  {final_data_hash[:8]}...")
-                r_log(f"[yellow]   Data may have been modified during analysis.[/yellow]")
-                r_log(f"[yellow]   Cache was saved with old hash. Consider re-running analysis.[/yellow]")
+                _log(f"[yellow]   Data may have been modified during analysis.[/yellow]")
+                _log(f"[yellow]   Cache was saved with old hash. Consider re-running analysis.[/yellow]")
             data_hash = final_data_hash
 
     # Save snapshot if requested (interactive — disabled in JSON mode)
@@ -240,9 +240,9 @@ def analyze_eda_command(
             if result["success"]:
                 new_snapshot_id = result["snapshot_id"]
                 cache_service._save_snapshot_mapping(new_snapshot_id, data_hash)
-                r_log(f"[green]✅ Saved as snapshot: {new_snapshot_id}[/green]")
+                _log(f"[green]✅ Saved as snapshot: {new_snapshot_id}[/green]")
                 if alias:
-                    r_log(f"[green]   Alias: {alias}[/green]")
+                    _log(f"[green]   Alias: {alias}[/green]")
 
 
 def _finish_eda(hook_results, *, json_out: bool, return_dict: bool = False):
