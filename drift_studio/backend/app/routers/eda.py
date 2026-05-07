@@ -1,3 +1,4 @@
+import logging
 import os
 import uuid
 from datetime import datetime
@@ -8,9 +9,33 @@ from sqlalchemy.orm.attributes import flag_modified
 from app.database import SessionLocal
 from app.models import Dataset, EDAResult, AnalysisTask
 from app.services.eda_service import run_eda, run_image_attributes, run_image_clustering
+from app.services.ddoc_runner import run_ddoc, DdocError
 from app.services.task_queue import get_task_queue
 from app.services.progress_tracker import TimeEstimator
 from app.utils.json_sanitize import clean_json_value
+
+logger = logging.getLogger(__name__)
+
+
+def _use_ddoc_cli() -> bool:
+    """Phase 3 — orchestrator pivot feature flag (mirror of routers/drift.py)."""
+    return os.getenv("BACKEND_USE_DDOC_CLI", "false").lower() in ("1", "true", "yes")
+
+
+def _run_eda_via_cli(ds: Dataset) -> dict:
+    """Subprocess ``ddoc analyze eda --data-path <p> --json`` and return
+    parsed JSON. Raises ``HTTPException(500)`` on subprocess failure.
+    """
+    args = ["analyze", "eda", "--data-path", ds.dvc_path, "--json"]
+    try:
+        out = run_ddoc(args)
+    except DdocError as e:
+        logger.warning("[eda] ddoc subprocess failed: %s", e.to_dict())
+        raise HTTPException(
+            status_code=500,
+            detail={"error": "ddoc subprocess failed", "ddoc": e.to_dict()},
+        )
+    return out.json
 
 
 router = APIRouter(prefix="/eda", tags=["eda"])
@@ -50,11 +75,15 @@ def eda(
                 **cached.stats
             }
 
-    # 3) 분석 수행
-    result = run_eda(
-        file_path=ds.dvc_path,
-        dtype=ds.type.lower() if ds.type else "csv"
-    )
+    # 3) 분석 수행 (Phase 3: BACKEND_USE_DDOC_CLI 시 ddoc CLI subprocess 경유)
+    if _use_ddoc_cli():
+        result = _run_eda_via_cli(ds)
+    else:
+        # legacy in-process path
+        result = run_eda(
+            file_path=ds.dvc_path,
+            dtype=ds.type.lower() if ds.type else "csv",
+        )
 
     # 4) 결과 저장 (upsert)
     existing = db.query(EDAResult).filter(EDAResult.dataset_id == dataset_id).first()

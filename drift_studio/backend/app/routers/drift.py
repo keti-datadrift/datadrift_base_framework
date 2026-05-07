@@ -1,3 +1,4 @@
+import logging
 import os
 import uuid
 from typing import Optional
@@ -9,8 +10,75 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import Dataset, DriftResult, AnalysisTask, EDAResult
 from app.services.drift_service import run_drift
+from app.services.ddoc_runner import run_ddoc, DdocError
 from app.services.task_queue import get_task_queue
 from app.services.progress_tracker import TimeEstimator
+
+logger = logging.getLogger(__name__)
+
+
+def _use_ddoc_cli() -> bool:
+    """Phase 3 — orchestrator pivot feature flag.
+
+    When ``BACKEND_USE_DDOC_CLI=true``, drift / eda routers route the
+    actual analysis through a ``ddoc`` subprocess instead of the legacy
+    in-process ``app.services.{drift,eda}_service`` implementations.
+    """
+    return os.getenv("BACKEND_USE_DDOC_CLI", "false").lower() in ("1", "true", "yes")
+
+
+def _extract_overall_score(result: dict) -> Optional[float]:
+    """Best-effort extraction of an aggregate drift score across the
+    legacy and ddoc-CLI result shapes.
+
+    Legacy ``drift_service.run_drift`` produces
+    ``result["advanced_drift"]["ensemble"]["overall_score"]``. ddoc's
+    plugin-emitted dict may instead expose ``ensemble.overall_score``
+    at the top level (single-modality) or under
+    ``modalities.<m>.ensemble.overall_score`` (multi-modality).
+    """
+    if not isinstance(result, dict):
+        return None
+    legacy = (result.get("advanced_drift") or {})
+    if isinstance(legacy, dict):
+        ens = legacy.get("ensemble") or {}
+        if isinstance(ens, dict) and ens.get("overall_score") is not None:
+            return ens["overall_score"]
+    ens_top = result.get("ensemble") or {}
+    if isinstance(ens_top, dict) and ens_top.get("overall_score") is not None:
+        return ens_top["overall_score"]
+    mods = result.get("modalities") or {}
+    if isinstance(mods, dict):
+        for m in mods.values():
+            ens = (m or {}).get("ensemble") or {}
+            if isinstance(ens, dict) and ens.get("overall_score") is not None:
+                return ens["overall_score"]
+    return None
+
+
+def _run_drift_via_cli(base: Dataset, target: Dataset) -> dict:
+    """Subprocess ddoc analyze drift on two dataset paths, return the
+    parsed JSON dict. Raises ``HTTPException(500)`` on subprocess
+    failure with the ddoc stderr tail surfaced for debugging."""
+    args = [
+        "analyze", "drift",
+        "--data-path-ref", base.dvc_path,
+        "--data-path-cur", target.dvc_path,
+        "--detector", os.getenv("DDOC_DRIFT_DETECTOR", "mmd"),
+        "--json",
+    ]
+    try:
+        out = run_ddoc(args)
+    except DdocError as e:
+        logger.warning("[drift] ddoc subprocess failed: %s", e.to_dict())
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": "ddoc subprocess failed",
+                "ddoc": e.to_dict(),
+            },
+        )
+    return out.json
 
 router = APIRouter(prefix="/drift", tags=["drift"])
 
@@ -124,25 +192,29 @@ def _get_or_create_drift_result(
     print(f"   Base ({base.name}): 속성={bool(base_cache.get('image_analysis'))}, 임베딩={bool(base_cache.get('clustering', {}).get('embeddings'))}")
     print(f"   Target ({target.name}): 속성={bool(target_cache.get('image_analysis'))}, 임베딩={bool(target_cache.get('clustering', {}).get('embeddings'))}")
     
-    # 3) 분석 수행 (EDA 캐시 전달)
-    result = run_drift(
-        base.dvc_path, 
-        target.dvc_path,
-        base_cache=base_cache,
-        target_cache=target_cache
-    )
-    
+    # 3) 분석 수행 (Phase 3: BACKEND_USE_DDOC_CLI 시 ddoc CLI subprocess 경유)
+    if _use_ddoc_cli():
+        result = _run_drift_via_cli(base, target)
+    else:
+        # legacy in-process path — drift_service.run_drift gets EDA cache
+        # directly and returns a richer dict than the CLI envelope. Kept
+        # behind the feature flag for one release; deprecation warning
+        # lives at module load time.
+        result = run_drift(
+            base.dvc_path,
+            target.dvc_path,
+            base_cache=base_cache,
+            target_cache=target_cache,
+        )
+
     # 4) 결과 저장 (upsert)
     existing = db.query(DriftResult).filter(
         DriftResult.base_id == base.id,
         DriftResult.target_id == target.id
     ).first()
-    
-    # overall 점수 추출 (advanced_drift에서 가져오거나 기본값)
-    overall_score = None
-    if "advanced_drift" in result and result["advanced_drift"]:
-        ensemble = result["advanced_drift"].get("ensemble", {})
-        overall_score = ensemble.get("overall_score")
+
+    # overall 점수 추출 (legacy + ddoc CLI shape 모두 대응)
+    overall_score = _extract_overall_score(result)
     
     if existing:
         # 업데이트
