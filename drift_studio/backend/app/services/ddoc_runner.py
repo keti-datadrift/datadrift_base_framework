@@ -32,9 +32,11 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
+from collections import deque
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 
 DEFAULT_TIMEOUT_SEC = int(os.getenv("DDOC_RUNNER_DEFAULT_TIMEOUT_SEC", "600"))
@@ -233,6 +235,217 @@ def run_ddoc(
         # The CLI emits one JSON object per invocation; some commands may
         # additionally print rich-mode noise. Pick the *last* parseable
         # JSON object in stdout (common convention).
+        parsed_obj = _try_parse_last_json_object(stdout)
+        if parsed_obj is None:
+            raise DdocError(
+                "ddoc subprocess stdout was not valid JSON",
+                error_type="invalid_json",
+                returncode=proc.returncode,
+                stderr_tail=stderr_tail,
+                elapsed_ms=elapsed_ms,
+                argv=argv,
+            )
+        parsed = parsed_obj
+    else:
+        parsed_obj = _try_parse_last_json_object(stdout)
+        if parsed_obj is not None:
+            parsed = parsed_obj
+        else:
+            parse_err = "stdout was not parseable as JSON (require_json=False)"
+
+    return DdocResult(
+        argv=argv,
+        returncode=proc.returncode,
+        stdout=stdout,
+        stderr_tail=stderr_tail,
+        elapsed_ms=elapsed_ms,
+        json=parsed,
+        json_parse_error=parse_err,
+    )
+
+
+# ── Streaming variant (Phase 6 — NDJSON progress) ─────────────────────
+
+
+ProgressCallback = Callable[[dict[str, Any]], None]
+
+
+def run_ddoc_streamed(
+    args: list[str],
+    *,
+    on_progress: Optional[ProgressCallback] = None,
+    cwd: Optional[str] = None,
+    timeout: Optional[float] = None,
+    env_extra: Optional[dict[str, str]] = None,
+    require_json: bool = True,
+    stderr_buffer_lines: int = 2048,
+) -> DdocResult:
+    """Streaming variant of ``run_ddoc`` for long-running analyses.
+
+    Spawns the same hermetic ``python -m ddoc.cli.main`` invocation but
+    consumes stderr line-by-line in a background thread. Lines that
+    successfully parse as JSON objects with a ``progress`` field are
+    forwarded to ``on_progress``; everything else is buffered for the
+    error tail. Stdout is collected whole and parsed identically to
+    ``run_ddoc`` once the process exits.
+
+    The caller is expected to enable progress emission by passing
+    ``--ndjson-progress`` inside ``args`` — without that flag the ddoc
+    CLI emits nothing on stderr and the callback never fires (silent
+    fallback to the plain run shape).
+
+    ``on_progress`` callbacks run on the reader thread; keep them small
+    (e.g. push to ``progress_tracker`` or update a Celery task state)
+    and treat exceptions as recoverable — they are caught and logged
+    via stderr buffer rather than killing the subprocess.
+    """
+    timeout_eff: Optional[float] = (
+        None if (timeout is not None and timeout <= 0)
+        else (timeout if timeout is not None else DEFAULT_TIMEOUT_SEC)
+    )
+
+    env = os.environ.copy()
+    if env_extra:
+        env.update(env_extra)
+
+    argv = [sys.executable, "-m", "ddoc.cli.main", *args]
+
+    stderr_buf: deque[str] = deque(maxlen=stderr_buffer_lines)
+
+    def _consume_stderr(stream) -> None:
+        try:
+            for raw in stream:
+                line = raw.rstrip("\n")
+                stderr_buf.append(line)
+                if not on_progress:
+                    continue
+                stripped = line.strip()
+                if not (stripped.startswith("{") and stripped.endswith("}")):
+                    continue
+                try:
+                    obj = json.loads(stripped)
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(obj, dict) or "progress" not in obj:
+                    continue
+                try:
+                    on_progress(obj)
+                except Exception as cb_err:  # noqa: BLE001
+                    stderr_buf.append(
+                        f"[ddoc_runner] on_progress callback raised: {cb_err!r}"
+                    )
+        except Exception as read_err:  # noqa: BLE001
+            stderr_buf.append(f"[ddoc_runner] stderr reader error: {read_err!r}")
+        finally:
+            try:
+                stream.close()
+            except Exception:  # noqa: BLE001
+                pass
+
+    t0 = time.monotonic()
+    proc = subprocess.Popen(
+        argv,
+        cwd=cwd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,  # line-buffered for live NDJSON consumption
+    )
+
+    reader = threading.Thread(
+        target=_consume_stderr,
+        args=(proc.stderr,),
+        name="ddoc-stderr-reader",
+        daemon=True,
+    )
+    reader.start()
+
+    # Read stdout in the main thread (the reader thread owns stderr).
+    # Using ``communicate()`` here would conflict with the reader on the
+    # same Popen object — ``select`` sees stderr as a pipe to read, but
+    # the reader thread has already taken it, producing EBADF.
+    stdout_chunks: list[str] = []
+    stdout_pipe = proc.stdout
+    stdout_thread_err: list[str] = []
+
+    def _drain_stdout() -> None:
+        try:
+            assert stdout_pipe is not None
+            for chunk in stdout_pipe:
+                stdout_chunks.append(chunk)
+        except Exception as e:  # noqa: BLE001
+            stdout_thread_err.append(repr(e))
+        finally:
+            try:
+                if stdout_pipe is not None:
+                    stdout_pipe.close()
+            except Exception:  # noqa: BLE001
+                pass
+
+    stdout_reader = threading.Thread(
+        target=_drain_stdout, name="ddoc-stdout-reader", daemon=True,
+    )
+    stdout_reader.start()
+
+    timed_out = False
+    try:
+        proc.wait(timeout=timeout_eff)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        proc.kill()
+        try:
+            proc.wait(timeout=5)
+        except Exception:  # noqa: BLE001
+            pass
+
+    stdout_reader.join(timeout=5.0)
+    reader.join(timeout=2.0)
+    stdout = "".join(stdout_chunks)
+    if stdout_thread_err:
+        stderr_buf.append(
+            f"[ddoc_runner] stdout reader error(s): {stdout_thread_err}"
+        )
+    elapsed_ms = int((time.monotonic() - t0) * 1000)
+    stderr_tail = _tail("\n".join(stderr_buf))
+
+    if timed_out:
+        increment_counter("ddoc_cli_errors")
+        raise DdocError(
+            f"ddoc subprocess timed out after {timeout_eff}s",
+            error_type="timeout",
+            stderr_tail=stderr_tail,
+            elapsed_ms=elapsed_ms,
+            argv=argv,
+        )
+
+    increment_counter("ddoc_cli_calls")
+    increment_counter("ddoc_cli_total_elapsed_ms", elapsed_ms)
+
+    if proc.returncode != 0:
+        increment_counter("ddoc_cli_errors")
+        raise DdocError(
+            f"ddoc subprocess exited {proc.returncode}",
+            error_type="nonzero_exit",
+            returncode=proc.returncode,
+            stderr_tail=stderr_tail,
+            elapsed_ms=elapsed_ms,
+            argv=argv,
+        )
+
+    stdout = stdout or ""
+    parsed: dict[str, Any] = {}
+    parse_err: Optional[str] = None
+    if require_json:
+        if not stdout.strip():
+            raise DdocError(
+                "ddoc subprocess produced no stdout (expected --json envelope)",
+                error_type="empty_stdout",
+                returncode=proc.returncode,
+                stderr_tail=stderr_tail,
+                elapsed_ms=elapsed_ms,
+                argv=argv,
+            )
         parsed_obj = _try_parse_last_json_object(stdout)
         if parsed_obj is None:
             raise DdocError(
