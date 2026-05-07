@@ -121,11 +121,19 @@ def analyze_eda_command(
         # (Cache is keyed by data hash, so same data = same cache)
         data_hash = snapshot_data_hash
         
-        # Warn if data hashes don't match (snapshot data not in workspace)
+        # Warn if data hashes don't match. This is a real foot-gun:
+        # EDA reads workspace data but caches the result under the
+        # *snapshot's* data hash. If the workspace has been mutated
+        # since the snapshot was created, drift later will read the
+        # wrong attributes for that snapshot. Round-6 (2026-05-08) —
+        # message strengthened to red, ``--restore`` corrected to the
+        # actual v2 form ``ddoc snapshot checkout``, and the cache
+        # provenance hazard spelled out.
         if snapshot_data_hash != current_data_hash and current_data_hash != "unknown":
-            _log(f"[yellow]⚠️  Snapshot data hash ({snapshot_data_hash[:8]}) differs from current workspace ({current_data_hash[:8]})[/yellow]")
-            _log(f"[yellow]   Analyzing current workspace data, but using snapshot cache if available[/yellow]")
-            _log(f"[yellow]   To analyze snapshot data, run: ddoc snapshot --restore {snapshot_id}[/yellow]\n")
+            _log(f"[red]⚠️  HASH MISMATCH — snapshot {snapshot_id} expects {snapshot_data_hash[:8]} but workspace currently has {current_data_hash[:8]}[/red]")
+            _log(f"[red]   EDA will analyze the WORKSPACE data and write that result to the snapshot's cache slot.[/red]")
+            _log(f"[red]   Drift comparisons against {snapshot_id} after this point will reflect the workspace contents, not the snapshot's original data.[/red]")
+            _log(f"[red]   To analyze the snapshot's original data, first run:  ddoc snapshot checkout {snapshot_id}[/red]\n")
         
         is_workspace = False
     else:
