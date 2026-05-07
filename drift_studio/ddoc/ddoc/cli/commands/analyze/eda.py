@@ -188,6 +188,8 @@ def analyze_eda_command(
         _log(f"[cyan]📊 Analyzing snapshot: {snapshot_id}[/cyan]\n")
     
     # Call plugins (multi-modal support: collect all non-None results)
+    emit_progress(0.2, "plugin_call", "invoking eda_run hook",
+                  enabled=ndjson_progress)
     try:
         hook_results = get_pmgr().hook.eda_run(
             snapshot_id=snapshot_id,
@@ -200,6 +202,8 @@ def analyze_eda_command(
         _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
         raise typer.Exit(code=1)
 
+    emit_progress(0.9, "merge", "merging plugin results",
+                  enabled=ndjson_progress)
     res = _finish_eda(hook_results, json_out=json_out, return_dict=True)
     if res is None:
         return  # error already emitted
