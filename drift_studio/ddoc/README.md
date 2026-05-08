@@ -58,7 +58,7 @@ ddoc add --data ./datasets/train_data
 
 # 3. 첫 스냅샷 생성
 git add . && git commit -m "Initial setup"
-ddoc snapshot -m "baseline" -a baseline
+ddoc snapshot create -m "baseline" -a baseline
 
 # 4. 데이터 분석
 ddoc analyze eda
@@ -111,7 +111,7 @@ ddoc exp train yolo --dataset train_data
 ```bash
 ddoc init myproject
 ddoc add --data ./datasets/train_data
-ddoc snapshot -m "baseline dataset" -a baseline
+ddoc snapshot create -m "baseline dataset" -a baseline
 ```
 
 ### 실험 추적

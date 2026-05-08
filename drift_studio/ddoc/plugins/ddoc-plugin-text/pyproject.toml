@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.entry-points."ddoc"]
-ddoc_text = "ddoc_plugin_text.text_impl:DDOCTextPlugin"
+ddoc_text = "ddoc_plugin_text.text_impl:DOCTextPlugin"
 
 [tool.setuptools]
 packages = {find = {where = ["."], include = ["ddoc_plugin_text*"]}}

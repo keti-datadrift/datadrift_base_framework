@@ -19,7 +19,7 @@ class FileService:
         self.code_dir = self.project_root / "code"
         self.notebooks_dir = self.project_root / "notebooks"
     
-    def add_data(self, source: str, auto_dvc: bool = True) -> Dict[str, Any]:
+    def add_data(self, source: str, auto_dvc: bool = True, auto_git: bool = True) -> Dict[str, Any]:
         """
         Add data file or directory to data/
         
@@ -84,10 +84,13 @@ class FileService:
                 if not dvc_result["success"]:
                     result["dvc_warning"] = dvc_result.get("error", "DVC add failed")
                 
-                # Also git add the data.dvc file
-                if dvc_result["success"]:
+                # Also git add the data.dvc file (skipped when auto_git
+                # is False or there's no .git/ — Round-9).
+                if dvc_result["success"] and auto_git:
                     git_result = self._git_add_dvc_file()
                     result["git_staged"] = git_result["success"]
+                    if not git_result["success"]:
+                        result["git_warning"] = git_result.get("error", "git add failed")
             
             return result
             

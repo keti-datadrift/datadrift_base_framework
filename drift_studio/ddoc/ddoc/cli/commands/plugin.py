@@ -56,6 +56,87 @@ def plugin_list_command():
         print("  No plugins installed.")
 
 
+def plugin_detectors_command():
+    """Round-13 — print every plugin's advertised detector preset.
+
+    Reads each registered plugin's ``ddoc_supported_detectors`` hookimpl
+    (Gap 5) and prints a consolidated table. Use this to find the right
+    ``--detector`` value before running ``ddoc analyze drift``.
+
+    Plugins that don't implement the registry hook are listed as
+    "(no preset declared)" — their per-plugin runtime validation
+    (Round-11/12) still works.
+    """
+    pmgr = get_pmgr()
+    pm = pmgr.pm
+    try:
+        decls = pm.hook.ddoc_supported_detectors()
+    except Exception as e:
+        print(f"[red]❌ Failed to gather detector registry: {e}[/red]")
+        return
+    decls = [d for d in (decls or []) if isinstance(d, dict)]
+
+    print("[bold cyan]🎯 Detector preset registry[/bold cyan]\n")
+    if not decls:
+        print("  (no plugin declared any supported detectors)")
+        return
+
+    for d in decls:
+        modality = d.get("modality", "?")
+        default = d.get("default", "?")
+        supported = d.get("supported", [])
+        notes = d.get("notes", "")
+        print(f"[bold yellow]{modality}[/bold yellow]  default = [bold]{default}[/bold]")
+        print("  supported: " + ", ".join(f"[cyan]{s}[/cyan]" for s in supported))
+        if notes:
+            print(f"  [dim]{notes}[/dim]")
+        print()
+    print("[dim]💡 Tip: ddoc analyze drift --detector <strategy> ...[/dim]")
+
+
+def plugin_install_command(
+    package: str = typer.Argument(..., help="PyPI package name or PEP 508 requirement (e.g. ddoc-plugin-vision, 'ddoc-plugin-text==1.0', 'git+https://...')"),
+    editable: bool = typer.Option(False, "-e", "--editable", help="Install in editable mode (for local plugin checkouts)"),
+    upgrade: bool = typer.Option(False, "-U", "--upgrade", help="Pass --upgrade to pip"),
+    quiet: bool = typer.Option(False, "-q", "--quiet", help="Suppress pip's per-step output"),
+):
+    """Install a ddoc plugin via pip.
+
+    Round-10 — promoted from doc-only example to a real subcommand.
+    Thin wrapper over ``pip install`` so users can stay inside the
+    ddoc CLI for plugin lifecycle.
+
+    Examples:
+        ddoc plugin install ddoc-plugin-text
+        ddoc plugin install -e plugins/ddoc-plugin-vision
+        ddoc plugin install -U ddoc-plugin-vision
+    """
+    import sys
+    import subprocess
+    cmd = [sys.executable, "-m", "pip", "install"]
+    if upgrade:
+        cmd.append("--upgrade")
+    if editable:
+        cmd.append("-e")
+    if quiet:
+        cmd.append("-q")
+    cmd.append(package)
+
+    print(f"[cyan]📦 {' '.join(cmd[3:])}[/cyan]")
+    try:
+        proc = subprocess.run(cmd, check=False)
+    except FileNotFoundError:
+        print("[red]❌ pip not found in this Python environment[/red]")
+        raise typer.Exit(code=1)
+
+    if proc.returncode != 0:
+        print(f"[red]❌ pip install failed (exit {proc.returncode})[/red]")
+        raise typer.Exit(code=proc.returncode)
+
+    print(f"[green]✅ Installed {package}[/green]")
+    print("[dim]💡 Run 'ddoc plugin list' to confirm the new entry point is discovered.[/dim]")
+
+
 def plugin_info_command(
     plugin_name: Optional[str] = typer.Argument(None, help="Specific plugin name to show info for")
 ):

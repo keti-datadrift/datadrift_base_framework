@@ -103,13 +103,13 @@ experiments/
 
 ```bash
 # 실험 전
-ddoc snapshot -m "Before experiment X" -a before_exp_x
+ddoc snapshot create -m "Before experiment X" -a before_exp_x
 
 # 실험 수행
 ddoc exp train yolo --dataset dataset_name
 
 # 결과 확인 후 스냅샷
-ddoc snapshot -m "After experiment X - accuracy: 0.95" -a exp_x
+ddoc snapshot create -m "After experiment X - accuracy: 0.95" -a exp_x
 ```
 
 ### 2. MLflow UI 활용

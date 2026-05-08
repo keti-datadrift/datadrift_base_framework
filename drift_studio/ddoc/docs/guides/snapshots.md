@@ -28,16 +28,16 @@ ddoc snapshot -n 10                      # 최근 10개만
 ### 스냅샷 생성
 
 ```bash
-ddoc snapshot -m "message"               # 스냅샷 생성
-ddoc snapshot -m "message" -a alias      # Alias와 함께 생성
-ddoc snapshot -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
+ddoc snapshot create -m "message"               # 스냅샷 생성
+ddoc snapshot create -m "message" -a alias      # Alias와 함께 생성
+ddoc snapshot create -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
 ```
 
 **예시:**
 ```bash
-ddoc snapshot -m "baseline model"
-ddoc snapshot -m "improved accuracy" -a best_model
-ddoc snapshot -m "production ready" -a production
+ddoc snapshot create -m "baseline model"
+ddoc snapshot create -m "improved accuracy" -a best_model
+ddoc snapshot create -m "production ready" -a production
 ```
 
 **주의사항:**
@@ -54,9 +54,9 @@ ddoc snapshot baseline                   # Alias로 조회
 ### 스냅샷 복원
 
 ```bash
-ddoc snapshot --restore v01              # 버전으로 복원
-ddoc snapshot -r baseline                # Alias로 복원 (축약형)
-ddoc snapshot --restore v01 --force      # 강제 복원
+ddoc snapshot checkout v01              # 버전으로 복원
+ddoc snapshot checkout baseline                # Alias로 복원 (축약형)
+ddoc snapshot checkout v01 --force      # 강제 복원
 ```
 
 **복원 시 주의사항:**
@@ -120,7 +120,7 @@ ddoc snapshot --prune                    # 고아 스냅샷 식별
 - `-m, --message TEXT`: 스냅샷 생성 메시지
 - `-a, --alias TEXT`: 스냅샷 alias
 - `-l, --list`: 목록 조회
-- `-r, --restore VERSION`: 스냅샷 복원
+- `checkout VERSION`: 스냅샷 복원 (서브커맨드 — 예: `ddoc snapshot checkout v01`)
 - `--diff V1 V2`: 두 스냅샷 비교
 - `--graph`: 계보 그래프 표시
 - `--delete VERSION`: 스냅샷 삭제
@@ -140,12 +140,12 @@ ddoc snapshot --prune                    # 고아 스냅샷 식별
 # 1. 초기 데이터로 baseline 스냅샷 생성
 ddoc add --data initial_data/
 git add . && git commit -m "Initial setup"
-ddoc snapshot -m "Initial baseline" -a baseline
+ddoc snapshot create -m "Initial baseline" -a baseline
 
 # 2. 데이터 증강 추가
 ddoc add --data augmented_data/
 git add . && git commit -m "Added augmentation"
-ddoc snapshot -m "With augmentation" -a augmented
+ddoc snapshot create -m "With augmentation" -a augmented
 
 # 3. 스냅샷 목록 확인
 ddoc snapshot
@@ -154,7 +154,7 @@ ddoc snapshot
 ddoc snapshot --diff baseline augmented
 
 # 5. 이전 버전으로 복원
-ddoc snapshot --restore baseline
+ddoc snapshot checkout baseline
 ```
 
 ### 프로덕션 배포 워크플로우
@@ -168,7 +168,7 @@ ddoc snapshot v05  # 상세 정보 확인
 ddoc snapshot --set-alias v05 production
 
 # 3. Production 스냅샷으로 전환
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 
 # 4. 무결성 검증
 ddoc snapshot --verify production
@@ -180,18 +180,18 @@ ddoc snapshot --verify production
 
 ```bash
 # 좋은 예
-ddoc snapshot -m "Added 10K augmented images, improved preprocessing"
+ddoc snapshot create -m "Added 10K augmented images, improved preprocessing"
 
 # 나쁜 예
-ddoc snapshot -m "update"
+ddoc snapshot create -m "update"
 ```
 
 ### 2. 의미있는 Alias 사용
 
 ```bash
-ddoc snapshot -m "Initial model" -a baseline
-ddoc snapshot -m "Best performing model" -a best_accuracy
-ddoc snapshot -m "Deployed to production" -a production_v1
+ddoc snapshot create -m "Initial model" -a baseline
+ddoc snapshot create -m "Best performing model" -a best_accuracy
+ddoc snapshot create -m "Deployed to production" -a production_v1
 ```
 
 ### 3. 정기적인 스냅샷 생성
@@ -200,7 +200,7 @@ ddoc snapshot -m "Deployed to production" -a production_v1
 # 중요한 변경사항마다 스냅샷 생성
 ddoc add --data new_data/
 git add . && git commit -m "Added new data batch"
-ddoc snapshot -m "Added 2025-11 data batch"
+ddoc snapshot create -m "Added 2025-11 data batch"
 ```
 
 ### 4. Git 커밋 메시지와 스냅샷 메시지 구분
@@ -210,7 +210,7 @@ ddoc snapshot -m "Added 2025-11 data batch"
 git commit -m "Refactored data preprocessing pipeline"
 
 # ddoc: 전체 프로젝트 상태
-ddoc snapshot -m "Baseline with refactored preprocessing, original dataset"
+ddoc snapshot create -m "Baseline with refactored preprocessing, original dataset"
 ```
 
 ## 다음 단계

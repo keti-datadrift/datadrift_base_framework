@@ -34,7 +34,7 @@ from .add import add
 from .snapshot import snapshot_app
 from .analyze import analyze_eda_command, analyze_drift_command
 from .ingest import ingest_command
-from .plugin import plugin_list_command, plugin_info_command
+from .plugin import plugin_list_command, plugin_info_command, plugin_install_command, plugin_detectors_command
 from .vis import vis
 
 
@@ -109,8 +109,34 @@ def register(app: typer.Typer) -> None:
     # ========================================================================
     plugin_app.command("list")(plugin_list_command)
     plugin_app.command("info")(plugin_info_command)
+    plugin_app.command("install")(plugin_install_command)
+    plugin_app.command("detectors")(plugin_detectors_command)
     app.add_typer(plugin_app, name="plugin")
-    
+
+    # Round 11 (Track A) — toy data generators for tutorials.
+    from .examples import examples_app
+    app.add_typer(examples_app, name="examples", help="Generate ready-to-analyze toy datasets")
+
+    # Round 11 (Track C) — report rendering + export to external systems.
+    from .report import report_app
+    from .export import export_app
+    app.add_typer(report_app, name="report", help="Render drift / EDA results as HTML / PDF / Markdown reports")
+    app.add_typer(export_app, name="export", help="Ship drift / EDA results to external systems (keti_veritas / file / ...)")
+
+    # Round 13 — data-source adapter (file:// fallback + plugin extension point for s3:// etc.)
+    from .fetch import fetch_command
+    app.command(
+        name="fetch",
+        help="Materialize an external data source (file/s3/gs/http) into a local directory",
+    )(fetch_command)
+
+    # Round 14 — REST facade (`ddoc serve`).
+    from .serve import serve_command
+    app.command(
+        name="serve",
+        help="Start a FastAPI server exposing every ddoc CLI command over HTTP",
+    )(serve_command)
+
     app.command(name="vis", help="Run GUI app")(vis)
     
     # ========================================================================

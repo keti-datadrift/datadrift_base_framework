@@ -2,6 +2,11 @@
 
 5분 안에 ddoc의 기본 사용법을 익혀보세요.
 
+> 💡 **본인 데이터 없이 먼저 drift 결과만 보고 싶다면**
+> [toy-data 튜토리얼](toy-data.md) 부터 — `ddoc examples generate
+> timeseries` 한 줄로 합성 데이터셋 만들고 `ddoc analyze drift` 로 즉시
+> 검증할 수 있습니다 (project / DVC 설정 불필요).
+
 ## 1. 프로젝트 초기화
 
 ```bash
@@ -45,7 +50,7 @@ git add .
 git commit -m "Initial setup"
 
 # ddoc 스냅샷 생성 (데이터 + 코드 + 실험 상태)
-ddoc snapshot -m "baseline model" -a baseline
+ddoc snapshot create -m "baseline model" -a baseline
 ```
 
 스냅샷은 다음을 포함합니다:
@@ -83,7 +88,7 @@ ddoc snapshot
 ddoc snapshot --diff baseline v02
 
 # 이전 버전으로 복원
-ddoc snapshot --restore baseline
+ddoc snapshot checkout baseline
 ```
 
 ## 다음 단계

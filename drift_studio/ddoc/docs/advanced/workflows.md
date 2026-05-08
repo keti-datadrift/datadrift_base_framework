@@ -9,19 +9,19 @@ Git 브랜치를 활용하여 여러 실험을 병렬로 진행할 수 있습니
 ```bash
 # 메인 브랜치에서 baseline
 git checkout main
-ddoc snapshot -m "baseline" -a baseline
+ddoc snapshot create -m "baseline" -a baseline
 
 # 새 브랜치에서 실험
 git checkout -b experiment1
 ddoc add --data new_augmented_data/
 git add . && git commit -m "Experiment 1 data"
-ddoc snapshot -m "experiment 1" -a exp1
+ddoc snapshot create -m "experiment 1" -a exp1
 
 # 다른 브랜치에서 다른 실험
 git checkout -b experiment2
 ddoc add --data different_preprocessing/
 git add . && git commit -m "Experiment 2 data"
-ddoc snapshot -m "experiment 2" -a exp2
+ddoc snapshot create -m "experiment 2" -a exp2
 
 # 결과 비교
 ddoc snapshot --diff baseline exp1
@@ -61,7 +61,7 @@ git push origin main
 git clone <repo-url>
 cd project
 dvc pull
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 ```
 
 ## 팀 협업 워크플로우
@@ -83,7 +83,7 @@ ddoc snapshot
 ### 3. 특정 버전으로 전환
 
 ```bash
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 ```
 
 ### 4. 변경사항 작업
@@ -91,7 +91,7 @@ ddoc snapshot --restore production
 ```bash
 ddoc add --data new_data/
 git add . && git commit -m "My changes"
-ddoc snapshot -m "experiment X" -a exp-x
+ddoc snapshot create -m "experiment X" -a exp-x
 ```
 
 ### 5. 변경사항 푸시
@@ -107,18 +107,18 @@ dvc push
 
 ```bash
 # 좋은 예
-ddoc snapshot -m "Added 10K augmented images, improved preprocessing"
+ddoc snapshot create -m "Added 10K augmented images, improved preprocessing"
 
 # 나쁜 예
-ddoc snapshot -m "update"
+ddoc snapshot create -m "update"
 ```
 
 ### 2. 의미있는 Alias 사용
 
 ```bash
-ddoc snapshot -m "Initial model" -a baseline
-ddoc snapshot -m "Best performing model" -a best_accuracy
-ddoc snapshot -m "Deployed to production" -a production_v1
+ddoc snapshot create -m "Initial model" -a baseline
+ddoc snapshot create -m "Best performing model" -a best_accuracy
+ddoc snapshot create -m "Deployed to production" -a production_v1
 ```
 
 ### 3. 정기적인 스냅샷 생성
@@ -127,20 +127,20 @@ ddoc snapshot -m "Deployed to production" -a production_v1
 # 중요한 변경사항마다 스냅샷 생성
 ddoc add --data new_data/
 git add . && git commit -m "Added new data batch"
-ddoc snapshot -m "Added 2025-11 data batch"
+ddoc snapshot create -m "Added 2025-11 data batch"
 ```
 
 ### 4. 실험 전 스냅샷 생성
 
 ```bash
 # 실험 전
-ddoc snapshot -m "Before experiment X" -a before_exp_x
+ddoc snapshot create -m "Before experiment X" -a before_exp_x
 
 # 실험 수행
 ddoc exp train yolo --dataset dataset_name
 
 # 결과 확인 후 스냅샷
-ddoc snapshot -m "After experiment X - accuracy: 0.95" -a exp_x
+ddoc snapshot create -m "After experiment X - accuracy: 0.95" -a exp_x
 ```
 
 ### 5. Git 커밋 메시지와 스냅샷 메시지 구분
@@ -150,7 +150,7 @@ ddoc snapshot -m "After experiment X - accuracy: 0.95" -a exp_x
 git commit -m "Refactored data preprocessing pipeline"
 
 # ddoc: 전체 프로젝트 상태
-ddoc snapshot -m "Baseline with refactored preprocessing, original dataset"
+ddoc snapshot create -m "Baseline with refactored preprocessing, original dataset"
 ```
 
 ### 6. Trainer 기반 실험 워크플로우

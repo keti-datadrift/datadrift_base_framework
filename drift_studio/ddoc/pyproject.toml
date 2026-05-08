@@ -70,6 +70,19 @@ ingest = [
 # `pip install ddoc[orchestrator]==2.x.y` and survive future tightening.
 orchestrator = []
 
+# Test extras — used by `11_install_pytest.sh` and CI. Kept tiny so the
+# core install path is uncontaminated.
+test = [
+  "pytest>=7.0",
+]
+
+# Round-9 — combo extras for the common training scenarios. ``ddoc exp
+# train yolo`` requires both [exp] (mlflow) and [yolo] (ultralytics +
+# torch); having a single extras name documents that intent and makes
+# deployment manifests one line shorter.
+exp-yolo = ["ddoc[exp,yolo]"]
+exp-vision = ["ddoc[exp,vision]"]
+
 vision = [
   "torch>=2.0.0",
   "torchvision>=0.15.0",
@@ -94,35 +107,15 @@ nlp = [
 vis = [
   "streamlit>=1.28.0",
 ]
-# NOTE: the `all` extras's plugin entries below use file:// paths bound to
-# a developer's local checkout. They will NOT resolve on a fresh PyPI
-# install. Leaving the spec here as documentation of the intended bundle;
-# fix-up to a real Plugin index (or PEP 508 git+ URLs) is a separate round.
+# Round-8 (2026-05-08) — ``all`` rebuilt from the named extras instead
+# of duplicating their content. The previous incarnation also bundled
+# three plugin packages via ``file:///Users/bhc/...`` paths bound to a
+# specific developer's local checkout — those would silently fail to
+# resolve on any other machine and on PyPI installs. Plugins are now
+# expected to be installed separately (PyPI when published, or
+# ``pip install -e plugins/<name>`` in this monorepo).
 all = [
-  # Subsumes other extras for end-to-end install
-  "mlflow>=2.0.0",
-  "pyarrow>=14.0.0",
-  # Vision dependencies
-  "torch>=2.0.0",
-  "torchvision>=0.15.0",
-  "clip @ git+https://github.com/openai/CLIP.git",
-  "pillow>=9.0.0",
-  "matplotlib>=3.5.0",
-  "seaborn>=0.11.0",
-  "scikit-image>=0.19.0",
-  "scipy>=1.7.0",
-  "yellowbrick>=1.5",
-  # YOLO dependencies
-  "ultralytics>=8.0.0; python_version >= '3.10'",
-  "ultralytics>=7.0.0,<8.0.0; python_version < '3.10'",
-  "opencv-python>=4.6.0",
-  # Visualization dependencies
-  "streamlit>=1.28.0",
-  # Plugin packages — file:// paths only valid in the original developer
-  # workspace. Replace with PyPI / git+https URLs before a public release.
-  "ddoc-plugin-vision @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-vision",
-  "ddoc-plugin-yolo @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-yolo",
-  "ddoc-plugin-vis @ file:///Users/bhc/dev/drift_v1/ddoc/plugins/ddoc-plugin-vis",
+  "ddoc[exp,ingest,vision,yolo,vis]",
 ]
 
 [project.scripts]
@@ -136,5 +129,6 @@ include-package-data = true  # ✅ 이 줄을 여기에 두세요 (boolean 값)
 ddoc = [
   "fonts/NanumGothicCoding-Bold.ttf",
   "fonts/NanumGothicCoding-Regular.ttf",
-  "config/config.json"
+  "config/config.json",
+  "templates/*.html",
 ]

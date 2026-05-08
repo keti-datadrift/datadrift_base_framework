@@ -22,13 +22,17 @@ from typing import Optional
 from ..utils import get_pmgr, _pretty
 from ddoc.core.snapshot_service import get_snapshot_service
 from ddoc.core.cache_service import get_cache_service
-from .drift import _emit, _emit_error, _merge_plugin_results, emit_progress
+from .drift import _emit, _emit_error, _merge_plugin_results, emit_progress, _SilencePluginIO
 
 
 def analyze_eda_command(
     snapshot: Optional[str] = typer.Argument(None, help="Snapshot ID or alias (default: current workspace; ignore when --data-path)"),
     invalidate_cache: bool = typer.Option(False, "--invalidate-cache", help="Invalidate existing cache before analysis"),
     save_snapshot: bool = typer.Option(False, "--save-snapshot", help="Save workspace as permanent snapshot after analysis (interactive — incompatible with --json)"),
+    strict_hash: bool = typer.Option(
+        False, "--strict-hash",
+        help="Refuse to run when the snapshot's data_hash does not match the workspace (forces the user to ``ddoc snapshot checkout`` first). Default: warn-only with provenance-correct cache routing.",
+    ),
     data_path: Optional[str] = typer.Option(
         None, "--data-path",
         help="Skip snapshot/workspace; pass data path directly (orchestrator mode).",
@@ -40,6 +44,10 @@ def analyze_eda_command(
     ndjson_progress: bool = typer.Option(
         False, "--ndjson-progress",
         help="Emit NDJSON progress lines on stderr (orchestrator streaming).",
+    ),
+    quiet: bool = typer.Option(
+        False, "--quiet", "-q",
+        help="Silence all plugin stdout/stderr during hook invocation. CLI's own NDJSON progress (if --ndjson-progress) and final --json envelope still emit.",
     ),
 ):
     """
@@ -67,13 +75,14 @@ def analyze_eda_command(
         emit_progress(0.2, "plugin_call", "invoking eda_run hook",
                       enabled=ndjson_progress)
         try:
-            hook_results = get_pmgr().hook.eda_run(
-                snapshot_id="__path__",
-                data_path=data_path,
-                data_hash="",
-                output_path=f"analysis/path_{Path(data_path).name}",
-                invalidate_cache=invalidate_cache,
-            )
+            with _SilencePluginIO(json_out=json_out, quiet=quiet):
+                hook_results = get_pmgr().hook.eda_run(
+                    snapshot_id="__path__",
+                    data_path=data_path,
+                    data_hash="",
+                    output_path=f"analysis/path_{Path(data_path).name}",
+                    invalidate_cache=invalidate_cache,
+                )
         except Exception as e:
             _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
             raise typer.Exit(code=1)
@@ -116,16 +125,37 @@ def analyze_eda_command(
         # Always use current workspace data path for analysis
         # (Analysis operates on actual files in workspace)
         data_path = "data/"  # Relative path from project root
-        
-        # Use snapshot data hash for cache lookup
-        # (Cache is keyed by data hash, so same data = same cache)
-        data_hash = snapshot_data_hash
-        
-        # Warn if data hashes don't match (snapshot data not in workspace)
-        if snapshot_data_hash != current_data_hash and current_data_hash != "unknown":
-            _log(f"[yellow]⚠️  Snapshot data hash ({snapshot_data_hash[:8]}) differs from current workspace ({current_data_hash[:8]})[/yellow]")
-            _log(f"[yellow]   Analyzing current workspace data, but using snapshot cache if available[/yellow]")
-            _log(f"[yellow]   To analyze snapshot data, run: ddoc snapshot --restore {snapshot_id}[/yellow]\n")
+
+        hashes_match = (
+            snapshot_data_hash == current_data_hash
+            or current_data_hash == "unknown"
+        )
+
+        # Round-7 (2026-05-08) — provenance-correct cache routing.
+        # When the workspace data does NOT match the requested
+        # snapshot, we used to cache the analysis result under the
+        # *snapshot's* hash anyway, which silently corrupted drift
+        # comparisons against that snapshot. Now we cache under the
+        # *workspace's actual* hash (whatever was analyzed). Drift
+        # against the original snapshot data correctly returns
+        # cache_missing — which is the truthful outcome — and the user
+        # is told to ``ddoc snapshot checkout`` first.
+        if hashes_match:
+            data_hash = snapshot_data_hash
+        else:
+            if strict_hash:
+                _emit_error(
+                    f"--strict-hash: snapshot {snapshot_id} expects {snapshot_data_hash[:8]} "
+                    f"but workspace has {current_data_hash[:8]}. "
+                    f"Run 'ddoc snapshot checkout {snapshot_id}' first.",
+                    code="hash_mismatch", json_out=json_out,
+                )
+                raise typer.Exit(code=2)
+            _log(f"[red]⚠️  HASH MISMATCH — snapshot {snapshot_id} expects {snapshot_data_hash[:8]} but workspace currently has {current_data_hash[:8]}[/red]")
+            _log(f"[red]   EDA will analyze the workspace data and cache the result under the WORKSPACE hash ({current_data_hash[:8]}), not the snapshot's hash.[/red]")
+            _log(f"[red]   Drift against {snapshot_id} will report cache_missing until you run:  ddoc snapshot checkout {snapshot_id}  and re-run EDA.[/red]")
+            _log(f"[red]   Pass --strict-hash to make this a hard error instead of a warning.[/red]\n")
+            data_hash = current_data_hash
         
         is_workspace = False
     else:
@@ -191,13 +221,14 @@ def analyze_eda_command(
     emit_progress(0.2, "plugin_call", "invoking eda_run hook",
                   enabled=ndjson_progress)
     try:
-        hook_results = get_pmgr().hook.eda_run(
-            snapshot_id=snapshot_id,
-            data_path=data_path,
-            data_hash=data_hash,
-            output_path=output_path,
-            invalidate_cache=invalidate_cache,
-        )
+        with _SilencePluginIO(json_out=json_out, quiet=quiet):
+            hook_results = get_pmgr().hook.eda_run(
+                snapshot_id=snapshot_id,
+                data_path=data_path,
+                data_hash=data_hash,
+                output_path=output_path,
+                invalidate_cache=invalidate_cache,
+            )
     except Exception as e:
         _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
         raise typer.Exit(code=1)
@@ -213,11 +244,11 @@ def analyze_eda_command(
         final_data_hash = snapshot_service._get_dvc_data_hash() or "unknown"
         if final_data_hash != data_hash and data_hash != "unknown":
             if not json_out:
-                r_log(f"[yellow]⚠️  Data hash changed during analysis![/yellow]")
+                _log(f"[yellow]⚠️  Data hash changed during analysis![/yellow]")
                 rprint(f"   Before: {data_hash[:8]}...")
                 rprint(f"   After:  {final_data_hash[:8]}...")
-                r_log(f"[yellow]   Data may have been modified during analysis.[/yellow]")
-                r_log(f"[yellow]   Cache was saved with old hash. Consider re-running analysis.[/yellow]")
+                _log(f"[yellow]   Data may have been modified during analysis.[/yellow]")
+                _log(f"[yellow]   Cache was saved with old hash. Consider re-running analysis.[/yellow]")
             data_hash = final_data_hash
 
     # Save snapshot if requested (interactive — disabled in JSON mode)
@@ -240,9 +271,9 @@ def analyze_eda_command(
             if result["success"]:
                 new_snapshot_id = result["snapshot_id"]
                 cache_service._save_snapshot_mapping(new_snapshot_id, data_hash)
-                r_log(f"[green]✅ Saved as snapshot: {new_snapshot_id}[/green]")
+                _log(f"[green]✅ Saved as snapshot: {new_snapshot_id}[/green]")
                 if alias:
-                    r_log(f"[green]   Alias: {alias}[/green]")
+                    _log(f"[green]   Alias: {alias}[/green]")
 
 
 def _finish_eda(hook_results, *, json_out: bool, return_dict: bool = False):

@@ -67,9 +67,9 @@ ddoc snapshot -n 10                      # 최근 10개만
 
 **스냅샷 생성:**
 ```bash
-ddoc snapshot -m "message"               # 스냅샷 생성
-ddoc snapshot -m "message" -a alias      # Alias와 함께 생성
-ddoc snapshot -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
+ddoc snapshot create -m "message"               # 스냅샷 생성
+ddoc snapshot create -m "message" -a alias      # Alias와 함께 생성
+ddoc snapshot create -m "msg" --no-auto-commit  # Git/DVC 자동 커밋 비활성화
 ```
 
 **스냅샷 상세 조회:**
@@ -80,9 +80,9 @@ ddoc snapshot baseline                   # Alias로 조회
 
 **스냅샷 복원:**
 ```bash
-ddoc snapshot --restore v01              # 버전으로 복원
-ddoc snapshot -r baseline                # Alias로 복원 (축약형)
-ddoc snapshot --restore v01 --force      # 강제 복원
+ddoc snapshot checkout v01              # 버전으로 복원
+ddoc snapshot checkout baseline                # Alias로 복원 (축약형)
+ddoc snapshot checkout v01 --force      # 강제 복원
 ```
 
 **스냅샷 비교:**
@@ -129,7 +129,7 @@ ddoc snapshot --prune                    # 고아 스냅샷 식별
 - `-m, --message TEXT`: 스냅샷 생성 메시지
 - `-a, --alias TEXT`: 스냅샷 alias
 - `-l, --list`: 목록 조회
-- `-r, --restore VERSION`: 스냅샷 복원
+- `checkout VERSION`: 스냅샷 복원 (서브커맨드 — 예: `ddoc snapshot checkout v01`)
 - `--diff V1 V2`: 두 스냅샷 비교
 - `--graph`: 계보 그래프 표시
 - `--delete VERSION`: 스냅샷 삭제
@@ -237,8 +237,8 @@ ddoc exp best yolo_reference --metric precision
 
 다음 명령어들은 v2.0.3에서 deprecated되었습니다:
 
-- `ddoc commit` → `ddoc snapshot -m`
-- `ddoc checkout` → `ddoc snapshot --restore`
+- `ddoc commit` → `ddoc snapshot create -m`
+- `ddoc checkout` → `ddoc snapshot checkout`
 - `ddoc log` → `ddoc snapshot --list`
 - `ddoc diff` → `ddoc snapshot --diff`
 - `ddoc exp run` → `ddoc exp train`

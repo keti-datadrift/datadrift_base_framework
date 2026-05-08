@@ -167,7 +167,7 @@ class CacheService:
             if cache_type in ["summary", "file_metadata"] or cache_type.startswith("attributes_"):
                 cache_file = data_dir / f"{cache_type}.json"
                 with open(cache_file, 'w') as f:
-                    json.dump(data, f, indent=2)
+                    json.dump(data, f, indent=2, default=str)
             elif cache_type.startswith("embedding_") or cache_type.startswith("xai_"):
                 cache_file = data_dir / f"{cache_type}.pkl"
                 with open(cache_file, 'wb') as f:
@@ -177,7 +177,7 @@ class CacheService:
                 if cache_type == "attributes":
                     cache_file = data_dir / f"{cache_type}.json"
                     with open(cache_file, 'w') as f:
-                        json.dump(data, f, indent=2)
+                        json.dump(data, f, indent=2, default=str)
                 else:  # embedding or xai
                     cache_file = data_dir / f"{cache_type}.pkl"
                     with open(cache_file, 'wb') as f:
@@ -276,6 +276,49 @@ class CacheService:
         
         return None
     
+    def find_attribute_caches(
+        self,
+        snapshot_id: Optional[str] = None,
+        data_hash: Optional[str] = None,
+    ) -> dict:
+        """Return all ``attributes*`` JSON caches available for the data
+        hash, keyed by their cache_type.
+
+        Plugins write modality-suffixed caches such as
+        ``attributes_timeseries.json`` / ``attributes_image.json``.
+        Callers (notably ``ddoc analyze drift``) used to look up the
+        bare ``attributes`` cache only, which silently missed every
+        modality-aware plugin's output. This helper resolves the right
+        directory once and lists every variant on disk.
+
+        Returns ``{}`` when no data hash can be resolved or no
+        attributes cache exists.
+        """
+        if snapshot_id == "workspace" and not data_hash:
+            workspace_state = self._get_workspace_state()
+            data_hash = workspace_state.get("current_data_hash")
+        if snapshot_id and not data_hash and snapshot_id != "workspace":
+            data_hash = self._get_data_hash_by_snapshot(snapshot_id)
+        if not data_hash:
+            return {}
+
+        data_dir = self.get_data_hash_dir(data_hash)
+        if not data_dir.exists():
+            return {}
+
+        out: dict = {}
+        for f in data_dir.iterdir():
+            if not (f.is_file() and f.suffix == ".json"):
+                continue
+            stem = f.stem
+            if stem == "attributes" or stem.startswith("attributes_"):
+                try:
+                    with open(f, "r") as fh:
+                        out[stem] = json.load(fh)
+                except (OSError, json.JSONDecodeError):
+                    continue
+        return out
+
     def _save_snapshot_mapping(self, snapshot_id: str, data_hash: str):
         """Save snapshot to data hash mapping (SQLite only)"""
         conn = sqlite3.connect(self.index_db)

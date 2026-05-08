@@ -28,8 +28,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 프로젝트 루트 디렉토리
-PROJECT_ROOT="/Users/bhc/dev/drift_v1/ddoc"
+# 프로젝트 루트 디렉토리 — 스크립트 위치 기준 자동 산출.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 # 사용법 출력

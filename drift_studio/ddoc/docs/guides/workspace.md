@@ -169,7 +169,7 @@ git commit -m "Updated training script"
 
 ```bash
 # 중요한 변경사항마다 스냅샷 생성
-ddoc snapshot -m "Added new dataset" -a v1
+ddoc snapshot create -m "Added new dataset" -a v1
 ```
 
 ## 다음 단계

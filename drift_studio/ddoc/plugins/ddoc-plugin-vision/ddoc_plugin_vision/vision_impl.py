@@ -73,6 +73,81 @@ class DDOCVisionPlugin:
             print(f"⚠️ Could not query metadata service: {e}")
             return os.path.basename(dataset_path)
     
+    def _compute_embeddings_from_path(self, data_path) -> Dict[str, Any]:
+        """Round-12 — companion to ``_compute_attributes_from_path``.
+
+        Walks ``data_path`` for images and runs the CLIP embedding
+        analyzer on each. Only invoked in path mode when the caller
+        passes ``cfg['with_embeddings']`` (i.e. the user opted in via
+        ``--with-embeddings``) AND no embedding cache is available;
+        otherwise the plugin's drift falls back to attribute-only
+        (Round-7 contract).
+
+        Mirrors text plugin's path-mode embedding helper (Round-10).
+        Returns the same shape that the cache would
+        (``{rel_path: {embedding: [...], file_size?: n, file_mtime?: n}}``)
+        so ``drift_detect`` doesn't have to branch on source.
+        """
+        input_path = Path(data_path)
+        if not input_path.exists() or not input_path.is_dir():
+            return {}
+
+        formats = ('.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG')
+        image_files = self._get_current_image_files(input_path, formats)
+        if not image_files:
+            return {}
+
+        if self.emb_analyzer is None:
+            self.emb_analyzer = EmbeddingAnalyzer(device='cpu')
+            try:
+                self.emb_analyzer.load_model("ViT-B/16")
+            except Exception as e:
+                print(f"⚠️ CLIP load failed in path mode: {e}")
+                return {}
+
+        out: Dict[str, Any] = {}
+        for img_file in image_files:
+            try:
+                result = self.emb_analyzer.extract_embedding(str(img_file))
+            except Exception as e:
+                print(f"⚠️ embedding extract failed for {img_file.name}: {e}")
+                continue
+            if result and 'embedding' in result:
+                rel_path = str(img_file.relative_to(input_path))
+                out[rel_path] = {
+                    'embedding': result['embedding'],
+                    'file_size': img_file.stat().st_size,
+                    'file_mtime': int(img_file.stat().st_mtime),
+                }
+        return out
+
+    def _compute_attributes_from_path(self, data_path) -> Dict[str, Any]:
+        """Walk ``data_path`` for image files and run the attribute
+        analyzer on each. Round-7 — minimal helper for ``drift_detect``
+        path-mode fallback. Skips embeddings (CLIP load), incremental
+        cache deltas, and file-metadata bookkeeping — those belong to
+        the snapshot/cache flow, not the orchestrator path-mode flow.
+        """
+        input_path = Path(data_path)
+        if not input_path.exists() or not input_path.is_dir():
+            return {}
+
+        formats = ('.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG')
+        image_files = self._get_current_image_files(input_path, formats)
+        if not image_files:
+            return {}
+
+        if self.attr_analyzer is None:
+            self.attr_analyzer = AttributeAnalyzer()
+
+        out: Dict[str, Any] = {}
+        for img_file in image_files:
+            attrs = self.attr_analyzer.analyze_image_attributes(str(img_file))
+            if attrs:
+                rel_path = str(img_file.relative_to(input_path))
+                out[rel_path] = attrs
+        return out
+
     @hookimpl
     def eda_run(self, snapshot_id, data_path, data_hash, output_path, invalidate_cache=False):
         """
@@ -481,12 +556,37 @@ class DDOCVisionPlugin:
             baseline_attr = get_cached_analysis_data(ref_dataset_path, "attribute_analysis")
         if not baseline_emb:
             baseline_emb = get_cached_analysis_data(ref_dataset_path, "embedding_analysis")
-        
+
         if not current_attr:
             current_attr = get_cached_analysis_data(cur_dataset_path, "attribute_analysis")
         if not current_emb:
             current_emb = get_cached_analysis_data(cur_dataset_path, "embedding_analysis")
-        
+
+        # Round-7 path-mode fallback — when no cache (new ddoc cache,
+        # legacy cache, or at all) is available but the orchestrator
+        # passed concrete data paths, compute attributes inline. Drift
+        # then runs on the freshly-computed attribute snapshot. This is
+        # what makes ``ddoc analyze drift --data-path-ref X
+        # --data-path-cur Y`` work without project / snapshot context.
+        # Embeddings stay None — drift's overall_score then weights
+        # them as 0 and returns attribute-only drift.
+        if not baseline_attr and data_path_ref:
+            baseline_attr = self._compute_attributes_from_path(data_path_ref)
+        if not current_attr and data_path_cur:
+            current_attr = self._compute_attributes_from_path(data_path_cur)
+
+        # Round-12 (Track B Gap follow-up) — vision ``--with-embeddings``.
+        # Symmetric with the text plugin's Round-10 contract: when path
+        # mode has no embedding cache AND the user opted in, load CLIP
+        # inline and compute embeddings. Without the flag we keep
+        # attribute-only drift (path-mode default) so the embedding-
+        # heavy CLIP load (~5 s, ~600 MB RAM) stays explicit.
+        _with_embeddings = bool(cfg.get('with_embeddings', False))
+        if _with_embeddings and not baseline_emb and data_path_ref:
+            baseline_emb = self._compute_embeddings_from_path(data_path_ref)
+        if _with_embeddings and not current_emb and data_path_cur:
+            current_emb = self._compute_embeddings_from_path(data_path_cur)
+
         # If no baseline, set current as baseline (only for same snapshot comparison)
         if not baseline_attr and current_attr and snapshot_id_ref == snapshot_id_cur:
             print("⚠️ No baseline found. Setting current as baseline.")
@@ -535,8 +635,29 @@ class DDOCVisionPlugin:
         # Drift analysis
         if not baseline_attr or not current_attr:
             print("❌ Missing baseline or current data")
-            return None
-        
+            return None  # no image data — silently defer to other plugins
+
+        # Round-11 (Track B) — detector validation at the top of the
+        # work-doing path so unsupported values are rejected even when
+        # embeddings aren't computed (e.g. path mode without CLIP).
+        # The full per-strategy mapping for embedding_drift happens
+        # later inside the ``if baseline_emb and current_emb:`` block.
+        _SUPPORTED_DETECTORS = {
+            "default", "ensemble", "mmd", "mean_shift",
+            "wasserstein", "psi", "cosine",
+        }
+        _strategy = (detector or "default").lower()
+        if _strategy not in _SUPPORTED_DETECTORS:
+            return {
+                "status": "error",
+                "error_code": "unsupported_detector",
+                "modality": "image",
+                "message": (
+                    f"vision plugin supports detector ∈ "
+                    f"{sorted(_SUPPORTED_DETECTORS)}; got {detector!r}."
+                ),
+            }
+
         # File changes
         ref_files = set(baseline_attr.keys())
         cur_files = set(current_attr.keys())
@@ -630,9 +751,38 @@ class DDOCVisionPlugin:
                 embedding_drift_metrics = self._calculate_embedding_drift_ensemble(
                     ref_emb_array, cur_emb_array
                 )
-                
-                # Store detailed metrics
-                drift_metrics['embedding_drift'] = embedding_drift_metrics['ensemble_score']
+
+                # Round-11 (Track B) — wire ``detector`` parameter so
+                # operators can request a single metric rather than the
+                # weighted ensemble. Mapping uses the *normalized*
+                # per-metric scores so every option stays in [0, 1].
+                # ``default`` and the legacy ``mmd`` CLI default both
+                # keep the historical ensemble behaviour.
+                _strategy = (detector or "default").lower()
+                _STRATEGIES = {
+                    "default": embedding_drift_metrics["ensemble_score"],
+                    "ensemble": embedding_drift_metrics["ensemble_score"],
+                    "mmd": embedding_drift_metrics["normalized_scores"]["mmd_multiscale"],
+                    "mean_shift": embedding_drift_metrics["normalized_scores"]["mean_shift"],
+                    "wasserstein": embedding_drift_metrics["normalized_scores"]["wasserstein"],
+                    "psi": embedding_drift_metrics["normalized_scores"]["psi"],
+                    "cosine": embedding_drift_metrics["normalized_scores"]["cosine_distance"],
+                }
+                if _strategy not in _STRATEGIES:
+                    return {
+                        "status": "error",
+                        "error_code": "unsupported_detector",
+                        "modality": "image",
+                        "message": (
+                            f"vision plugin does not support detector={detector!r}. "
+                            f"supported: {sorted(_STRATEGIES.keys())}"
+                        ),
+                    }
+
+                # Store detailed metrics — keep full breakdown so callers
+                # who picked one strategy can still inspect the others.
+                drift_metrics['embedding_drift'] = float(_STRATEGIES[_strategy])
+                drift_metrics['embedding_drift_detector'] = _strategy
                 drift_metrics['embedding_drift_detailed'] = embedding_drift_metrics
                 
                 # Print detailed metrics
@@ -1304,7 +1454,28 @@ class DDOCVisionPlugin:
             "name": "ddoc-plugin-vision",
             "version": "0.1.0",
             "description": "Vision analysis plugin for image datasets",
-            "hooks": ["eda_run", "drift_detect"],
+            "hooks": ["eda_run", "drift_detect", "ddoc_supported_detectors"],
             "modalities": ["image"]
+        }
+
+    @hookimpl
+    def ddoc_supported_detectors(self) -> Dict[str, Any]:
+        """Round-13 (Gap 5) — declare the detector strategies this
+        plugin honours so the CLI can validate ``--detector`` upfront.
+        Mirrors the runtime ``_SUPPORTED_DETECTORS`` set inside
+        ``drift_detect`` (Round-11)."""
+        return {
+            "modality": "image",
+            "default": "ensemble",
+            "supported": [
+                "default", "ensemble", "mmd", "mean_shift",
+                "wasserstein", "psi", "cosine",
+            ],
+            "notes": (
+                "5-metric ensemble (multi-scale MMD + mean shift + 1-D "
+                "wasserstein + PSI-on-PCA + cosine). All values map to a "
+                "[0, 1]-normalized score; ``default``/``ensemble`` are "
+                "the weighted sum, the rest pick a single metric."
+            ),
         }
 

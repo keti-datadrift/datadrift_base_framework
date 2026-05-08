@@ -16,8 +16,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 프로젝트 루트 디렉토리
-PROJECT_ROOT="/Users/bhc/dev/drift_v1/ddoc"
+# 프로젝트 루트 디렉토리 — 스크립트 위치 기준 자동 산출.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 ################################################################################
@@ -296,7 +297,7 @@ print_header "다음 단계"
 echo "환경이 성공적으로 설정되었습니다. 다음 명령어로 테스트를 진행하세요:"
 echo ""
 echo -e "${CYAN}  # 1. 가상환경 활성화 (새 터미널에서)${NC}"
-echo "  cd /Users/bhc/dev/drift_v1/ddoc"
+echo "  cd $PROJECT_ROOT"
 echo "  source venv/bin/activate"
 echo ""
 echo -e "${CYAN}  # 2. 테스트 스크립트 실행${NC}"

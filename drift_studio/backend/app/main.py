@@ -124,6 +124,10 @@ def healthz():
     ``BACKEND_USE_DDOC_CLI=true`` permanently once ``ddoc_cli_calls`` >>
     ``legacy_calls_*`` over a release window. Phase 6 of the
     orchestrator pivot — see ``_specs/ddoc_orchestrator_pattern.md``.
+
+    Round-10 — surfaces ``warnings`` when the legacy in-process path
+    is still being exercised, so monitoring/health-checks can flag
+    deployments that haven't yet flipped to CLI orchestrator mode.
     """
     try:
         from .services.ddoc_runner import get_counters
@@ -131,8 +135,35 @@ def healthz():
     except Exception:
         counters = {}
     use_cli = os.getenv("BACKEND_USE_DDOC_CLI", "false").lower() in ("1", "true", "yes")
+
+    warnings_list = []
+    legacy_drift = counters.get("legacy_calls_drift", 0)
+    legacy_eda = counters.get("legacy_calls_eda", 0)
+    legacy_total = legacy_drift + legacy_eda
+    if legacy_total > 0:
+        warnings_list.append({
+            "code": "legacy_in_process_calls",
+            "message": (
+                f"legacy in-process path used {legacy_total} time(s) "
+                f"(drift={legacy_drift}, eda={legacy_eda}). "
+                f"Set BACKEND_USE_DDOC_CLI=true to route through the "
+                f"ddoc CLI subprocess (Phase 6 orchestrator pivot)."
+            ),
+        })
+    if not use_cli:
+        warnings_list.append({
+            "code": "orchestrator_disabled",
+            "message": (
+                "BACKEND_USE_DDOC_CLI is not enabled — drift/eda routers "
+                "use the legacy in-process services. The CLI path is "
+                "the supported direction; flip the env to true to "
+                "migrate."
+            ),
+        })
+
     return {
         "status": "healthy",
         "ddoc_cli_orchestrator": use_cli,
         "invocations": counters,
+        "warnings": warnings_list,
     }
