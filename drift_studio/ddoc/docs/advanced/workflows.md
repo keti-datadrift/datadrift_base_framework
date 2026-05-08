@@ -61,7 +61,7 @@ git push origin main
 git clone <repo-url>
 cd project
 dvc pull
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 ```
 
 ## 팀 협업 워크플로우
@@ -83,7 +83,7 @@ ddoc snapshot
 ### 3. 특정 버전으로 전환
 
 ```bash
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 ```
 
 ### 4. 변경사항 작업

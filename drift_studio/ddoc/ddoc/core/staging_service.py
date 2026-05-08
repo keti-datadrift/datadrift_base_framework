@@ -21,29 +21,36 @@ class StagingService:
         self.staging_file = self.metadata_dir / "staging.json"
         self._init_staging()
     
-    def _init_staging(self):
-        """Initialize staging file if it doesn't exist"""
+    def _empty_staging(self) -> Dict[str, Any]:
+        return {
+            'staged_datasets': {},
+            'created_at': datetime.now().isoformat(),
+            'last_updated': datetime.now().isoformat(),
+        }
+
+    def _init_staging(self) -> Dict[str, Any]:
+        """Initialize staging file if missing; return the in-memory shape.
+
+        Round-7 — previously returned None, which broke the
+        ``return self._init_staging()`` fallback in ``_load_staging``
+        whenever the staging file got deleted (e.g. the test suite
+        reusing a singleton across tmpdirs).
+        """
+        staging = self._empty_staging()
         if not self.staging_file.exists():
-            staging = {
-                'staged_datasets': {},
-                'created_at': datetime.now().isoformat(),
-                'last_updated': datetime.now().isoformat()
-            }
+            self.metadata_dir.mkdir(parents=True, exist_ok=True)
             self._save_staging(staging)
-    
+        return staging
+
     def _load_staging(self) -> Dict[str, Any]:
-        """Load staging data"""
+        """Load staging data — always returns a usable dict."""
         if self.staging_file.exists():
             try:
                 with open(self.staging_file, 'r') as f:
                     return json.load(f)
-            except (json.JSONDecodeError, KeyError):
+            except (json.JSONDecodeError, KeyError, OSError):
                 print("[yellow]Warning: Could not load staging data, starting fresh[/yellow]")
-                return {
-                    'staged_datasets': {},
-                    'created_at': datetime.now().isoformat(),
-                    'last_updated': datetime.now().isoformat()
-                }
+                return self._empty_staging()
         return self._init_staging()
     
     def _save_staging(self, staging_data: Dict[str, Any]):
@@ -244,9 +251,18 @@ _staging_service = None
 
 
 def get_staging_service(project_root: str = ".") -> StagingService:
-    """Get global staging service instance"""
+    """Return a staging service for ``project_root``.
+
+    Round-7 — was a singleton that ignored ``project_root`` on every
+    call after the first, which left subsequent callers (notably
+    tests using fresh tmpdirs) pointing at a deleted metadata
+    directory. Now we cache by ``project_root`` so repeated calls
+    with the same root are still cheap, but a different root gets a
+    fresh instance.
+    """
     global _staging_service
-    if _staging_service is None:
+    cur = _staging_service
+    if cur is None or str(Path(project_root).resolve()) != str(cur.project_root.resolve()):
         _staging_service = StagingService(project_root)
     return _staging_service
 

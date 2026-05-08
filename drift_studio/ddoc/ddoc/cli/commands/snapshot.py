@@ -18,9 +18,18 @@ snapshot_app = typer.Typer(
 def create_snapshot(
     message: str = typer.Option(..., "-m", "--message", help="Snapshot description message"),
     alias: Optional[str] = typer.Option(None, "-a", "--alias", help="Alias for this snapshot"),
-    no_auto_commit: bool = typer.Option(False, "--no-auto-commit", help="Disable automatic git/dvc commit"),
+    no_auto_commit: bool = typer.Option(
+        False, "--no-auto-commit",
+        help="Skip the automatic dvc add + git commit step. By default (Round-5 onward) auto-commit is safe on a clean working tree (it detects 'nothing to commit' and skips); use this flag only if you want to stage changes manually first.",
+    ),
 ):
-    """Create a new snapshot"""
+    """Create a new snapshot.
+
+    Default flow auto-commits any data/code changes via dvc add + git
+    commit before recording the snapshot. ``--no-auto-commit`` opts out
+    of that and requires the working tree to be clean (or you manage
+    staging yourself); the snapshot then records the current HEAD.
+    """
     from ddoc.core.snapshot_service import get_snapshot_service
     
     snapshot_service = get_snapshot_service()
@@ -158,6 +167,62 @@ def checkout_snapshot(
 # 부가 기능 - 옵션으로 처리
 # ========================================================================
 
+def _diff_snapshots(version1: str, version2: str) -> None:
+    """Shared snapshot-diff logic, callable from either the
+    ``--diff v1 v2`` parent option (legacy) or the new
+    ``ddoc snapshot diff v1 v2`` subcommand (Round-8). Prints the diff
+    or exits non-zero on failure."""
+    from ddoc.core.snapshot_service import get_snapshot_service
+    from ddoc.core.git_service import get_git_service
+
+    snapshot_service = get_snapshot_service()
+    print(f"[cyan]🔍 Comparing snapshots: {version1} vs {version2}[/cyan]\n")
+
+    v1 = snapshot_service._resolve_version(version1)
+    v2 = snapshot_service._resolve_version(version2)
+
+    if not v1:
+        print(f"[red]❌ Snapshot '{version1}' not found[/red]")
+        raise typer.Exit(code=1)
+    if not v2:
+        print(f"[red]❌ Snapshot '{version2}' not found[/red]")
+        raise typer.Exit(code=1)
+
+    snap1 = snapshot_service._load_snapshot(v1)
+    snap2 = snapshot_service._load_snapshot(v2)
+
+    print(f"[bold]Data Changes:[/bold]")
+    if snap1.data.dvc_hash != snap2.data.dvc_hash:
+        print(f"  [yellow]Data hash changed[/yellow]")
+        print(f"    {v1}: {snap1.data.dvc_hash[:7]}")
+        print(f"    {v2}: {snap2.data.dvc_hash[:7]}")
+    else:
+        print(f"  [green]No data changes[/green]")
+
+    print(f"\n[bold]Code Changes:[/bold]")
+    git_service = get_git_service()
+    git_diff = git_service.diff(snap1.code.git_rev, snap2.code.git_rev)
+    if git_diff.get("has_changes"):
+        print(f"[yellow]{git_diff['stat']}[/yellow]")
+    else:
+        print(f"  [green]No code changes[/green]")
+    print()
+
+
+@snapshot_app.command("diff")
+def diff_snapshots(
+    version1: str = typer.Argument(..., help="First snapshot ID or alias"),
+    version2: str = typer.Argument(..., help="Second snapshot ID or alias"),
+):
+    """Compare two snapshots (data + code).
+
+    Round-8 — promoted from the parent's ``--diff`` option to a proper
+    subcommand for consistency with create/list/inspect/checkout. The
+    legacy ``ddoc snapshot --diff v1 v2`` form still works.
+    """
+    _diff_snapshots(version1, version2)
+
+
 @snapshot_app.callback(invoke_without_command=True)
 def snapshot(
     ctx: typer.Context,
@@ -223,42 +288,11 @@ def snapshot(
         raise typer.Exit(code=1)
     
     # ========================================================================
-    # COMPARE SNAPSHOTS
+    # COMPARE SNAPSHOTS (legacy --diff option — kept for backward compat;
+    # prefer ``ddoc snapshot diff <v1> <v2>`` subcommand introduced in Round-8)
     # ========================================================================
     if diff and len(diff) >= 2:
-        version1, version2 = diff[0], diff[1]
-        print(f"[cyan]🔍 Comparing snapshots: {version1} vs {version2}[/cyan]\n")
-        
-        v1 = snapshot_service._resolve_version(version1)
-        v2 = snapshot_service._resolve_version(version2)
-        
-        if not v1:
-            print(f"[red]❌ Snapshot '{version1}' not found[/red]")
-            raise typer.Exit(code=1)
-        if not v2:
-            print(f"[red]❌ Snapshot '{version2}' not found[/red]")
-            raise typer.Exit(code=1)
-        
-        snap1 = snapshot_service._load_snapshot(v1)
-        snap2 = snapshot_service._load_snapshot(v2)
-        
-        print(f"[bold]Data Changes:[/bold]")
-        if snap1.data.dvc_hash != snap2.data.dvc_hash:
-            print(f"  [yellow]Data hash changed[/yellow]")
-            print(f"    {v1}: {snap1.data.dvc_hash[:7]}")
-            print(f"    {v2}: {snap2.data.dvc_hash[:7]}")
-        else:
-            print(f"  [green]No data changes[/green]")
-        
-        print(f"\n[bold]Code Changes:[/bold]")
-        git_service = get_git_service()
-        git_diff = git_service.diff(snap1.code.git_rev, snap2.code.git_rev)
-        if git_diff.get("has_changes"):
-            print(f"[yellow]{git_diff['stat']}[/yellow]")
-        else:
-            print(f"  [green]No code changes[/green]")
-        
-        print()
+        _diff_snapshots(diff[0], diff[1])
         return
     
     # ========================================================================

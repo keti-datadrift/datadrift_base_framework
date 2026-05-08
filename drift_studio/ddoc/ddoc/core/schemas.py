@@ -1,7 +1,7 @@
 """
 Pydantic schemas for ddoc snapshot and configuration
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
@@ -47,8 +47,11 @@ class Snapshot(BaseModel):
     experiment: Optional[ExperimentSnapshot] = Field(default=None, description="Experiment results")
     lineage: Optional[LineageSnapshot] = Field(default=None, description="Lineage information")
     
-    class Config:
-        json_schema_extra = {
+    # Round-9 — migrated from class-based ``class Config`` to
+    # ``model_config`` per Pydantic V2 (the legacy form raises a
+    # PydanticDeprecatedSince20 warning under pydantic >= 2.0).
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "snapshot_id": "v01",
                 "alias": "baseline",
@@ -60,26 +63,27 @@ class Snapshot(BaseModel):
                     "contents": ["test_data", "yolo_reference"],
                     "stats": {
                         "total_files": 1000,
-                        "total_size_mb": 500
-                    }
+                        "total_size_mb": 500,
+                    },
                 },
                 "code": {
                     "git_rev": "af31bdc",
                     "branch": "main",
-                    "files": ["code/train.py", "code/model.py"]
+                    "files": ["code/train.py", "code/model.py"],
                 },
                 "experiment": {
                     "id": "exp_001",
                     "params": {"lr": 0.001, "batch": 64},
                     "metrics": {"accuracy": 0.912},
-                    "artifacts": {"checkpoint": "experiments/exp_001/best.pt"}
+                    "artifacts": {"checkpoint": "experiments/exp_001/best.pt"},
                 },
                 "lineage": {
                     "parent_snapshot": None,
-                    "experiments_run": ["exp_001"]
-                }
+                    "experiments_run": ["exp_001"],
+                },
             }
         }
+    )
 
 
 class AliasMapping(BaseModel):

@@ -54,9 +54,9 @@ ddoc snapshot baseline                   # Alias로 조회
 ### 스냅샷 복원
 
 ```bash
-ddoc snapshot --restore v01              # 버전으로 복원
-ddoc snapshot -r baseline                # Alias로 복원 (축약형)
-ddoc snapshot --restore v01 --force      # 강제 복원
+ddoc snapshot checkout v01              # 버전으로 복원
+ddoc snapshot checkout baseline                # Alias로 복원 (축약형)
+ddoc snapshot checkout v01 --force      # 강제 복원
 ```
 
 **복원 시 주의사항:**
@@ -120,7 +120,7 @@ ddoc snapshot --prune                    # 고아 스냅샷 식별
 - `-m, --message TEXT`: 스냅샷 생성 메시지
 - `-a, --alias TEXT`: 스냅샷 alias
 - `-l, --list`: 목록 조회
-- `-r, --restore VERSION`: 스냅샷 복원
+- `checkout VERSION`: 스냅샷 복원 (서브커맨드 — 예: `ddoc snapshot checkout v01`)
 - `--diff V1 V2`: 두 스냅샷 비교
 - `--graph`: 계보 그래프 표시
 - `--delete VERSION`: 스냅샷 삭제
@@ -154,7 +154,7 @@ ddoc snapshot
 ddoc snapshot --diff baseline augmented
 
 # 5. 이전 버전으로 복원
-ddoc snapshot --restore baseline
+ddoc snapshot checkout baseline
 ```
 
 ### 프로덕션 배포 워크플로우
@@ -168,7 +168,7 @@ ddoc snapshot v05  # 상세 정보 확인
 ddoc snapshot --set-alias v05 production
 
 # 3. Production 스냅샷으로 전환
-ddoc snapshot --restore production
+ddoc snapshot checkout production
 
 # 4. 무결성 검증
 ddoc snapshot --verify production

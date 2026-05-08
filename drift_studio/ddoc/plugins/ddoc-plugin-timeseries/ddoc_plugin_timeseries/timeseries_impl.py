@@ -269,8 +269,24 @@ class DOCTimeSeriesPlugin:
         )
 
         if not baseline_attr or not current_attr:
-            return None
-        
+            return None  # no timeseries data — silently defer
+
+        # Round-11 (Track B) — detector validation only fires when this
+        # plugin actually has data to process. Default / mmd / attributes
+        # all alias to "abs Δ on mean/var/skew/kurt".
+        _SUPPORTED_DETECTORS = {"default", "mmd", "attributes"}
+        _strategy = (detector or "default").lower()
+        if _strategy not in _SUPPORTED_DETECTORS:
+            return {
+                "status": "error",
+                "error_code": "unsupported_detector",
+                "modality": "timeseries",
+                "message": (
+                    f"timeseries plugin supports detector ∈ "
+                    f"{sorted(_SUPPORTED_DETECTORS)}; got {detector!r}."
+                ),
+            }
+
         drift_metrics = {
             'modality': 'timeseries',
             'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -289,10 +305,25 @@ class DOCTimeSeriesPlugin:
                     drift_scores.append(diff)
         
         drift_metrics['overall_score'] = float(np.mean(drift_scores)) if drift_scores else 0.0
-        
+
         metrics_file = output_path / 'metrics.json'
         with open(metrics_file, 'w') as f:
             json.dump(drift_metrics, f, indent=2)
-        
+
         return drift_metrics
+
+    @hookimpl
+    def ddoc_supported_detectors(self) -> Dict[str, Any]:
+        """Round-13 (Gap 5) — declare detector strategies."""
+        return {
+            "modality": "timeseries",
+            "default": "attributes",
+            "supported": ["default", "mmd", "attributes"],
+            "notes": (
+                "abs Δ on mean / variance / skewness / kurtosis. All "
+                "three CLI values are aliases for the same single "
+                "strategy. Embedding-based timeseries drift is not in "
+                "scope for this plugin."
+            ),
+        }
 

@@ -58,7 +58,7 @@ ddoc snapshot create -m "baseline model" -a baseline
 ddoc snapshot
 
 # 스냅샷 복원
-ddoc snapshot --restore baseline
+ddoc snapshot checkout baseline
 
 # 스냅샷 비교
 ddoc snapshot --diff baseline v02
@@ -77,7 +77,7 @@ ddoc snapshot create -m "best accuracy" -a best_model
 ddoc snapshot create -m "production ready" -a production
 
 # Alias로 스냅샷 참조
-ddoc snapshot --restore baseline
+ddoc snapshot checkout baseline
 ddoc snapshot --diff baseline production
 ```
 

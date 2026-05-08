@@ -276,6 +276,273 @@ class DOCTextPlugin:
             print(f"Error extracting embedding: {e}")
             return None
     
+    # ── Round-12 (Track B Gap 2 closure) ────────────────────────────
+    # Embedding-drift ensemble for text. Mirrors the vision plugin's
+    # philosophy (multiple complementary metrics, normalized to [0, 1],
+    # weighted sum) but with a smaller, text-appropriate set: cosine
+    # (directional shift), multi-scale MMD (distribution shift), and
+    # PSI on top PCA components (variance shift).
+
+    @staticmethod
+    def _text_calculate_mmd(X: np.ndarray, Y: np.ndarray, gamma: float = 1.0) -> float:
+        """Maximum Mean Discrepancy with RBF kernel — same shape as
+        vision plugin's helper, kept self-contained so the text plugin
+        has no cross-plugin import."""
+        try:
+            from sklearn.metrics.pairwise import rbf_kernel
+        except ImportError:
+            return 0.0
+        m = X.shape[0]
+        n = Y.shape[0]
+        K_XX = rbf_kernel(X, X, gamma=gamma)
+        K_YY = rbf_kernel(Y, Y, gamma=gamma)
+        K_XY = rbf_kernel(X, Y, gamma=gamma)
+        if m < 2 or n < 2:
+            return 0.0
+        mmd = np.sum(np.triu(K_XX, k=1)) / (m * (m - 1) / 2)
+        mmd += np.sum(np.triu(K_YY, k=1)) / (n * (n - 1) / 2)
+        mmd -= 2 * K_XY.sum() / (m * n)
+        return float(np.sqrt(max(mmd, 0.0)))
+
+    @staticmethod
+    def _text_calculate_psi(baseline: np.ndarray, current: np.ndarray, bins: int = 10) -> float:
+        """PSI between two 1-D distributions (smoothed)."""
+        if baseline.size == 0 or current.size == 0:
+            return 0.0
+        lo = float(min(baseline.min(), current.min()))
+        hi = float(max(baseline.max(), current.max()))
+        if hi == lo:
+            return 0.0
+        edges = np.linspace(lo, hi, bins + 1)
+        b_hist, _ = np.histogram(baseline, bins=edges)
+        c_hist, _ = np.histogram(current, bins=edges)
+        b_prop = (b_hist + 1) / (b_hist.sum() + bins)
+        c_prop = (c_hist + 1) / (c_hist.sum() + bins)
+        psi = float(np.sum((c_prop - b_prop) * np.log(c_prop / b_prop)))
+        return abs(psi)
+
+    def _calculate_text_embedding_drift_ensemble(self, X: np.ndarray, Y: np.ndarray) -> Dict[str, Any]:
+        """3-metric ensemble for text embeddings.
+
+        Components (each normalized to [0, 1] against empirical text-
+        domain thresholds, then weighted):
+
+        * **cosine** (weight 0.40) — 1 − cosine similarity of mean
+          vectors. Sensitive to directional shift; matches the
+          historical text-plugin score so the result stays comparable
+          across rounds.
+        * **mmd** (weight 0.40) — multi-scale RBF MMD averaged over
+          γ ∈ {0.5, 1.0, 2.0}. Catches distribution shifts that mean-
+          based cosine misses (e.g. broader vs tighter clusters).
+        * **psi_pca** (weight 0.20) — PSI on the top-3 PCA components
+          of the joint (X∪Y) embedding space. Surfaces variance
+          changes that MMD smooths out.
+
+        Returns the same dict shape as vision's ensemble so downstream
+        renderers (e.g. ddoc/templates/drift_report.html) work
+        uniformly.
+        """
+        # Cap sample sizes to keep MMD tractable on large corpora.
+        if X.shape[0] > 1000:
+            X = X[:1000]
+        if Y.shape[0] > 1000:
+            Y = Y[:1000]
+
+        out: Dict[str, Any] = {}
+
+        # 1. Cosine
+        ref_mean = X.mean(axis=0)
+        cur_mean = Y.mean(axis=0)
+        denom = (np.linalg.norm(ref_mean) * np.linalg.norm(cur_mean) + 1e-10)
+        cosine_distance = float(1.0 - (np.dot(ref_mean, cur_mean) / denom))
+        out["cosine_distance"] = cosine_distance
+
+        # 2. Multi-scale MMD
+        gammas = [0.5, 1.0, 2.0]
+        mmd_scores = [self._text_calculate_mmd(X, Y, gamma=g) for g in gammas]
+        out["mmd_multiscale"] = float(np.mean(mmd_scores))
+        out["mmd_std"] = float(np.std(mmd_scores))
+
+        # 3. PSI on top-3 PCA components of joint space
+        try:
+            from sklearn.decomposition import PCA
+            joint = np.vstack([X, Y])
+            n_components = min(3, joint.shape[0], joint.shape[1])
+            pca = PCA(n_components=n_components)
+            pca.fit(joint)
+            X_proj = pca.transform(X)
+            Y_proj = pca.transform(Y)
+            psi_per_component = [
+                self._text_calculate_psi(X_proj[:, i], Y_proj[:, i])
+                for i in range(n_components)
+            ]
+            out["psi"] = float(np.mean(psi_per_component))
+        except Exception as e:
+            print(f"Warning: PSI-on-PCA failed: {e}")
+            out["psi"] = 0.0
+
+        # Normalize per component to [0, 1] and combine.
+        normalized_scores = {
+            "cosine_distance": min(out["cosine_distance"], 1.0),
+            "mmd_multiscale": min(out["mmd_multiscale"] / 0.3, 1.0),  # text MMD threshold
+            "psi": min(out["psi"] / 0.25, 1.0),
+        }
+        weights = {"cosine_distance": 0.40, "mmd_multiscale": 0.40, "psi": 0.20}
+        ensemble_score = sum(weights[k] * normalized_scores[k] for k in weights)
+
+        out["normalized_scores"] = normalized_scores
+        out["weights"] = weights
+        out["ensemble_score"] = float(ensemble_score)
+        return out
+
+    def _compute_attributes_from_path(self, data_path) -> Dict[str, Any]:
+        """Walk ``data_path`` for ddoc.yaml-declared text datasets and
+        compute attributes inline (no embeddings).
+
+        Round-7 — extracted from ``eda_run`` so ``drift_detect`` path
+        mode can compute baseline/current attributes when no cache
+        exists. Embeddings are deliberately skipped in path mode
+        because they require the CLIP model which the orchestrator may
+        not have loaded; ``drift_detect`` then falls back to attribute-
+        only drift (overall_score = 0.5 * attr + 0.5 * 0).
+        """
+        import shutil
+        input_path = Path(data_path)
+        if not input_path.exists() or not input_path.is_dir():
+            return {}
+
+        text_datasets = []
+        for item in input_path.iterdir():
+            if not item.is_dir():
+                continue
+            yaml_path = item / "ddoc.yaml"
+            if not yaml_path.exists():
+                continue
+            try:
+                config = self._load_ddoc_yaml(item)
+                if config.get('modality') == 'text':
+                    text_datasets.append((item, config))
+            except Exception as e:
+                print(f"⚠️ Skipping {item}: {e}")
+
+        all_attributes: Dict[str, Any] = {}
+        for dataset_path, config in text_datasets:
+            text_column = config['text_column']
+            id_column = config.get('id_column', None)
+            language = config.get('language', 'english')
+
+            csv_files, temp_extract_dir = self._find_csv_files(dataset_path)
+            if not csv_files:
+                if temp_extract_dir and temp_extract_dir.exists():
+                    shutil.rmtree(temp_extract_dir)
+                continue
+            base_path = temp_extract_dir if temp_extract_dir else dataset_path
+            df = self._load_and_combine_csvs(csv_files, text_column, id_column, base_path)
+            if temp_extract_dir and temp_extract_dir.exists():
+                try:
+                    shutil.rmtree(temp_extract_dir)
+                except Exception:
+                    pass
+            if df.empty:
+                continue
+
+            actual_id_column = id_column
+            if not actual_id_column:
+                for col in ['id', 'ID', 'index', 'INDEX', 'idx', '_auto_id']:
+                    if col in df.columns:
+                        actual_id_column = col
+                        break
+
+            for idx, row in df.iterrows():
+                text = row[text_column]
+                if actual_id_column and actual_id_column in df.columns:
+                    row_id = str(row[actual_id_column])
+                else:
+                    row_id = f"row_{idx}"
+                source_file = row.get('_source_file', dataset_path.name)
+                cache_key = f"{dataset_path.name}/{source_file}/{row_id}"
+                all_attributes[cache_key] = self._analyze_text_attributes(text, language)
+        return all_attributes
+
+    def _compute_embeddings_from_path(self, data_path) -> Dict[str, Any]:
+        """Walk ``data_path`` and compute CLIP embeddings inline.
+
+        Round-10 — companion to ``_compute_attributes_from_path``. Only
+        called when the user opts in via ``cfg['with_embeddings']`` (or
+        the CLI's ``--with-embeddings`` flag) because CLIP loading is
+        expensive (~5s + ~600MB RAM). Returns the same shape that the
+        cache would (``{cache_key: {embedding: [...], text_length: n}}``)
+        so ``drift_detect`` doesn't need to branch on source.
+        """
+        import shutil
+        input_path = Path(data_path)
+        if not input_path.exists() or not input_path.is_dir():
+            return {}
+
+        text_datasets = []
+        for item in input_path.iterdir():
+            if not item.is_dir():
+                continue
+            yaml_path = item / "ddoc.yaml"
+            if not yaml_path.exists():
+                continue
+            try:
+                config = self._load_ddoc_yaml(item)
+                if config.get('modality') == 'text':
+                    text_datasets.append((item, config))
+            except Exception:
+                continue
+
+        # Lazy CLIP load — only when we actually have datasets.
+        if not text_datasets:
+            return {}
+        if self.clip_model is None:
+            self._load_clip_model()
+        if self.clip_model is None:
+            return {}  # CLIP unavailable — caller falls back to attr-only
+
+        all_embeddings: Dict[str, Any] = {}
+        for dataset_path, config in text_datasets:
+            text_column = config['text_column']
+            id_column = config.get('id_column', None)
+            csv_files, temp_extract_dir = self._find_csv_files(dataset_path)
+            if not csv_files:
+                if temp_extract_dir and temp_extract_dir.exists():
+                    shutil.rmtree(temp_extract_dir)
+                continue
+            base_path = temp_extract_dir if temp_extract_dir else dataset_path
+            df = self._load_and_combine_csvs(csv_files, text_column, id_column, base_path)
+            if temp_extract_dir and temp_extract_dir.exists():
+                try:
+                    shutil.rmtree(temp_extract_dir)
+                except Exception:
+                    pass
+            if df.empty:
+                continue
+
+            actual_id_column = id_column
+            if not actual_id_column:
+                for col in ['id', 'ID', 'index', 'INDEX', 'idx', '_auto_id']:
+                    if col in df.columns:
+                        actual_id_column = col
+                        break
+
+            for idx, row in df.iterrows():
+                text = row[text_column]
+                if actual_id_column and actual_id_column in df.columns:
+                    row_id = str(row[actual_id_column])
+                else:
+                    row_id = f"row_{idx}"
+                source_file = row.get('_source_file', dataset_path.name)
+                cache_key = f"{dataset_path.name}/{source_file}/{row_id}"
+                emb = self._extract_text_embedding(text)
+                if emb is not None:
+                    all_embeddings[cache_key] = {
+                        'embedding': emb.tolist(),
+                        'text_length': len(str(text)),
+                    }
+        return all_embeddings
+
     @hookimpl
     def eda_run(self, snapshot_id, data_path, data_hash, output_path, invalidate_cache=False):
         """Run EDA for text datasets"""
@@ -483,34 +750,79 @@ class DOCTextPlugin:
         
         print(f"🔍 Text Drift Detection Started")
         print(f"=" * 80)
-        
-        # Load caches
-        baseline_attr = cfg.get('baseline_cache') or cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_ref,
-            data_hash=data_hash_ref,
-            cache_type="attributes_text"
+
+        # 3-tier resolve for attributes (Round-7 path-mode fallback):
+        # cfg → cache → inline compute. Embeddings stay cache-only —
+        # path-mode skips them (CLIP not assumed loaded), and drift's
+        # overall_score gracefully degrades to attribute-only.
+        def _resolve_attr(cfg_key, snap_id, data_hash, data_path):
+            attrs = cfg.get(cfg_key)
+            if attrs:
+                return attrs
+            attrs = cache_service.load_analysis_cache(
+                snapshot_id=snap_id,
+                data_hash=data_hash,
+                cache_type="attributes_text",
+            )
+            if attrs:
+                return attrs
+            if data_path:
+                return self._compute_attributes_from_path(data_path)
+            return None
+
+        baseline_attr = _resolve_attr(
+            'baseline_cache', snapshot_id_ref, data_hash_ref, data_path_ref,
         )
-        baseline_emb = cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_ref,
-            data_hash=data_hash_ref,
-            cache_type="embedding_text"
+        current_attr = _resolve_attr(
+            'current_cache', snapshot_id_cur, data_hash_cur, data_path_cur,
         )
-        
-        current_attr = cfg.get('current_cache') or cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_cur,
-            data_hash=data_hash_cur,
-            cache_type="attributes_text"
-        )
-        current_emb = cache_service.load_analysis_cache(
-            snapshot_id=snapshot_id_cur,
-            data_hash=data_hash_cur,
-            cache_type="embedding_text"
-        )
+
+        # Round-10 — embeddings 3-tier resolve, gated on
+        # ``cfg['with_embeddings']`` so the CLIP load (~5s, ~600MB) is
+        # opt-in. Without the flag we keep the previous behaviour of
+        # cache-only embeddings + attribute-only drift fallback.
+        with_embeddings = bool(cfg.get('with_embeddings', False))
+
+        def _resolve_emb(snap_id, data_hash, data_path):
+            attrs = cache_service.load_analysis_cache(
+                snapshot_id=snap_id,
+                data_hash=data_hash,
+                cache_type="embedding_text",
+            )
+            if attrs:
+                return attrs
+            if with_embeddings and data_path:
+                return self._compute_embeddings_from_path(data_path)
+            return None
+
+        baseline_emb = _resolve_emb(snapshot_id_ref, data_hash_ref, data_path_ref)
+        current_emb = _resolve_emb(snapshot_id_cur, data_hash_cur, data_path_cur)
         
         if not baseline_attr or not current_attr:
             print("❌ Missing baseline or current data")
-            return None
-        
+            return None  # no text data — silently defer
+
+        # Round-12 — text plugin detector contract (Gap 2 closure):
+        # * ``default`` / ``mmd`` (CLI legacy default) / ``ensemble`` →
+        #   3-metric ensemble (cosine + MMD + PSI-on-PCA, see
+        #   ``_calculate_text_embedding_drift_ensemble``).
+        # * ``cosine`` → cosine-only (preserves historical Round-11
+        #   behaviour for callers that explicitly opted in).
+        # * ``mmd_only`` → MMD-only (single-strategy escape hatch).
+        # * ``psi`` → PSI-on-PCA only.
+        _SUPPORTED_DETECTORS = {"default", "mmd", "ensemble", "cosine", "mmd_only", "psi"}
+        _strategy = (detector or "default").lower()
+        if _strategy not in _SUPPORTED_DETECTORS:
+            return {
+                "status": "error",
+                "error_code": "unsupported_detector",
+                "modality": "text",
+                "message": (
+                    f"text plugin supports detector ∈ "
+                    f"{sorted(_SUPPORTED_DETECTORS)}; got {detector!r}."
+                ),
+            }
+
         drift_metrics = {
             'modality': 'text',
             'timestamp': datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -530,37 +842,58 @@ class DOCTextPlugin:
             
             if ref_values and cur_values:
                 try:
-                    # Use PSI for drift
+                    # Round-9 — was ``wasserstein / (mean(ref) + 1e-10)``,
+                    # which exploded to 1e9+ for low-mean attributes
+                    # (e.g. whitespace_ratio, where mean ≈ 0). The intent
+                    # was a scale-invariant divergence; the divisor floor
+                    # of 1.0 keeps small means from dominating while
+                    # large means still get standard normalization.
                     from scipy.stats import wasserstein_distance
-                    psi = wasserstein_distance(ref_values, cur_values) / (np.mean(ref_values) + 1e-10)
-                    attribute_drifts[attr_name] = float(psi)
-                    print(f"   {attr_name:20s} Drift: {psi:.4f}")
-                except:
+                    raw = wasserstein_distance(ref_values, cur_values)
+                    divisor = max(abs(float(np.mean(ref_values))), 1.0)
+                    score = raw / divisor
+                    attribute_drifts[attr_name] = float(score)
+                    print(f"   {attr_name:20s} Drift: {score:.4f}")
+                except Exception:
                     attribute_drifts[attr_name] = 0.0
         
         drift_metrics['attribute_drifts'] = attribute_drifts
         drift_metrics['attribute_drift_overall'] = np.mean(list(attribute_drifts.values())) if attribute_drifts else 0.0
         
-        # Embedding drift
+        # Embedding drift — Round-12 ensemble (Gap 2 closure)
         if baseline_emb and current_emb:
             print("\n🧠 Embedding Drift:")
             print("-" * 80)
-            
+
             ref_emb_list = [np.array(e['embedding']) for e in baseline_emb.values()]
             cur_emb_list = [np.array(e['embedding']) for e in current_emb.values()]
-            
+
             if ref_emb_list and cur_emb_list:
                 ref_emb_array = np.array(ref_emb_list)
                 cur_emb_array = np.array(cur_emb_list)
-                
-                # Cosine distance between mean embeddings
-                ref_mean = ref_emb_array.mean(axis=0)
-                cur_mean = cur_emb_array.mean(axis=0)
-                cosine_sim = np.dot(ref_mean, cur_mean) / (np.linalg.norm(ref_mean) * np.linalg.norm(cur_mean) + 1e-10)
-                embedding_drift = 1.0 - cosine_sim
-                
-                drift_metrics['embedding_drift'] = float(embedding_drift)
-                print(f"   Embedding Drift (cosine): {embedding_drift:.4f}")
+
+                ensemble = self._calculate_text_embedding_drift_ensemble(
+                    ref_emb_array, cur_emb_array
+                )
+                drift_metrics['embedding_drift_detailed'] = ensemble
+
+                # Map detector strategy → embedding_drift value.
+                _STRATEGY_TO_VALUE = {
+                    "default": ensemble["ensemble_score"],
+                    "mmd": ensemble["ensemble_score"],   # CLI legacy default
+                    "ensemble": ensemble["ensemble_score"],
+                    "cosine": ensemble["normalized_scores"]["cosine_distance"],
+                    "mmd_only": ensemble["normalized_scores"]["mmd_multiscale"],
+                    "psi": ensemble["normalized_scores"]["psi"],
+                }
+                drift_metrics['embedding_drift'] = float(_STRATEGY_TO_VALUE[_strategy])
+                drift_metrics['embedding_drift_detector'] = _strategy
+
+                print(f"   📊 cosine={ensemble['cosine_distance']:.4f}  "
+                      f"mmd={ensemble['mmd_multiscale']:.4f}  "
+                      f"psi={ensemble['psi']:.4f}")
+                print(f"   ⚖️  ensemble={ensemble['ensemble_score']:.4f} "
+                      f"(detector={_strategy})")
             else:
                 drift_metrics['embedding_drift'] = 0.0
         
@@ -577,6 +910,27 @@ class DOCTextPlugin:
         
         print(f"\n✅ Text Drift Detection Complete")
         print(f"   📄 Metrics: {metrics_file}")
-        
+
         return drift_metrics
+
+    @hookimpl
+    def ddoc_supported_detectors(self) -> Dict[str, Any]:
+        """Round-13 (Gap 5) — declare detector strategies. Mirrors the
+        runtime set inside drift_detect (Round-12 ensemble + Round-11
+        legacy aliases)."""
+        return {
+            "modality": "text",
+            "default": "ensemble",
+            "supported": [
+                "default", "mmd", "ensemble", "cosine", "mmd_only", "psi",
+            ],
+            "notes": (
+                "Round-12 3-metric ensemble (cosine 0.40 + multi-scale "
+                "MMD 0.40 + PSI-on-PCA 0.20). ``cosine`` is the legacy "
+                "single-metric path kept for backward compat. With "
+                "``--with-embeddings`` (path mode) the plugin loads CLIP "
+                "inline; otherwise embedding_drift falls back to 0 and "
+                "overall_score becomes attribute-only."
+            ),
+        }
 

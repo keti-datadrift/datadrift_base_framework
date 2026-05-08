@@ -32,10 +32,10 @@ git commit -m "Initial commit"
 # 변경사항 커밋
 git add .
 git commit -m "Save changes"
-ddoc snapshot --restore v01
+ddoc snapshot checkout v01
 
 # 또는 강제 복원
-ddoc snapshot --restore v01 --force
+ddoc snapshot checkout v01 --force
 ```
 
 ### Q: DVC 데이터가 복원되지 않음
@@ -127,7 +127,7 @@ ddoc snapshot create -m "message"
 dvc checkout
 
 # 또는 스냅샷 재복원
-ddoc snapshot --restore <version> --force
+ddoc snapshot checkout <version> --force
 ```
 
 ## 실험 관련 문제
