@@ -130,6 +130,13 @@ def register(app: typer.Typer) -> None:
         help="Materialize an external data source (file/s3/gs/http) into a local directory",
     )(fetch_command)
 
+    # Round 14 — REST facade (`ddoc serve`).
+    from .serve import serve_command
+    app.command(
+        name="serve",
+        help="Start a FastAPI server exposing every ddoc CLI command over HTTP",
+    )(serve_command)
+
     app.command(name="vis", help="Run GUI app")(vis)
     
     # ========================================================================
