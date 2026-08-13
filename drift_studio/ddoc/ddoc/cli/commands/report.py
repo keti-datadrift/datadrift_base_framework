@@ -31,6 +31,63 @@ def _load_input(input_path: Path) -> Dict[str, Any]:
     return json.loads(input_path.read_text(encoding="utf-8"))
 
 
+def _normalize_attribute_drifts(value: Any) -> list[tuple[str, Optional[float], Dict[str, Any]]]:
+    """Normalize the many possible ``attribute_drifts`` shapes into a
+    uniform list of ``(name, score, extras)`` tuples.
+
+    Round 28 (Track C) — closes the markdown renderer's ``{v:.4f}``
+    crash on non-flat shapes (discovered while writing Round 25 tests).
+    Accepted inputs:
+
+    * Flat dict: ``{"blur": 0.18, "exposure": 0.07}`` — original shape.
+    * Nested dict: ``{"blur": {"score": 0.18, "status": "warning"}, ...}``.
+    * List of dicts: ``[{"attribute": "blur", "score": 0.18,
+      "status": "warning"}, ...]``.
+    * Empty / None / unrecognized → ``[]`` (renderers skip the section).
+
+    Score may be ``None`` if the source shape doesn't supply a numeric
+    value; renderers should display "—" or skip in that case.
+    """
+    if not value:
+        return []
+
+    out: list[tuple[str, Optional[float], Dict[str, Any]]] = []
+
+    def _coerce_score(v: Any) -> Optional[float]:
+        if isinstance(v, (int, float)):
+            return float(v)
+        return None
+
+    if isinstance(value, dict):
+        for k, v in value.items():
+            if isinstance(v, dict):
+                score = _coerce_score(v.get("score"))
+                extras = {kk: vv for kk, vv in v.items() if kk != "score"}
+                out.append((str(k), score, extras))
+            else:
+                out.append((str(k), _coerce_score(v), {}))
+        return out
+
+    if isinstance(value, list):
+        for item in value:
+            if isinstance(item, dict):
+                name = str(
+                    item.get("attribute")
+                    or item.get("name")
+                    or item.get("key")
+                    or "?"
+                )
+                score = _coerce_score(item.get("score"))
+                extras = {
+                    k: v for k, v in item.items()
+                    if k not in ("attribute", "name", "key", "score")
+                }
+                out.append((name, score, extras))
+        return out
+
+    return []  # unrecognized — skip the section gracefully
+
+
 def _classify_envelope(payload: Dict[str, Any]) -> tuple[Optional[Dict], Optional[Dict]]:
     """Return ``(drift_result, eda_result)`` after a heuristic.
 
@@ -103,8 +160,15 @@ def _builtin_render(
 
     if drift_result is not None:
         tpl = env.get_template("drift_report.html")
+        # Round 28 (Track C) — pre-normalize attribute_drifts so the
+        # template iterates a uniform shape regardless of how the
+        # producing detector serialized it.
+        attr_rows = _normalize_attribute_drifts(
+            drift_result.get("attribute_drifts")
+        )
         html = tpl.render(
             drift=drift_result,
+            attribute_drifts_rows=attr_rows,
             title=cfg.get("title"),
             status_class=_status_class(drift_result.get("overall_score")),
             raw_json=json.dumps(drift_result, indent=2, ensure_ascii=False, default=str),
@@ -152,10 +216,16 @@ def _render_markdown(drift, eda, cfg) -> str:
             lines.append(f"- status: **{drift['status']}**")
         if drift.get("embedding_drift_detector"):
             lines.append(f"- embedding detector: `{drift['embedding_drift_detector']}`")
-        if drift.get("attribute_drifts"):
+        normalized = _normalize_attribute_drifts(drift.get("attribute_drifts"))
+        if normalized:
             lines += ["", "## Attribute drifts", ""]
-            for k, v in drift["attribute_drifts"].items():
-                lines.append(f"- `{k}`: {v:.4f}")
+            for name, score, extras in normalized:
+                score_str = "—" if score is None else f"{score:.4f}"
+                extras_str = (
+                    " (" + ", ".join(f"{k}={v}" for k, v in extras.items()) + ")"
+                    if extras else ""
+                )
+                lines.append(f"- `{name}`: {score_str}{extras_str}")
     if eda is not None:
         lines.append(f"- modality: `{eda.get('modality', 'unknown')}`")
         if "summary" in eda:

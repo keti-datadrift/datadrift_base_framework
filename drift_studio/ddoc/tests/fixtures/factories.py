@@ -206,6 +206,63 @@ def make_toy_vision(
     return dataset_dir
 
 
+# ── Categorical (Round 9 — D2 demo path) ─────────────────────────────
+
+
+# Default distributions used by the categorical pair builder. Shape is
+# **byte-equivalent** to the dict keti_veritas's
+# ``app/domains/analytics/repository.py:build_camera_stats_window``
+# emits — that's the hybrid framing in the Round 9 plan: the demo
+# doubles as a regression check that ddoc and keti agree on the
+# categorical shape.
+_CATEGORICAL_REF = {
+    "color_distribution":  {"red": 30, "blue": 10, "white": 5},
+    "type_distribution":   {"sedan": 60, "suv": 30, "truck": 10},
+    "hourly_distribution": {str(h): 0 for h in range(24)} | {
+        "8": 12, "9": 18, "12": 25, "17": 22, "18": 30, "19": 15,
+    },
+    "confidence_stats":    {"mean": 0.85, "std": 0.07},
+}
+
+_CATEGORICAL_CUR_SHIFTED = {
+    "color_distribution":  {"red": 5, "blue": 25, "white": 20},
+    "type_distribution":   {"sedan": 50, "suv": 30, "truck": 20},
+    "hourly_distribution": {str(h): 0 for h in range(24)} | {
+        "8": 8, "9": 12, "12": 30, "17": 14, "18": 20, "19": 10,
+        "21": 18, "22": 15,
+    },
+    "confidence_stats":    {"mean": 0.78, "std": 0.10},
+}
+
+
+def make_toy_categorical(
+    out_dir: str | Path,
+    *,
+    distributions: Dict[str, Any] | None = None,
+) -> Path:
+    """Write a categorical-drift dataset directly under ``out_dir``.
+
+    The plugin (``ddoc-plugin-categorical``, Round 26-A) reads
+    ``distributions.json`` directly from ``data_path`` — no
+    sub-directory walking. So ``out_dir`` IS the dataset dir.
+    ``distributions`` defaults to the canonical "ref" shape — pass an
+    alternative for the "current" side.
+    """
+    import json as _json
+    base = Path(out_dir)
+    base.mkdir(parents=True, exist_ok=True)
+    payload = distributions if distributions is not None else _CATEGORICAL_REF
+    (base / "distributions.json").write_text(
+        _json.dumps(payload, indent=2), encoding="utf-8",
+    )
+    _write_yaml(
+        base / "ddoc.yaml",
+        {"modality": "categorical",
+         "distributions_file": "distributions.json"},
+    )
+    return base
+
+
 # ── Pair builders (the user-facing scenario level) ────────────────────
 
 
@@ -286,12 +343,38 @@ def make_pair_vision(out_dir: str | Path, *, scenario: str = "shifted") -> Tuple
     return base / _REF_DIR, base / _CUR_DIR
 
 
+def make_pair_categorical(out_dir: str | Path, *, scenario: str = "shifted") -> Tuple[Path, Path]:
+    """Return ``(ref_dir, cur_dir)`` for a categorical-distribution
+    drift scenario.
+
+    ``scenario="shifted"``: ref vs cur with clear shifts in
+    ``color_distribution`` / ``type_distribution`` / ``hourly_distribution``
+    — keti vehicle-fingerprint shape, byte-equivalent to what
+    ``app/domains/analytics/repository.py:build_camera_stats_window``
+    emits in keti_veritas.
+
+    ``scenario="identical"``: ref and cur identical — drift score
+    should be near-zero.
+    """
+    base = Path(out_dir)
+    if scenario == "shifted":
+        make_toy_categorical(base / _REF_DIR, distributions=_CATEGORICAL_REF)
+        make_toy_categorical(base / _CUR_DIR, distributions=_CATEGORICAL_CUR_SHIFTED)
+    elif scenario == "identical":
+        make_toy_categorical(base / _REF_DIR, distributions=_CATEGORICAL_REF)
+        make_toy_categorical(base / _CUR_DIR, distributions=_CATEGORICAL_REF)
+    else:
+        raise ValueError(f"unsupported scenario: {scenario!r}")
+    return base / _REF_DIR, base / _CUR_DIR
+
+
 # Index for the ``ddoc examples`` CLI to enumerate.
 PAIR_BUILDERS = {
     "timeseries": make_pair_timeseries,
     "audio": make_pair_audio,
     "text": make_pair_text,
     "vision": make_pair_vision,
+    "categorical": make_pair_categorical,
 }
 
 SUPPORTED_SCENARIOS = ("shifted", "identical")

@@ -3,8 +3,11 @@ from __future__ import annotations
 
 import json
 import queue
+import tempfile
 import threading
-from typing import Any, Dict, List
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
@@ -64,6 +67,47 @@ def _drift_argv(req: AnalyzeDriftRequest, *, include_progress_flag: bool = False
     return args
 
 
+# ── R-D4: inline cfg → tempdir path-mode adapter ────────────────────
+
+
+@contextmanager
+def _materialize_cfg(cfg: Dict[str, Any]) -> Iterator[Tuple[str, str]]:
+    """Write inline cfg dicts into temp ``distributions[_series].json``
+    files under a scratch dir and yield ``(ref_dir, cur_dir)`` paths
+    suitable for CLI path-mode (`--data-path-ref/cur`).
+
+    Supported cfg shapes:
+      - dict-of-counts: ``baseline_categorical / current_categorical``
+        (R26-A `ddoc-plugin-categorical`)
+      - series-of-dists: ``baseline_categorical_series / current_categorical_series``
+        (R33 `ddoc-plugin-keti-temporal`)
+    """
+    base_cat = cfg.get("baseline_categorical")
+    cur_cat = cfg.get("current_categorical")
+    base_ser = cfg.get("baseline_categorical_series")
+    cur_ser = cfg.get("current_categorical_series")
+    with tempfile.TemporaryDirectory(prefix="ddoc-rest-cfg-") as tmp:
+        ref_dir = Path(tmp) / "ref"
+        cur_dir = Path(tmp) / "cur"
+        ref_dir.mkdir()
+        cur_dir.mkdir()
+        if base_cat is not None or cur_cat is not None:
+            (ref_dir / "distributions.json").write_text(
+                json.dumps(base_cat or {}), encoding="utf-8",
+            )
+            (cur_dir / "distributions.json").write_text(
+                json.dumps(cur_cat or {}), encoding="utf-8",
+            )
+        if base_ser is not None or cur_ser is not None:
+            (ref_dir / "distributions_series.json").write_text(
+                json.dumps({"series": base_ser or []}), encoding="utf-8",
+            )
+            (cur_dir / "distributions_series.json").write_text(
+                json.dumps({"series": cur_ser or []}), encoding="utf-8",
+            )
+        yield str(ref_dir), str(cur_dir)
+
+
 # ── Endpoints ────────────────────────────────────────────────────────
 
 
@@ -77,7 +121,23 @@ def analyze_eda(req: AnalyzeEdaRequest):
 
 @router.post("/analyze/drift")
 def analyze_drift(req: AnalyzeDriftRequest):
-    """Wrap ``ddoc analyze drift --json``."""
+    """Wrap ``ddoc analyze drift --json``.
+
+    R-D4: when ``req.cfg`` is set, the server materializes the inline
+    cfg into temp dist files and invokes path-mode internally. This
+    lets cross-container HTTP callers (keti) send dict-of-counts /
+    series without a shared volume.
+    """
+    if req.cfg:
+        with _materialize_cfg(req.cfg) as (ref_dir, cur_dir):
+            req2 = req.model_copy(update={
+                "data_path_ref": ref_dir,
+                "data_path_cur": cur_dir,
+                "cfg": None,  # avoid recursion into materialize
+            })
+            args = _drift_argv(req2)
+            result = run(args, require_json=True, timeout=req.timeout_sec)
+        return map_envelope_to_response(result.json)
     args = _drift_argv(req)
     result = run(args, require_json=True, timeout=req.timeout_sec)
     return map_envelope_to_response(result.json)

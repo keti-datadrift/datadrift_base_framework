@@ -34,6 +34,7 @@ def root(request: Request) -> Dict[str, Any]:
     return {
         "status": "ok",
         "service": "ddoc serve",
+        "tagline": "data doctor",
         "version": _ddoc_version(),
         "plugin_count": _plugin_count(),
         "auth_enabled": bool(get_expected_key()),
@@ -47,10 +48,22 @@ def healthz(request: Request) -> Dict[str, Any]:
     return {
         "status": "healthy",
         "ddoc_version": _ddoc_version(),
+        "tagline": "data doctor",
         "plugin_count": _plugin_count(),
         "auth_enabled": bool(get_expected_key()),
         "bind": getattr(request.app.state, "bind_info", "?"),
     }
+
+
+@router.get("/metrics", include_in_schema=False)
+def metrics():
+    """Prometheus text-format metrics. Round 19 — bypasses auth so
+    standard scrapers (Prometheus, OpenMetrics) work without keys.
+    Operators who want auth on this endpoint should put it behind a
+    reverse proxy with IP allowlist (see deploy.md §"보안 체크리스트")."""
+    from fastapi import Response
+    from ..metrics import REGISTRY
+    return Response(content=REGISTRY.render(), media_type="text/plain; version=0.0.4")
 
 
 @router.get("/version")

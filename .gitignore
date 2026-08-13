@@ -1,7 +1,9 @@
 # general
+**/.claude
+# 내부 작업 컨텍스트 백업(대화 맥락·설계문서 사본) — 로컬 전용, 원격 저장소에 올리지 않음
+/.dev-context
 **/.DS_Store
 **/venv
-**/_specs
 **/.venv
 **/*.dvc
 **/*.dd
@@ -16,8 +18,9 @@
 **/dvc_storage
 **/server/sample_dataset/yolo
 **/server/ddoc
-
-
+**/CLAUDE.md
+**/_specs
+**/papers
 
 # DVC
 src/containers/dvc/.git

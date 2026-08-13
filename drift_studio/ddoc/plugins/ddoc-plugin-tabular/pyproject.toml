@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ddoc-plugin-tabular"
+version = "1.0.0"
+description = "Tabular EDA report plugin for ddoc — renders {rows, cols, missing, summary} envelopes. Closes the backend EDA shape gap (Round 25 finding #2)."
+requires-python = ">=3.9"
+dependencies = [
+    "pluggy>=1.5.0",
+    "jinja2>=3.0",
+]
+
+[project.entry-points."ddoc"]
+ddoc_tabular = "ddoc_plugin_tabular.tabular_impl:TabularReportPlugin"
+
+[tool.setuptools]
+packages = {find = {where = ["."], include = ["ddoc_plugin_tabular*"]}}
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.package-data]
+ddoc_plugin_tabular = ["templates/*.html"]

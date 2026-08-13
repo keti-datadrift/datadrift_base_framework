@@ -155,8 +155,84 @@ curl -H 'X-API-Key: mysecret' http://server.local:8765/plugins
 같은 머신에서 둘 다 실행 가능 (다른 포트). 같은 ddoc CLI 를 공유하므로
 결과는 byte-for-byte 동일.
 
-## Round-15 GUI
+## Browser GUI (Round 15)
 
-Round 15 에서 `ddoc serve` 위에 vanilla HTML/JS GUI 를 얹을 예정 —
-form builder + 실시간 결과 패널 + "생성된 CLI 명령어" 복사 버튼.
-gpu-tunnel 의 `dashboard.py` 패턴 참조.
+`ddoc serve` 가 띄운 그 서버의 루트(`/`) 에 vanilla HTML/JS GUI 가
+같이 service 됩니다. 별도 npm / 빌드 단계 없이 wheel 안에 그대로
+embed.
+
+```bash
+ddoc serve         # http://127.0.0.1:8765
+# 그대로 브라우저로 열기
+```
+
+### 6 tabs (CLI 1-to-1)
+
+| Tab | 호출 endpoint | 비고 |
+|---|---|---|
+| Analyze drift | `POST /analyze/drift` (또는 `…/stream`) | "Use streaming" 체크 시 SSE 진행 chip |
+| Analyze EDA | `POST /analyze/eda` | snapshot / path / workspace 모드 모두 |
+| Examples | `POST /examples/generate` | 4 modality × 2 scenario, 즉시 toy 생성 |
+| Report | `POST /report/render` | HTML / PDF / Markdown |
+| Export | `POST /export/drift-report` | file / keti_veritas / 플러그인 |
+| Fetch | `POST /fetch` | file:// 기본, plugin scheme 지원 |
+
+### 핵심 기능
+
+- **CLI hint panel** (form 우측). 사용자가 form 채우는 동안 동등한
+  `ddoc …` 명령어가 실시간으로 표시됨. `Copy` 버튼으로 클립보드에 즉시.
+  GUI 가 CLI 를 *대체* 하지 않고 *학습 곡선을 낮춤*.
+- **Live validation**. 필수 필드, detector 가 `/plugins/detectors`
+  registry 에 있는지, JSON config 가 valid 인지 등 client-side 에서
+  먼저 chip 으로 표시.
+- **Drift SSE 스트림**. "Use streaming" 체크 시 `POST /analyze/drift/
+  stream` 으로 갈아타서 NDJSON progress event 를 chip 으로 흘려보내고,
+  마지막 `result` event 가 envelope 채움.
+- **Auth**. 서버가 `DDOC_API_KEY` 와 함께 시작되면 헤더에
+  `X-API-Key` 입력 필드가 노출됨. 입력값은 localStorage 에 캐싱되어
+  새로고침해도 유지.
+- **Result panel**. JSON envelope pretty-print + drift / EDA 결과면
+  "Download envelope" 버튼.
+
+### 화면 구성
+
+```
+┌─ ddoc serve · v2.1.0 · 4 plugins · auth: OFF       Swagger /docs ──┐
+├─ [Drift] [EDA] [Examples] [Report] [Export] [Fetch] ───────────────┤
+│  ┌─ form (left, 2/3) ──────┐  ┌─ Generated CLI command ─────────┐ │
+│  │ data-path-ref: [____]   │  │ ddoc analyze drift \            │ │
+│  │ data-path-cur: [____]   │  │   --data-path-ref /tmp/ref \    │ │
+│  │ detector: [default▾]    │  │   --data-path-cur /tmp/cur \    │ │
+│  │ ☑ quiet  ☐ Use streaming│  │   --detector default --json \   │ │
+│  │ [Submit]                │  │   --quiet                       │ │
+│  └─────────────────────────┘  │ [Copy]                          │ │
+│                               └─────────────────────────────────┘ │
+│  ┌─ Result (full width, expand on submit) ────────────────────────┐ │
+│  │ HTTP 200 OK  [Download envelope]                               │ │
+│  │ progress chips: [start 5%] [plugin_call 20%] [merge 90%] [done]│ │
+│  │ {"modality":"timeseries","overall_score":0.282,...}            │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Round-16 추가
+
+- **Result viz** — drift / EDA envelope 이 도착하면 raw JSON 이 아니라
+  modality 카드 (overall_score, status, attribute drift bars) 형태로
+  먼저 표시됨. raw JSON 은 `<details>` 로 접혀 보존.
+- **Multi-modal fusion** — `fused_score` 가 있는 envelope 에는 fusion
+  카드가 추가로 표시 (strategy, weights, warnings).
+- **Recipe envelope** — `ddoc recipe run --json` 의 결과를 GUI 에 붙여
+  넣으면 step 별 상태 카드 표시.
+- **한국어 i18n** — 우측 상단 토글 (또는 `?lang=ko` 쿼리). localStorage
+  에 캐싱. CLI 옵션명은 (CLI 와 1대1 매핑이라) 영문 유지.
+
+### Round-17+ 후속
+
+- modality 별 결과 시각화 심화 (vision: 썸네일, text: 단어 통계,
+  audio: 파형, timeseries: 라인 차트 — 차트 라이브러리 도입 검토)
+- GUI 에서 직접 recipe 작성 / 실행 (Round 16 의 `ddoc recipe` 와 결합)
+- vis plugin 의 DVC-centric tab 점진 이관
+
+브라우저 우측 위 `Swagger /docs` 링크는 자동 생성된 OpenAPI 문서로
+이어집니다 — endpoint signature / Pydantic schema 직접 확인 가능.

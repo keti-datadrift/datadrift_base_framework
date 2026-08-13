@@ -54,7 +54,12 @@ class DriftDecisionEngine:
     MEDIUM_ESCALATION_WINDOW_HOURS = 48
 
     def evaluate(self, db: Session, report: FieldDriftReport) -> DriftDecision:
-        """Evaluate a single drift report and return the recommended action."""
+        """Evaluate a single drift report and return the recommended action.
+
+        Prefer `drift_corroboration_service.evaluate_corroborated()` over
+        calling this directly (Round 36) -- it wraps this same result with
+        an event-based corroboration check before any caller acts on it.
+        """
         severity = report.severity or "low"
         model_name = report.model_name or "unknown"
 

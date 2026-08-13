@@ -37,13 +37,23 @@
 <p>Embedding detector: <code>{{ drift.embedding_drift_detector }}</code></p>
 {% endif %}
 
-{% if drift.attribute_drifts %}
+{% if attribute_drifts_rows %}
 <h2>Attribute drifts</h2>
 <table>
-  <thead><tr><th>attribute</th><th>drift</th></tr></thead>
+  <thead><tr><th>attribute</th><th>drift</th><th>extras</th></tr></thead>
   <tbody>
-    {% for k, v in drift.attribute_drifts.items() %}
-    <tr><td><code>{{ k }}</code></td><td>{{ "%.4f"|format(v) }}</td></tr>
+    {% for name, score, extras in attribute_drifts_rows %}
+    <tr>
+      <td><code>{{ name }}</code></td>
+      <td>{% if score is none %}—{% else %}{{ "%.4f"|format(score) }}{% endif %}</td>
+      <td>
+        {%- if extras -%}
+        {%- for k, v in extras.items() -%}
+        {{ k }}={{ v }}{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+        {%- endif -%}
+      </td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>

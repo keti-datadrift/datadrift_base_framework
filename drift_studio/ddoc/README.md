@@ -1,8 +1,11 @@
-# ddoc - Data Drift Detection & Analysis Framework
+# ddoc — the data doctor for drift detection
 
-> Git-like workflow for MLOps with snapshot-based version management
+> Diagnose data drift across modalities. CLI · REST · GUI in one wheel.
 
-**ddoc**은 데이터, 코드, 실험을 통합적으로 관리하는 MLOps 도구입니다. Git과 유사한 직관적인 워크플로우로 머신러닝 프로젝트의 완벽한 재현성을 보장합니다.
+**ddoc** (data doctor) 은 데이터의 분포 변화를 *진단* 하는 도구입니다.
+멀티모달 (vision / text / timeseries / audio) drift detection + EDA +
+report rendering 을 단일 CLI / REST facade / vanilla HTML GUI 로 묶어
+ML 모델의 건강 상태를 일관되게 점검합니다.
 
 ## ✨ 주요 기능
 
@@ -46,7 +49,32 @@ pip install ddoc[all]           # ⚠️ all 의 plugin file:// 경로는 개발
 | `ddoc vis` (Streamlit GUI) | ✓ | | | | ✓ |
 | `drift_studio` backend subprocess orchestrator | ✓ | | | | |
 
-### 5분 튜토리얼
+### 30 초 quick start (project scaffolding 불필요)
+
+```bash
+# 1. drift 가 있는 toy 데이터 한 쌍 생성
+ddoc examples generate categorical --out /tmp/d --scenario shifted
+
+# 2. drift 측정 (envelope JSON)
+ddoc analyze drift \
+    --data-path-ref /tmp/d/ref \
+    --data-path-cur /tmp/d/cur \
+    --json --quiet
+```
+
+→ `overall_score: 0.11` 같은 envelope 한 줄로 떨어집니다.
+
+5 modality 지원 (`timeseries / audio / text / vision / categorical`),
+2 scenario (`shifted / identical`). 자세한 [toy-data 튜토리얼](docs/tutorial/toy-data.md)
+이 *primary onboarding*. 본인 데이터로 옮길 때는 같은 dataset
+layout (modality 별 `ddoc.yaml` + 데이터 파일) 만 따르면 그대로
+`ddoc analyze drift --data-path-ref X --data-path-cur Y` 가능.
+
+`--detector` 옵션 골라야 할 때는 [detector cookbook](docs/tutorial/detectors.md)
+참고 — modality 별 strategy 선택과 drift severity 임계값 (alpr
+post-train gate 의 default 와 일치).
+
+### 다음 단계 — Project / Snapshot / Experiment 워크플로 (heavier path)
 
 ```bash
 # 1. 프로젝트 초기화

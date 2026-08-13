@@ -79,14 +79,64 @@ def init_app(debug: bool = False, load_plugins: bool = True):
 # ------------------------------------------------------
 # 📘 메타 정보 출력
 # ------------------------------------------------------
+def _list_installed_plugins() -> list[tuple[str, str]]:
+    """Return [(plugin_entry_name, package_version), ...] for every plugin
+    discoverable via the ``ddoc`` setuptools entry-point group.
+
+    Pure entry-point metadata scan — does NOT import plugin modules
+    (so this stays cheap, matching ffmpeg's ``ffmpeg -version`` which
+    lists codecs without exercising them). R22 plugin hardening.
+    """
+    import importlib.metadata as _md
+    rows: list[tuple[str, str]] = []
+    try:
+        eps = list(_md.entry_points(group="ddoc"))
+    except Exception:
+        return rows
+    for ep in eps:
+        # Resolve the package the entry-point lives in (best-effort —
+        # `dist` attr was added in newer importlib_metadata; fall back
+        # to module → distribution mapping when absent).
+        version = "?"
+        try:
+            dist = getattr(ep, "dist", None)
+            if dist is not None:
+                version = dist.version
+            else:
+                pkg = (ep.value or "").split(":", 1)[0].split(".", 1)[0]
+                if pkg:
+                    version = _md.version(pkg)
+        except Exception:
+            version = "?"
+        rows.append((ep.name, version))
+    rows.sort()
+    return rows
+
+
 def print_meta_info(is_show_logo=True, full=False):
     if is_show_logo:
         show_logo()
-        
+
     click.echo(f"🔖 Version       : {APP_VERSION}")
     if RELEASE_DATE:
         click.echo(f"📅 Release Date  : {RELEASE_DATE}")
-    
+
+    # R22 — ffmpeg-style manifest. Always show hookspec version + a
+    # one-line plugin summary so reproducibility is built into the
+    # version banner. `--about` (full) expands to per-plugin versions.
+    try:
+        from ddoc.plugins.hookspecs import HOOKSPEC_VERSION
+        click.echo(f"📦 Hookspec      : {HOOKSPEC_VERSION}")
+    except ImportError:
+        pass
+
+    plugins = _list_installed_plugins()
+    if plugins:
+        click.echo(f"🔌 Plugins       : {len(plugins)} loaded")
+        if full:
+            for name, version in plugins:
+                click.echo(f"   {name:<28} {version}")
+
     if full:
         click.echo(f"📘 Description   : {DESCRIPTION}")
         if DDOC_HUB_URL:
@@ -129,7 +179,7 @@ def _bootstrap(
     
     # Determine if plugins are needed based on the subcommand
     # NOTE: 'plugin' and 'showcmd' removed - they don't need heavy plugin loading
-    plugin_dependent_commands = {'analyze', 'exp', 'vis'}
+    plugin_dependent_commands = {'analyze', 'exp', 'vis', 'train', 'transform'}
     load_plugins = (
         ctx.invoked_subcommand in plugin_dependent_commands
         and not is_help_request  # Don't load plugins for help

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EDA Report{% if name %} — {{ name }}{% endif %}</title>
+  <style>
+    body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; margin: 24px; color: #1a1d24; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 18px; }
+    header .tagline { color: #6a7382; font-size: 12px; font-style: italic; margin-left: 6px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    h2 { font-size: 15px; color: #374151; margin: 18px 0 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+    .meta { color: #6a7382; font-size: 12px; }
+    .grid { display: grid; grid-template-columns: 9em 1fr; gap: 6px 14px; font-size: 13px; }
+    .grid b { color: #1a1d24; }
+    table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin-top: 6px; }
+    th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f3f4f6; font-weight: 600; color: #374151; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    pre.raw { background: #f3f5f8; padding: 10px; border-radius: 4px; font-size: 11.5px; overflow: auto; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>{{ title or ("EDA Report" + (" · " + name if name else "")) }}</h1>
+  <div class="meta">
+    ddoc · <span class="tagline">data doctor</span>
+    {% if generated_at %} · generated {{ generated_at }}{% endif %}
+  </div>
+</header>
+
+<h2>Dataset</h2>
+<div class="grid">
+  {% if name %}<span>name</span><b>{{ name }}</b>{% endif %}
+  {% if rows is not none %}<span>rows</span><b>{{ rows }}</b>{% endif %}
+  {% if cols is not none %}<span>cols</span><b>{{ cols }}</b>{% endif %}
+  {% if files_analyzed %}<span>files analyzed</span><b>{{ files_analyzed }}</b>{% endif %}
+</div>
+
+{% if missing %}
+<h2>Missing rate</h2>
+{% if missing_is_dict %}
+<table>
+  <thead><tr><th>Column</th><th>Missing rate</th></tr></thead>
+  <tbody>
+    {% for col, rate in missing.items() %}
+    <tr><td>{{ col }}</td><td class="num">{{ rate }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre class="raw">{{ missing }}</pre>
+{% endif %}
+{% endif %}
+
+{% if summary %}
+<h2>Summary</h2>
+{% if summary_is_table %}
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      {% for stat in summary_stats %}<th>{{ stat }}</th>{% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for col, stats in summary.items() %}
+    <tr>
+      <td>{{ col }}</td>
+      {% for stat in summary_stats %}<td class="num">{{ stats.get(stat, "") }}</td>{% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<pre class="raw">{{ summary_text }}</pre>
+{% endif %}
+{% endif %}
+
+<h2>Raw envelope</h2>
+<pre class="raw">{{ raw_json }}</pre>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ddoc-plugin-reference-engine"
+version = "0.1.0"
+description = "Round 34: reference-selection-function ladder (level 0/1/2/3/4) for ddoc -- alert/quiet/deferred status, YoY dual-basis (L1), regime redefinition (L2), intervention-log suppression (L4), event ontology with auto-detected candidates."
+requires-python = ">=3.9"
+dependencies = [
+    "pluggy>=1.5.0",
+    "pandas>=1.3.0",
+    "numpy>=1.21.0",
+    "scipy>=1.7.0",
+    "statsmodels>=0.13.0",
+    "pyyaml>=6.0",
+]
+
+[project.entry-points."ddoc"]
+ddoc_reference_engine = "ddoc_plugin_reference_engine.reference_engine_impl:ReferenceEnginePlugin"
+
+[tool.setuptools]
+packages = {find = {where = ["."], include = ["ddoc_plugin_reference_engine*"]}}
+include-package-data = true
+zip-safe = false

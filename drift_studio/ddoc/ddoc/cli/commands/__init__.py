@@ -137,6 +137,28 @@ def register(app: typer.Typer) -> None:
         help="Start a FastAPI server exposing every ddoc CLI command over HTTP",
     )(serve_command)
 
+    # Round 16 — multi-step recipes.
+    from .recipe import recipe_app
+    app.add_typer(recipe_app, name="recipe", help="Run a multi-step workflow described in YAML")
+
+    # R21 (alpr framework consolidation) — `ddoc train` invokes the
+    # `retrain_run` hookspec implemented by training plugins
+    # (ddoc-plugin-alpr, ddoc-plugin-yolo, ...).
+    from .train import train_command
+    app.command(
+        name="train",
+        help="Train a model via a plugin's `retrain_run` hook implementation",
+    )(train_command)
+
+    # R49 (alpr PII/EDA plugin consolidation) — `ddoc transform`
+    # invokes the `transform_apply` hookspec implemented by transform
+    # plugins (ddoc-plugin-pii-eda for `pii_blur`, ...).
+    from .transform import transform_command
+    app.command(
+        name="transform",
+        help="Apply a transform via a plugin's `transform_apply` hook implementation",
+    )(transform_command)
+
     app.command(name="vis", help="Run GUI app")(vis)
     
     # ========================================================================

@@ -7,7 +7,7 @@ pandas
 python-multipart
 evidently
 langdetect
-pdfkit
+weasyprint  # Round 19: replaced pdfkit (wkhtmltopdf wrapper) — same PDF engine as ddoc serve.
 pillow
 jinja2
 pyyaml

@@ -48,12 +48,14 @@ def _plugin_installed(name: str) -> bool:
 
 
 def test_root(client: TestClient):
+    """``GET /`` serves the Round-15 GUI when static assets are
+    packaged; the JSON metadata previously served at ``/`` now lives
+    only at ``/healthz``."""
     r = client.get("/")
     assert r.status_code == 200
-    body = r.json()
-    assert body["service"] == "ddoc serve"
-    assert "version" in body
-    assert body["auth_enabled"] is False
+    # Round 15 — static assets ship with the wheel, so / returns HTML.
+    assert "text/html" in r.headers["content-type"]
+    assert "<title>ddoc" in r.text and "data doctor" in r.text
 
 
 def test_healthz(client: TestClient):

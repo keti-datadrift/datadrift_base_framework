@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ddoc-plugin-keti-temporal"
+version = "0.1.0"
+description = "KETI Temporal Categorical Drift — drift detector for distribution series over time (R33)"
+requires-python = ">=3.9"
+dependencies = [
+    "pluggy>=1.5.0",
+    "numpy>=1.20",
+]
+
+[project.entry-points."ddoc"]
+ddoc_keti_temporal = "ddoc_plugin_keti_temporal.plugin:TemporalCategoricalDriftPlugin"
+
+[tool.setuptools]
+packages = {find = {where = ["."], include = ["ddoc_plugin_keti_temporal*"]}}
+include-package-data = true
+zip-safe = false

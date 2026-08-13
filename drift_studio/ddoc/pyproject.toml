@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc"
 version = "2.1.0"
-description = "ddoc: AI data and model management tools as data drift solutions"
+description = "ddoc — the data doctor for drift detection (CLI · REST · GUI)"
 license = {text = "Apache2.0"}
 readme = "README.md"
 requires-python = ">=3.8"
@@ -131,4 +131,7 @@ ddoc = [
   "fonts/NanumGothicCoding-Regular.ttf",
   "config/config.json",
   "templates/*.html",
+  "server/static/*.html",
+  "server/static/*.js",
+  "server/static/*.css",
 ]

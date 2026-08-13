@@ -26,6 +26,7 @@ from app.models import FieldDriftReport, TrainingJob
 from app.services.drift_decision_engine import Action, DriftDecisionEngine
 from app.services.training_orchestrator import TrainingOrchestrator
 from app.services.model_deployment_service import ModelDeploymentService
+from app.services import promotion_gate_service
 
 logger = logging.getLogger(__name__)
 
@@ -134,28 +135,41 @@ def on_training_completed(db: Session, job: TrainingJob) -> dict:
             "metrics": acceptance,
         }
 
-    # Store artifact metadata
-    artifact_meta = _deploy_service.store_from_training_result(db, job)
-    if not artifact_meta:
-        return {"auto_deploy": True, "action": "skipped", "reason": "no_model_result"}
-
-    # Deploy to the field agent that triggered the drift report
-    target_app_id = job.field_agent_id
-    from app.models import FieldAgent
-    if target_app_id:
-        agent = db.query(FieldAgent).filter(FieldAgent.id == target_app_id).first()
-        target_app_id = agent.app_id if agent else None
-
-    deployments = _deploy_service.deploy_to_all_agents(
-        db,
-        artifact_meta=artifact_meta,
-        training_job=job,
-        target_app_id=target_app_id,
+    # Promotion gate (drift_tool_analysis.md 5부/12부) — the trainer's own
+    # self-reported gate_passed is necessary but not sufficient. If a
+    # champion is already deployed for this (model, agent), an independent
+    # human/agent approval is required before this fully-autonomous path
+    # (no human in the loop otherwise) is allowed to deploy. First-ever
+    # deployment for a (model, agent) pair auto-approves — nothing to
+    # compare against yet.
+    model_name = (
+        (job.result_json or {}).get("model", {}).get("name")
+        or (job.command_json or {}).get("training", {}).get("pipeline")
+        or "unknown"
     )
+    promotion = promotion_gate_service.evaluate_promotion(db, job, model_name=model_name)
+
+    if promotion.status != "auto_approved":
+        logger.info(
+            "[AutoLoop] Training job %s: promotion %s requires approval — deploy deferred (%s)",
+            job.id, promotion.id, promotion.decision_reason,
+        )
+        return {
+            "auto_deploy": True,
+            "action": "pending_approval",
+            "promotion_id": promotion.id,
+            "reason": promotion.decision_reason,
+            "comparison": promotion.comparison,
+        }
+
+    deployments, artifact_meta = _deploy_job(db, job)
+    if artifact_meta is None:
+        return {"auto_deploy": True, "action": "skipped", "reason": "no_model_result"}
+    promotion_gate_service.mark_deployed(db, promotion.id)
 
     logger.info(
-        "[AutoLoop] Auto-deployed model from job %s → %d agent(s)",
-        job.id, len(deployments),
+        "[AutoLoop] Auto-deployed model from job %s → %d agent(s) (promotion=%s)",
+        job.id, len(deployments), promotion.id,
     )
 
     return {
@@ -163,4 +177,39 @@ def on_training_completed(db: Session, job: TrainingJob) -> dict:
         "action": "deployed",
         "artifact_id": artifact_meta.get("id"),
         "deployments": deployments,
+        "promotion_id": promotion.id,
     }
+
+
+def _deploy_job(db: Session, job: TrainingJob):
+    """Shared deploy step -- used both by the auto-approved path above and
+    by `deploy_after_promotion_approval` once a pending_approval promotion
+    is later approved via the API."""
+    artifact_meta = _deploy_service.store_from_training_result(db, job)
+    if not artifact_meta:
+        return [], None
+
+    target_app_id = job.field_agent_id
+    from app.models import FieldAgent
+    if target_app_id:
+        agent = db.query(FieldAgent).filter(FieldAgent.id == target_app_id).first()
+        target_app_id = agent.app_id if agent else None
+
+    deployments = _deploy_service.deploy_to_all_agents(
+        db, artifact_meta=artifact_meta, training_job=job, target_app_id=target_app_id,
+    )
+    return deployments, artifact_meta
+
+
+def deploy_after_promotion_approval(db: Session, job: TrainingJob, promotion) -> dict:
+    """Called by the approval endpoint once a pending_approval promotion is
+    approved -- performs the deployment that on_training_completed deferred."""
+    deployments, artifact_meta = _deploy_job(db, job)
+    if artifact_meta is None:
+        return {"action": "skipped", "reason": "no_model_result"}
+    promotion_gate_service.mark_deployed(db, promotion.id)
+    logger.info(
+        "[AutoLoop] Deployed model from job %s after promotion approval (promotion=%s)",
+        job.id, promotion.id,
+    )
+    return {"action": "deployed", "artifact_id": artifact_meta.get("id"), "deployments": deployments}

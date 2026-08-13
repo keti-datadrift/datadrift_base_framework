@@ -69,7 +69,7 @@ def list_examples():
 @examples_app.command("generate")
 def generate_example(
     modality: str = typer.Argument(
-        ..., help="One of: timeseries, audio, text, vision (run `ddoc examples list` to see)."
+        ..., help="One of: timeseries, audio, text, vision, categorical (run `ddoc examples list` to see)."
     ),
     out: Path = typer.Option(
         ..., "--out", "-o",

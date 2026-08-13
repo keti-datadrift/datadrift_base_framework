@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ddoc · data doctor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <strong>ddoc</strong>
+    <span class="tagline">· data doctor</span>
+    <span id="meta">loading…</span>
+  </div>
+  <div id="auth-block" hidden>
+    <label>X-API-Key
+      <input type="password" id="api-key" placeholder="(set DDOC_API_KEY on server)">
+    </label>
+    <button id="auth-clear" class="link" title="Clear stored key">clear</button>
+  </div>
+  <a class="link" href="/docs" target="_blank">Swagger /docs</a>
+</header>
+
+<nav id="tabs">
+  <button data-tab="drift" class="tab active">Analyze drift</button>
+  <button data-tab="eda" class="tab">Analyze EDA</button>
+  <button data-tab="examples" class="tab">Examples</button>
+  <button data-tab="report" class="tab">Report</button>
+  <button data-tab="export" class="tab">Export</button>
+  <button data-tab="fetch" class="tab">Fetch</button>
+  <button data-tab="recipe" class="tab">Recipe</button>
+</nav>
+
+<main>
+  <section class="panel form-panel">
+    <!-- Each builder is an inline form rendered by app.js. -->
+    <div data-builder="drift" class="builder active"></div>
+    <div data-builder="eda" class="builder"></div>
+    <div data-builder="examples" class="builder"></div>
+    <div data-builder="report" class="builder"></div>
+    <div data-builder="export" class="builder"></div>
+    <div data-builder="fetch" class="builder"></div>
+    <div data-builder="recipe" class="builder"></div>
+    <div id="errors" class="errors"></div>
+    <div class="actions">
+      <button id="submit" type="button" class="primary">Submit</button>
+      <span id="submit-hint" class="hint"></span>
+    </div>
+  </section>
+
+  <aside class="panel cli-panel">
+    <h3>Generated CLI command</h3>
+    <pre id="cli-hint">ddoc …</pre>
+    <button id="copy-cli" type="button">Copy</button>
+    <p class="hint">
+      The form on the left maps 1-to-1 to <code>ddoc</code> CLI options.
+      Submit calls the equivalent REST endpoint; this panel shows what
+      you'd run in a terminal for the same effect.
+    </p>
+  </aside>
+
+  <section id="result-panel" class="panel result-panel" hidden>
+    <header>
+      <h3>Result</h3>
+      <span id="result-status"></span>
+      <button id="result-download" type="button" hidden>Download envelope</button>
+      <button id="result-render" type="button" hidden>Render report…</button>
+    </header>
+    <div id="result-progress" class="progress" hidden></div>
+    <!-- Round-16 viz container — populated by app.js when a drift / EDA
+         envelope arrives. Falls through to raw JSON pre when nothing
+         to visualize. -->
+    <div id="result-viz" class="viz" hidden></div>
+    <details>
+      <summary>Raw JSON</summary>
+      <pre id="result-body"></pre>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <span>ddoc serve · Round-15 GUI · gpu-tunnel pattern</span>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
