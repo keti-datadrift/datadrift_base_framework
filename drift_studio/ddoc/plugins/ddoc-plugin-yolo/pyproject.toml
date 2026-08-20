@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-yolo"
 version = "0.1.0"
+license = {text = "Apache-2.0"}
 description = "YOLO training plugin for ddoc"
 requires-python = ">=3.9"
 dependencies = [

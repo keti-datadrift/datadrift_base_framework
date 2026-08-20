@@ -1,8 +1,6 @@
 """subprocess wrapper for invoking the ddoc CLI from the backend.
 
-Phase 3 of the orchestrator pivot — see
-``/Users/jpark/.claude/plans/modular-wandering-tiger.md`` and
-``_specs/architecture_consolidation.md`` Round-2.
+Part of the orchestrator pivot.
 
 The backend used to import ddoc as a Python library
 (``from ddoc.core.workspace import ...``) and reimplement drift / eda

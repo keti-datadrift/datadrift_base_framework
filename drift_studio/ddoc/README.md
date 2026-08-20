@@ -241,7 +241,7 @@ ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
 
 ## 📄 라이선스
 
-MIT License
+Apache License 2.0 — [LICENSE](LICENSE) 참조.
 
 ## 👥 기여자
 

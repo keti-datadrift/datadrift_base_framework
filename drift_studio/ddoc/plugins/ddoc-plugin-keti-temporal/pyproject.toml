@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-keti-temporal"
 version = "0.1.0"
+license = {text = "Apache-2.0"}
 description = "KETI Temporal Categorical Drift — drift detector for distribution series over time (R33)"
 requires-python = ">=3.9"
 dependencies = [

@@ -1,18 +1,14 @@
-# ddoc-plugin-reference-engine (Round 34)
+# ddoc-plugin-reference-engine
 
 레퍼런스 선택 함수 성숙도 사다리(레벨0~4)와 이벤트 온톨로지(개입/레짐 로그)를
-`ddoc`에 더하는 플러그인입니다. 설계 배경과 전체 아키텍처는
-[context_workplace/drift_tool_analysis.md](../../../../../context_workplace/drift_tool_analysis.md)
-3부·10부·12부·13부를, 통계 로직의 검증 이력은
-[context_workplace/drift_fashion_pilot/](../../../../../context_workplace/drift_fashion_pilot/)를 참고하세요.
+`ddoc`에 더하는 플러그인입니다. 통계 로직은 실제 일별 판매 데이터 파일럿에서
+검증된 구현을 이식했습니다.
 
-## Round 33까지 확인한 공백을 메움
+## 기존 플러그인이 다루지 않던 공백을 메움
 
-R25(공백 발견) → R26(categorical) → R27(tabular 렌더) → R29(결정 문서) →
-R32(evidently) → R33(keti-temporal)까지, 이 저장소의 어떤 라운드도 다루지
-않은 지점을 메웁니다 (직접 소스 조사로 확인 — `dayofweek|yoy|seasonal|STL|
-regime|intervention|deferred` grep 결과가 네 플러그인(timeseries/evidently/
-categorical/keti-temporal) 전부 0건):
+timeseries/evidently/categorical/keti-temporal 네 플러그인 어디에도 없던
+지점을 메웁니다 (직접 소스 조사로 확인 — `dayofweek|yoy|seasonal|STL|
+regime|intervention|deferred` grep 결과가 전부 0건):
 
 - **연간 계절성 인지 기준선** — 기존 `ddoc-plugin-timeseries`의
   `seasonal_decompose(period=min(12, len//2))`는 월별용이라 일별 데이터의
@@ -20,7 +16,7 @@ categorical/keti-temporal) 전부 0건):
   사용.
 - **전년 대비 이중 기준 + 판정 유보** — 동일 날짜(365일 전)와 동일 요일
   (364일=52주 전) 두 기준이 상충하면 `deferred` 반환. 실제 소매업 대사
-  관행(KETI 「패션 동향 분석 보고서」 실증 사례)에서 가져온 패턴.
+  관행에서 가져온 패턴.
 - **영구 레짐 재정의 vs 일시적 개입의 구분** — keti-temporal의
   `sudden_shift`는 있는 그대로의 통계 플래그일 뿐, "원래대로 돌아올 변화"와
   "새 정상이 된 변화"를 구분하지 않음. 이 플러그인은 레벨2(regime_log)/

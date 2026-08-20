@@ -1,5 +1,5 @@
-"""Same 4 checkpoints already validated in the pilot (context_workplace/
-drift_fashion_pilot), re-run against this repo's STL-based level3/4 to check
+"""Same 4 checkpoints already validated in the pilot,
+re-run against this repo's STL-based level3/4 to check
 the algorithm swap didn't change the qualitative (status) behavior. Exact
 z-scores are expected to differ from the pilot's hand-rolled decomposition --
 only status is asserted, not specific numbers.

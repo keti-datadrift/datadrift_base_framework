@@ -73,9 +73,9 @@ def test_approve_transitions_status_and_records_decider(db):
     db.commit()
     promotion = gate.evaluate_promotion(db, challenger_job, model_name="m")
 
-    approved = gate.approve_promotion(db, promotion.id, approved_by="jpark", reason="looks good")
+    approved = gate.approve_promotion(db, promotion.id, approved_by="reviewer1", reason="looks good")
     assert approved.status == "approved"
-    assert approved.decided_by == "jpark"
+    assert approved.decided_by == "reviewer1"
     assert approved.decided_at is not None
 
 
@@ -90,7 +90,7 @@ def test_reject_transitions_status_and_requires_reason(db):
     db.commit()
     promotion = gate.evaluate_promotion(db, challenger_job, model_name="m")
 
-    rejected = gate.reject_promotion(db, promotion.id, rejected_by="jpark", reason="accuracy regressed")
+    rejected = gate.reject_promotion(db, promotion.id, rejected_by="reviewer1", reason="accuracy regressed")
     assert rejected.status == "rejected"
     assert rejected.decision_reason == "accuracy regressed"
 
@@ -106,7 +106,7 @@ def test_cannot_approve_already_decided_promotion(db):
     db.commit()
     promotion = gate.evaluate_promotion(db, challenger_job, model_name="m")
 
-    gate.approve_promotion(db, promotion.id, approved_by="jpark")
+    gate.approve_promotion(db, promotion.id, approved_by="reviewer1")
     second_attempt = gate.approve_promotion(db, promotion.id, approved_by="someone_else")
     assert second_attempt is None, "approving an already-decided promotion should be a no-op, not silently re-approve"
 

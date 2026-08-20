@@ -1,5 +1,5 @@
 """Event ontology (intervention_log + regime_log) as this plugin's own persistent
-store -- context_workplace/drift_tool_analysis.md 10부/12부. Round 34.
+store.
 
 No hookspec models a stateful event registry today (all 12 original hooks
 plus the 4 new Round-11/13 hooks are stateless), and no existing plugin

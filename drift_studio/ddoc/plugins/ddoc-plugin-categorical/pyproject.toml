@@ -5,7 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-categorical"
 version = "1.0.0"
-description = "Categorical-distribution drift plugin for ddoc — jensen_shannon + overlap on dict-of-counts. Closes the keti vehicle-fingerprint shape gap (Round 25 finding #3)."
+license = {text = "Apache-2.0"}
+description = "Categorical-distribution drift plugin for ddoc — jensen_shannon + overlap on dict-of-counts."
 requires-python = ">=3.9"
 dependencies = [
     "pluggy>=1.5.0",

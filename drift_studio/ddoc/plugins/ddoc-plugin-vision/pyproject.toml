@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-vision"
 version = "1.0.0"
+license = {text = "Apache-2.0"}
 description = "Vision analysis plugin for ddoc (image analysis, drift detection)"
 requires-python = ">=3.9"
 dependencies = [

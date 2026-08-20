@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-tabular"
 version = "1.0.0"
+license = {text = "Apache-2.0"}
 description = "Tabular EDA report plugin for ddoc — renders {rows, cols, missing, summary} envelopes. Closes the backend EDA shape gap (Round 25 finding #2)."
 requires-python = ">=3.9"
 dependencies = [

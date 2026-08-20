@@ -1,24 +1,24 @@
 # ddoc-plugin-keti-temporal
 
-**KETI research drift detector — Temporal Categorical Drift (R33)**.
+**Temporal Categorical Drift detector**.
 
-The first KETI-original drift detector that goes beyond two-point
-distribution comparison. Analyzes a *series* of categorical distributions
-over time and classifies the temporal evolution into 4 patterns.
+A drift detector that goes beyond two-point distribution comparison.
+Analyzes a *series* of categorical distributions over time and
+classifies the temporal evolution into 4 patterns.
 
 ## Why this matters
 
-ddoc-plugin-categorical (R26-A) answers "do these two distributions
-differ?". Real keti operators ask harder questions:
+ddoc-plugin-categorical answers "do these two distributions
+differ?". Operators monitoring a live data stream ask harder questions:
 
 | operator question | answers we give |
 |---|---|
-| "When did the camera go bad?" | `trend.argmax_idx` + `trend.z_anomalies` |
+| "When did the source go bad?" | `trend.argmax_idx` + `trend.z_anomalies` |
 | "Is it gradually degrading?" | `patterns.linear_drift` + `trend.slope` |
-| "Is it just a day-night rhythm?" | `patterns.cyclic` |
+| "Is it just a periodic rhythm?" | `patterns.cyclic` |
 | "Is it stable enough for production?" | `patterns.stable` |
 
-## Algorithm (research IP)
+## Algorithm
 
 1. Aggregate baseline distributions into a single **reference**
    (mean of normalized inputs — so unequal sample sizes don't bias).
@@ -94,13 +94,13 @@ cfg:
 }
 ```
 
-## Direct product integration
+## Example integration
 
-Built to match keti_veritas R1 camera health snapshot workflow. The
-existing endpoint `/api/v1/cameras/{id}/drift-report` can extend to
-pass `detector="keti:temporal_categorical"` with N hourly
-distributions instead of single 24h-vs-7d aggregate — operators get
-**when** the camera went off-distribution, not just **that** it did.
+Fits any periodic-snapshot health workflow: a monitoring service that
+already aggregates one distribution per source can instead pass
+`detector="keti:temporal_categorical"` with N hourly distributions —
+operators get **when** the source went off-distribution, not just
+**that** it did.
 
 ## Install
 

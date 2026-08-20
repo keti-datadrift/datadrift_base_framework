@@ -1,4 +1,4 @@
-"""ddoc-plugin-keti-temporal — KETI research drift detector.
+"""ddoc-plugin-keti-temporal — temporal categorical drift detector.
 
 Temporal Categorical Drift: analyze how a categorical distribution
 EVOLVES over a series of time points (vs the point-in-time comparison
@@ -9,10 +9,10 @@ in ddoc-plugin-categorical). Distinguishes:
 - Cyclic       (recurring pattern — daily / weekly)
 - Anomalous days (z-score outliers in the drift series)
 
-Direct product motivation: keti_veritas R1 "camera health snapshot"
-compares 24h vs 7d-baseline aggregate — operators want to see *when*
-the camera went off-distribution, not just *that* it did. This
-plugin gives per-timestamp drifts + trend statistics.
+Motivation: periodic health-snapshot workflows typically compare a
+recent aggregate vs a baseline aggregate — operators want to see
+*when* the source went off-distribution, not just *that* it did.
+This plugin gives per-timestamp drifts + trend statistics.
 """
 from .plugin import TemporalCategoricalDriftPlugin
 

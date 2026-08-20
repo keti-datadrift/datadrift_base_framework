@@ -1,4 +1,4 @@
-"""KETI Temporal Categorical Drift detector (R33).
+"""Temporal Categorical Drift detector.
 
 ## What it does
 
@@ -7,12 +7,12 @@ labeled by timestamp), measure how the distribution evolves vs a
 baseline. Returns per-timestamp drift scores + trend statistics that
 distinguish:
 
-| pattern        | trend                  | typical product cause              |
+| pattern        | trend                  | typical example cause              |
 |----------------|------------------------|------------------------------------|
-| sudden_shift   | one large drift spike   | camera angle physically moved     |
-| linear_drift   | positive slope          | gradual lens fouling / weathering |
-| cyclic         | periodic ups + downs    | day/night traffic pattern         |
-| anomalous_day  | z-score > 2 on a step   | one-off event (festival, accident) |
+| sudden_shift   | one large drift spike   | source configuration changed      |
+| linear_drift   | positive slope          | gradual sensor / source degradation |
+| cyclic         | periodic ups + downs    | daily / weekly seasonality        |
+| anomalous_day  | z-score > 2 on a step   | one-off external event            |
 | stable         | low overall, low slope  | healthy                           |
 
 Each pattern flag is `True/False` so downstream UIs can color-code.
@@ -45,8 +45,8 @@ flows through `report.render` and `export.drift_report` unchanged.
 
 When ``current_categorical_series`` is omitted, the first entry of
 ``baseline_categorical_series`` is used as the reference and the rest
-are scored as steps. This matches the keti R1 use case (one camera,
-N hourly snapshots).
+are scored as steps. This matches the common monitoring use case
+(one source, N periodic snapshots).
 
 ## Algorithm
 

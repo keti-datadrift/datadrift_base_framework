@@ -1,13 +1,13 @@
-"""Ingest service — read keti-veritas-style envelope JSON files into ddoc.
+"""Ingest service — read feedback-envelope JSON files into ddoc.
 
-This service is the *receiving* side of the keti_veritas → ddoc bridge
-defined in `_specs/ddoc_orchestrator_pattern.md` (Phase 5) and
-`/Users/jpark/.claude/plans/modular-wandering-tiger.md` (Phase 2).
+This service is the *receiving* side of the application → ddoc bridge:
+a monitored application exports audit/feedback envelopes as JSON files
+and ddoc ingests them here.
 
-Source-of-truth shape mirror — frozen dataclass copy of
-`keti_veritas/app/services/audit/envelope.py` protocol 1.1. We
-*intentionally* do not import keti_veritas as a package; the two
-projects ship separately and the schema is the contract.
+Source-of-truth shape mirror — frozen dataclass copy of the emitting
+application's envelope, protocol 1.1. We *intentionally* do not import
+the application as a package; the two projects ship separately and the
+schema is the contract.
 
 Layout written to disk (per ingest run, idempotent):
 

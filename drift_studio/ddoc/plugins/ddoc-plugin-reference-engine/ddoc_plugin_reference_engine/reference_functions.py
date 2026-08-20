@@ -1,8 +1,8 @@
 """Reference-selection-function ladder (levels 0/1/2/3/4).
 
-Round 34. Ported from a validated pilot (context_workplace/drift_fashion_pilot/
-reference_functions.py, itself validated against a real fashion-industry
-reconciliation practice) with two changes for this production target:
+Ported from a validated pilot implementation (exercised against a real
+retail daily-sales reconciliation practice) with two changes for this
+production target:
 
 1. Level 3's hand-rolled circular-smoothing decomposition is replaced with
    statsmodels' STL (this repo already depends on statsmodels via
@@ -12,7 +12,7 @@ reconciliation practice) with two changes for this production target:
    gaps before decomposition -- the pilot's rolling-mean approach never had
    to do this.
 2. AlertResult gains `attribution_confidence`. Per the causal-inference
-   limitations review (context_workplace/drift_tool_analysis.md 12부), calling
+   limitations review that preceded this design, calling
    an intervention-matched deviation "explained" overclaims certainty --
    level4 now reports it as a "설명 후보"(candidate explanation) with a
    confidence estimate (currently a simple count of past events of the same

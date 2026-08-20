@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-timeseries"
 version = "1.0.0"
+license = {text = "Apache-2.0"}
 description = "Time series analysis plugin for ddoc (CSV time series analysis, drift detection)"
 requires-python = ">=3.9"
 dependencies = [

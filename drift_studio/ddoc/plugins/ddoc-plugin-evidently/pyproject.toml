@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-evidently"
 version = "0.1.0"
+license = {text = "Apache-2.0"}
 description = "Evidently-backed drift detector plugin for ddoc (R32)"
 requires-python = ">=3.9"
 dependencies = [

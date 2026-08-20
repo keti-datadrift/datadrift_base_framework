@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ddoc"
 version = "2.1.0"
 description = "ddoc — the data doctor for drift detection (CLI · REST · GUI)"
-license = {text = "Apache2.0"}
+license = {text = "Apache-2.0"}
 readme = "README.md"
 requires-python = ">=3.8"
 #release_date = "2025-10-20"
@@ -23,7 +23,7 @@ authors = [
 #
 # What `pip install ddoc` (no extras) gives you:
 #   - init / add / snapshot — workspace + DVC integration
-#   - ingest — keti_veritas envelope JSON consumer
+#   - ingest — application feedback-envelope JSON consumer
 #   - analyze drift / eda (path mode + --json) — orchestrator-friendly
 #     subprocess interface; the actual analysis still requires a domain
 #     plugin (e.g. ddoc-plugin-vision) installed separately
@@ -109,7 +109,7 @@ vis = [
 ]
 # Round-8 (2026-05-08) — ``all`` rebuilt from the named extras instead
 # of duplicating their content. The previous incarnation also bundled
-# three plugin packages via ``file:///Users/bhc/...`` paths bound to a
+# three plugin packages via ``file://`` paths bound to a
 # specific developer's local checkout — those would silently fail to
 # resolve on any other machine and on PyPI installs. Plugins are now
 # expected to be installed separately (PyPI when published, or

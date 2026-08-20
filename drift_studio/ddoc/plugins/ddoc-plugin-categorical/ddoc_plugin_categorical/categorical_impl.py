@@ -18,10 +18,9 @@ Each top-level key is one *attribute*. Attribute values are
 flat dict-of-counts. ``overall_score`` is the (weighted) mean across
 attributes.
 
-The math here matches
-``keti_veritas/app/services/dia/comparison.py:jensen_shannon_divergence``
-exactly (same base-2 KL average) so any client switching from local
-computation to ``ddoc analyze drift --modality=categorical ...`` gets
+The math is the standard base-2 KL average, so any client switching
+from an equivalent local computation to
+``ddoc analyze drift --modality=categorical ...`` gets
 byte-equivalent scores.
 """
 from __future__ import annotations
@@ -52,9 +51,7 @@ def _normalize(dist: Dict[str, float]) -> Dict[str, float]:
 
 
 def jensen_shannon(a: Dict[str, float], b: Dict[str, float]) -> float:
-    """Base-2 Jensen-Shannon divergence on count dicts. Symmetric, in [0, 1].
-
-    Mirrors ``keti_veritas.../comparison.py:jensen_shannon_divergence``."""
+    """Base-2 Jensen-Shannon divergence on count dicts. Symmetric, in [0, 1]."""
     keys = set(a) | set(b)
     if not keys:
         return 0.0
@@ -226,7 +223,6 @@ class CategoricalDriftPlugin:
             "implements": ["drift_detect", "ddoc_supported_detectors"],
             "description": (
                 "Categorical-distribution drift via jensen_shannon / "
-                "overlap on dict-of-counts. Round 26 (Track A) — closes "
-                "the keti vehicle-fingerprint shape gap from Round 25."
+                "overlap on dict-of-counts."
             ),
         }

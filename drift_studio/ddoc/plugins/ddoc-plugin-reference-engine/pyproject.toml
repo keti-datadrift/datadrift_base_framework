@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ddoc-plugin-reference-engine"
 version = "0.1.0"
+license = {text = "Apache-2.0"}
 description = "Round 34: reference-selection-function ladder (level 0/1/2/3/4) for ddoc -- alert/quiet/deferred status, YoY dual-basis (L1), regime redefinition (L2), intervention-log suppression (L4), event ontology with auto-detected candidates."
 requires-python = ">=3.9"
 dependencies = [

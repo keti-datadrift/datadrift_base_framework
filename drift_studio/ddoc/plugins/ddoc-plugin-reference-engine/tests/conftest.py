@@ -1,5 +1,4 @@
-"""Synthetic ground-truth fixtures, ported from the validated pilot
-(context_workplace/drift_fashion_pilot/generate_synthetic_data.py). Same
+"""Synthetic ground-truth fixtures, ported from the validated pilot. Same
 injected scenarios: basic_tees (control), swimwear (registered campaign,
 first occurrence in 2026), cargo_pants (unregistered permanent trend break).
 """
