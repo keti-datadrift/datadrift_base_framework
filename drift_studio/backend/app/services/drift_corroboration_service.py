@@ -88,8 +88,12 @@ def evaluate_corroborated(db: Session, report: FieldDriftReport) -> Corroborated
 
     downgraded = Action.ALERT if decision.action == Action.RETRAIN else decision.action
     labels = ", ".join(e.description or e.id for e in confirmed)
+    if downgraded != decision.action:
+        change_note = f"'{decision.action}'에서 '{downgraded}'로 하향"
+    else:
+        change_note = f"'{decision.action}' 유지(더 낮출 액션이 없음)"
     reason = (
-        f"{decision.reason} — '{downgraded}'로 하향: 겹치는 확정 개입 이벤트가 있음"
+        f"{decision.reason} — {change_note}: 겹치는 확정 개입 이벤트가 있음"
         f"({labels}). 사람이 검토할 설명 후보일 뿐 확정된 원인이 아님(12부)."
     )
     return CorroboratedDecision(

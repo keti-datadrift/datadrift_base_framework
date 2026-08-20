@@ -1,0 +1,6 @@
+modality: timeseries
+csv_file: data.csv
+timestamp_column: date
+numeric_columns:
+- revenue
+- visits

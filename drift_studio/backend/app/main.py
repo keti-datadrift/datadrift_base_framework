@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 warnings.simplefilter("default", DeprecationWarning)
 
 from .database import Base, engine
-from .routers import datasets, eda, drift, report, files, ws, field_agents, training, model_registry
+from .routers import datasets, eda, drift, report, files, ws, field_agents, training, model_registry, drift_events, reference_engine_demo
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,13 @@ app.include_router(field_agents.router)
 
 # ── Training Orchestration (Stage 2) ─────────────────────
 app.include_router(training.router)
+
+# ── Drift Intervention Events (Round 36 — DriftDecisionEngine 보정) ────
+app.include_router(drift_events.router)
+
+# ── Reference-Engine Ladder Demo (Round 37 — Round 34 플러그인 proof-of-life,
+#    고정 토이 픽스처, DB 없음) ─────────────────────────────
+app.include_router(reference_engine_demo.router)
 
 # ── Model Deployment (Stage 3) ───────────────────────────
 app.include_router(model_registry.router)

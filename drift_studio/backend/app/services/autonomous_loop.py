@@ -1,7 +1,8 @@
 """Autonomous Loop — fully automated drift → retrain → deploy pipeline.
 
 When DD_AUTO_TRIGGER=true, incoming drift reports are automatically:
-1. Evaluated by DriftDecisionEngine
+1. Evaluated by DriftDecisionEngine, then corroborated against known
+   intervention events (drift_corroboration_service, Round 36)
 2. If action=retrain → training dispatched to trainer agent
 3. On training completion → model deployed to field agent
 
@@ -9,6 +10,8 @@ This is the "Stage 3.5" self-evolving loop.
 
 Safety:
 - Only triggers on medium (repeated) or high severity
+- A confirmed, overlapping intervention event downgrades retrain to alert
+  instead of triggering blindly (Round 36)
 - Quality gate must pass on trainer side
 - Field agent can reject deployment (DD_AUTO_ACCEPT_MODELS)
 - All actions are logged in TrainingJob and FieldDriftReport
@@ -23,14 +26,14 @@ import threading
 from sqlalchemy.orm import Session
 
 from app.models import FieldDriftReport, TrainingJob
-from app.services.drift_decision_engine import Action, DriftDecisionEngine
+from app.services.drift_decision_engine import Action
+from app.services import drift_corroboration_service
 from app.services.training_orchestrator import TrainingOrchestrator
 from app.services.model_deployment_service import ModelDeploymentService
 from app.services import promotion_gate_service
 
 logger = logging.getLogger(__name__)
 
-_decision_engine = DriftDecisionEngine()
 _orchestrator = TrainingOrchestrator()
 _deploy_service = ModelDeploymentService()
 
@@ -51,8 +54,8 @@ def on_drift_report_received(db: Session, report: FieldDriftReport) -> dict:
     if not is_auto_trigger_enabled():
         return {"auto_trigger": False, "action": "manual_review_required"}
 
-    # Step 1: Evaluate
-    decision = _decision_engine.evaluate(db, report)
+    # Step 1: Evaluate (+ event-based corroboration, Round 36)
+    decision = drift_corroboration_service.evaluate_corroborated(db, report)
     logger.info(
         "[AutoLoop] Report %s: severity=%s → action=%s",
         report.id, report.severity, decision.action,
@@ -68,6 +71,7 @@ def on_drift_report_received(db: Session, report: FieldDriftReport) -> dict:
             "auto_trigger": True,
             "action": decision.action,
             "reason": decision.reason,
+            "corroboration": decision.corroboration,
         }
 
     # Step 2: Trigger training

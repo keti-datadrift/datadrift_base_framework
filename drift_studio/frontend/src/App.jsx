@@ -5,6 +5,7 @@ import EDAStudio from "./components/EDAStudio";
 import DriftStudio from "./components/DriftStudio";
 import ZipDetail from "./components/ZipDetail";
 import WorkspaceStudio from "./components/WorkspaceStudio";
+import ReferenceEngineDemo from "./components/ReferenceEngineDemo";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 // 리버스 프록시 환경: 상대 경로 사용
@@ -125,6 +126,7 @@ export default function App() {
             />
           }
         />
+        <Route path="/reference-engine-demo" element={<ReferenceEngineDemo backend={BACKEND} />} />
       </Routes>
     </Layout>
   );

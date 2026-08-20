@@ -15,12 +15,12 @@ from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
 from app.models import FieldDriftReport, TrainerAgent, TrainingJob
-from app.services.drift_decision_engine import DriftDecisionEngine, Action
+from app.services.drift_decision_engine import Action
+from app.services import drift_corroboration_service
 from app.services.training_orchestrator import TrainingOrchestrator
 
 router = APIRouter(prefix="/training", tags=["training"])
 
-_decision_engine = DriftDecisionEngine()
 _orchestrator = TrainingOrchestrator()
 
 
@@ -133,7 +133,7 @@ def evaluate_drift_report(report_id: str, db: Session = Depends(get_db)):
     if not report:
         raise HTTPException(status_code=404, detail="Drift report not found")
 
-    decision = _decision_engine.evaluate(db, report)
+    decision = drift_corroboration_service.evaluate_corroborated(db, report)
     return {
         "report_id": report_id,
         "severity": report.severity,
@@ -157,7 +157,7 @@ def trigger_training(req: TriggerTrainingRequest, db: Session = Depends(get_db))
         raise HTTPException(status_code=404, detail="Drift report not found")
 
     # Evaluate
-    decision = _decision_engine.evaluate(db, report)
+    decision = drift_corroboration_service.evaluate_corroborated(db, report)
 
     if decision.action != Action.RETRAIN:
         # Update report status and return
