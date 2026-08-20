@@ -59,6 +59,15 @@ def register(app: typer.Typer) -> None:
     app.add_typer(analyze_app, name="analyze")
 
     # ========================================================================
+    # Diff Command — one-line drift verdict (the front door)
+    # ========================================================================
+    from .diff import diff_command
+    app.command(
+        name="diff",
+        help="One-line drift verdict between two datasets (exit 0=OK, 1=DRIFT, 2=BLIND)",
+    )(diff_command)
+
+    # ========================================================================
     # Ingest Command (application envelope bridge)
     # ========================================================================
     app.command(name="ingest", help="Ingest application feedback-envelope JSON files into the workspace inbox")(ingest_command)
@@ -217,7 +226,9 @@ def register(app: typer.Typer) -> None:
         app.command(name="log", hidden=True, deprecated=True)(log)
         app.command(name="status", hidden=True, deprecated=True)(status)
         app.command(name="alias", hidden=True, deprecated=True)(alias_cmd)
-        app.command(name="diff", hidden=True, deprecated=True)(diff)
+        # NOTE: the deprecated `diff` alias (→ snapshot --diff) has been
+        # retired; `ddoc diff` is now the dataset drift verdict command.
+        # Snapshot diffing remains available as `ddoc snapshot diff`.
     except ImportError as e:
         logger.debug(
             "[ddoc] legacy commands unavailable — missing dep: %s",

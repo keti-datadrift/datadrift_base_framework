@@ -143,6 +143,28 @@ ddoc snapshot --prune                    # 고아 스냅샷 식별
 
 ## 데이터 분석
 
+### `ddoc diff`
+
+두 데이터셋 사이의 드리프트를 **한 줄 판정**으로 알려줍니다. ddoc의 대표 동사.
+
+**사용법:**
+```bash
+ddoc diff baseline_data/ todays_data/       # 사람용 판정 출력
+ddoc diff jan.csv aug.csv --json            # JSON 한 객체 (스크립트/CI 용)
+ddoc diff camA_ref/ camA_now/ --attr-threshold 0.3
+```
+
+**동작:**
+- 입력 모달리티를 자동 스니핑 (categorical 레이아웃 / 이미지 / 오디오 / 텍스트 / CSV)
+- 준비된 레이아웃은 플러그인 `drift_detect` 훅으로, **생 CSV는 내장 비교기**
+  (컬럼별 히스토그램 JS divergence)로 — 플러그인 없이도 동작
+- 판정은 셋 중 하나: `OK` / `DRIFT` / `BLIND`(판정불가 — 정직한 셋째 답)
+- **exit code = 판정**: `0`=OK, `1`=DRIFT, `2`=BLIND·에러 → CI 게이트로 바로 사용
+
+**옵션:** `--threshold`(전체 점수 기준, 기본 0.15) ·
+`--attr-threshold`(단일 속성 기준, 기본 0.25 — 평균에 묻힌 국소 드리프트 방지) ·
+`--detector` · `--json` · `--verbose`
+
 ### `ddoc analyze eda`
 
 EDA(탐색적 데이터 분석)을 수행합니다.
@@ -240,7 +262,8 @@ ddoc exp best yolo_reference --metric precision
 - `ddoc commit` → `ddoc snapshot create -m`
 - `ddoc checkout` → `ddoc snapshot checkout`
 - `ddoc log` → `ddoc snapshot --list`
-- `ddoc diff` → `ddoc snapshot --diff`
+- (구) `ddoc diff` 스냅샷 별칭 → `ddoc snapshot diff` — **현재 `ddoc diff` 는
+  데이터셋 드리프트 판정 명령** (위 "데이터 분석" 참조)
 - `ddoc exp run` → `ddoc exp train`
 - `ddoc exp list` → MLflow UI 사용
 - `ddoc exp show` → MLflow UI 사용

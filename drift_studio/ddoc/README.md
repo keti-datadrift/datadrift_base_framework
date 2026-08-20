@@ -49,17 +49,40 @@ pip install ddoc[all]           # ⚠️ all 의 plugin file:// 경로는 개발
 | `ddoc vis` (Streamlit GUI) | ✓ | | | | ✓ |
 | `drift_studio` backend subprocess orchestrator | ✓ | | | | |
 
-### 30 초 quick start (project scaffolding 불필요)
+### 10 초 quick start — `ddoc diff`
+
+가지고 있는 데이터 두 벌을 그대로 가리키면 됩니다. 설정 없음:
 
 ```bash
-# 1. drift 가 있는 toy 데이터 한 쌍 생성
-ddoc examples generate categorical --out /tmp/d --scenario shifted
+ddoc diff baseline_data/ todays_data/
+```
 
-# 2. drift 측정 (envelope JSON)
-ddoc analyze drift \
-    --data-path-ref /tmp/d/ref \
-    --data-path-cur /tmp/d/cur \
-    --json --quiet
+```
+⚠ DRIFT — severity: high · score 0.27 (threshold 0.15)
+   가장 변한 속성: price 0.42 · color 0.18
+   ⤷ 처방: 'price' 축의 최근 샘플을 재계측/재라벨 후보로 검토
+```
+
+- 입력 모달리티 자동 감지 — **생 CSV 는 플러그인 없이도** 내장 비교기로 동작
+- 판정은 `OK` / `DRIFT` / **`BLIND`** (판정불가를 정직하게 셋째 답으로)
+- **exit code = 판정** (`0`/`1`/`2`) → CI 에서 그대로 데이터 게이트로
+
+```bash
+ddoc diff jan.csv aug.csv --json     # 스크립트/CI: JSON 한 객체
+```
+
+toy 데이터로 바로 체험하려면:
+
+```bash
+ddoc examples generate categorical --out /tmp/d --scenario shifted
+ddoc diff /tmp/d/ref /tmp/d/cur
+```
+
+정밀 제어(detector 선택·fusion·스냅샷 모드)는 저수준 명령
+`ddoc analyze drift` 로:
+
+```bash
+ddoc analyze drift --data-path-ref /tmp/d/ref --data-path-cur /tmp/d/cur --json --quiet
 ```
 
 → `overall_score: 0.11` 같은 envelope 한 줄로 떨어집니다.
