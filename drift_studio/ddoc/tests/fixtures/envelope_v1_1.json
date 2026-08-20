@@ -1,6 +1,6 @@
 {
   "source": {
-    "app_id": "keti-veritas-test",
+    "app_id": "field-app-test",
     "app_type": "video_forensics",
     "instance_id": null
   },
@@ -9,7 +9,7 @@
     {
       "id": "11111111-1111-1111-1111-111111111111",
       "created_at": "2026-05-07T08:00:00.000000+00:00",
-      "decision_type": "tessera_match",
+      "decision_type": "identity_match",
       "decision": "alert",
       "model_name": "yolov8n",
       "model_version": "1.0.0",

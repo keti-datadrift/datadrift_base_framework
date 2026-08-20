@@ -221,23 +221,22 @@ def export_drift_report(
 ) -> Optional[Dict[str, Any]]:
     """Ship a drift report to an external system.
 
-    Round-11 (Track C) — the reverse of ``ddoc ingest`` (which consumes
-    keti_veritas envelope JSON). This hook lets ddoc emit the
-    drift_result back to keti_veritas, a file system, S3, etc., using
-    plugin adapters.
+    The reverse of ``ddoc ingest`` (which consumes application
+    feedback-envelope JSON). This hook lets ddoc emit the
+    drift_result back to a monitored application, a file system,
+    S3, etc., using plugin adapters.
 
     Parameters
     ----------
     drift_result :
         The envelope produced by ``ddoc analyze drift``.
     target :
-        Adapter selector. Built-in adapters: ``"keti_veritas"``
-        (HTTP POST to ``<base_url>/field-agents/drift-report``),
-        ``"file"`` (atomic JSON write into ``<out_dir>/``). Plugins
-        can register additional targets (e.g. ``"s3"``,
-        ``"slack"``).
+        Adapter selector. Built-in adapters: ``"http"``
+        (HTTP POST to ``<base_url><path>``), ``"file"`` (atomic JSON
+        write into ``<out_dir>/``). Plugins can register additional
+        targets (e.g. ``"s3"``, ``"slack"``).
     target_config :
-        Adapter-specific options. ``keti_veritas``: ``{base_url,
+        Adapter-specific options. ``http``: ``{base_url, path?,
         api_key?, timeout_sec?, source: {app_id, app_type}}``.
         ``file``: ``{out_dir, filename?}``.
 

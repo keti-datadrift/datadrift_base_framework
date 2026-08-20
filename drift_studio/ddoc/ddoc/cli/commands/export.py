@@ -1,18 +1,15 @@
 """``ddoc export drift-report`` — ship a drift result to an external system.
 
-Round 11 (Track C) — first concrete user of the new
-``export_drift_report`` hookspec. The CLI:
+First concrete user of the ``export_drift_report`` hookspec. The CLI:
 
 1. Reads the drift envelope JSON from disk.
 2. Tries the hookspec — if any plugin returns a non-None result, use that.
-3. Falls back to built-in adapters: ``keti_veritas`` (HTTP POST to
-   ``<base_url>/field-agents/drift-report``) and ``file`` (atomic JSON
-   write into ``<out_dir>/drift_<utc_ts>.json``).
+3. Falls back to built-in adapters: ``http`` (HTTP POST to
+   ``<base_url><path>``) and ``file`` (atomic JSON write into
+   ``<out_dir>/drift_<utc_ts>.json``).
 
-The on-the-wire schema mirrors ``keti_veritas/app/services/dia/
-dd_export_hook.py`` (DriftReport, protocol 1.0) so the receiving side
-doesn't need to know the report originated from ddoc rather than from
-keti_veritas's own export hook.
+The on-the-wire schema is a stable DriftReport envelope (protocol 1.0)
+so a receiving application doesn't need to know which tool built it.
 """
 from __future__ import annotations
 
@@ -76,10 +73,9 @@ def _build_drift_report_envelope(
     drift_result: Dict[str, Any],
     target_config: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Wrap a ddoc drift_result in the keti_veritas DriftReport schema
-    (protocol 1.0). Mirror of the structure produced by
-    ``keti_veritas/app/services/dia/dd_export_hook.py`` so the
-    receiving end is symmetric whether ddoc or keti_veritas built it.
+    """Wrap a ddoc drift_result in the DriftReport wire schema
+    (protocol 1.0), so the receiving end sees the same structure
+    regardless of which tool built the report.
     """
     source = target_config.get("source") or {
         "app_id": target_config.get("app_id", "ddoc-cli"),
@@ -142,14 +138,14 @@ def _adapter_file(envelope: Dict[str, Any], target_config: Dict[str, Any]) -> Di
     }
 
 
-def _adapter_keti_veritas(envelope: Dict[str, Any], target_config: Dict[str, Any]) -> Dict[str, Any]:
+def _adapter_http(envelope: Dict[str, Any], target_config: Dict[str, Any]) -> Dict[str, Any]:
     base_url = target_config.get("base_url")
     if not base_url:
-        raise typer.BadParameter("keti_veritas adapter requires `base_url` in target_config")
+        raise typer.BadParameter("http adapter requires `base_url` in target_config")
     timeout = float(target_config.get("timeout_sec", 30))
     api_key = target_config.get("api_key")
 
-    url = base_url.rstrip("/") + target_config.get("path", "/field-agents/drift-report")
+    url = base_url.rstrip("/") + target_config.get("path", "/drift-report")
     headers = {"Content-Type": "application/json"}
     if api_key:
         headers["X-API-Key"] = api_key
@@ -171,7 +167,7 @@ def _adapter_keti_veritas(envelope: Dict[str, Any], target_config: Dict[str, Any
             _httpx_log.setLevel(_saved_level)
         return {
             "status": "success" if response.is_success else "error",
-            "target": "keti_veritas",
+            "target": "http",
             "transmitted_at": envelope["sent_at"],
             "url": url,
             "http_status": response.status_code,
@@ -188,7 +184,7 @@ def _adapter_keti_veritas(envelope: Dict[str, Any], target_config: Dict[str, Any
                 preview = resp.read(500).decode("utf-8", errors="replace")
                 return {
                     "status": "success",
-                    "target": "keti_veritas",
+                    "target": "http",
                     "transmitted_at": envelope["sent_at"],
                     "url": url,
                     "http_status": resp.status,
@@ -197,7 +193,7 @@ def _adapter_keti_veritas(envelope: Dict[str, Any], target_config: Dict[str, Any
         except urllib.error.HTTPError as e:
             return {
                 "status": "error",
-                "target": "keti_veritas",
+                "target": "http",
                 "transmitted_at": envelope["sent_at"],
                 "url": url,
                 "http_status": e.code,
@@ -207,7 +203,7 @@ def _adapter_keti_veritas(envelope: Dict[str, Any], target_config: Dict[str, Any
 
 _BUILTIN_ADAPTERS = {
     "file": _adapter_file,
-    "keti_veritas": _adapter_keti_veritas,
+    "http": _adapter_http,
 }
 
 
@@ -224,11 +220,11 @@ def export_drift_report(
     ),
     target: str = typer.Option(
         ..., "--to", "-t",
-        help="Destination adapter. Built-in: keti_veritas | file. Plugins can register more.",
+        help="Destination adapter. Built-in: http | file. Plugins can register more.",
     ),
     config_file: Optional[Path] = typer.Option(
         None, "--config-file",
-        help="YAML / JSON file with target-specific options. keti_veritas: {base_url, api_key?, timeout_sec?, source}. file: {out_dir, filename?}.",
+        help="YAML / JSON file with target-specific options. http: {base_url, path?, api_key?, timeout_sec?, source}. file: {out_dir, filename?}.",
     ),
     config: Optional[str] = typer.Option(
         None, "--config",
@@ -243,8 +239,8 @@ def export_drift_report(
 
     Examples:
         ddoc export drift-report drift.json --to file --config '{"out_dir":"/tmp/exports"}'
-        ddoc export drift-report drift.json --to keti_veritas \\
-            --config '{"base_url":"http://veritas.local:8000","api_key":"..."}'
+        ddoc export drift-report drift.json --to http \\
+            --config '{"base_url":"http://my-app.local:8000","api_key":"..."}'
     """
     try:
         drift_result = _load_envelope(input)

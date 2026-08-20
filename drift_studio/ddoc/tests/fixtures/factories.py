@@ -209,11 +209,9 @@ def make_toy_vision(
 # ── Categorical (Round 9 — D2 demo path) ─────────────────────────────
 
 
-# Default distributions used by the categorical pair builder. Shape is
-# **byte-equivalent** to the dict keti_veritas's
-# ``app/domains/analytics/repository.py:build_camera_stats_window``
-# emits — that's the hybrid framing in the Round 9 plan: the demo
-# doubles as a regression check that ddoc and keti agree on the
+# Default distributions used by the categorical pair builder. Shape
+# matches a typical camera-stats-window dict emitted by a monitoring
+# application — the demo doubles as a regression check on the
 # categorical shape.
 _CATEGORICAL_REF = {
     "color_distribution":  {"red": 30, "blue": 10, "white": 5},
@@ -349,9 +347,8 @@ def make_pair_categorical(out_dir: str | Path, *, scenario: str = "shifted") -> 
 
     ``scenario="shifted"``: ref vs cur with clear shifts in
     ``color_distribution`` / ``type_distribution`` / ``hourly_distribution``
-    — keti vehicle-fingerprint shape, byte-equivalent to what
-    ``app/domains/analytics/repository.py:build_camera_stats_window``
-    emits in keti_veritas.
+    — a typical vehicle-fingerprint shape as emitted by a
+    camera-stats monitoring application.
 
     ``scenario="identical"``: ref and cur identical — drift score
     should be near-zero.

@@ -46,12 +46,12 @@ SUPPORTED_PROTOCOLS = frozenset({"1.1"})
 DEFAULT_INBOX_REL = ".ddoc/inbox"
 
 
-# ── Schema mirrors (frozen — keep in sync with keti_veritas envelope) ─
+# ── Schema mirrors (frozen — keep in sync with the emitting app's envelope) ─
 
 
 @dataclass(frozen=True)
 class IngestEnvelopeSource:
-    """Mirror of ``EnvelopeSource`` in keti_veritas/app/services/audit/envelope.py."""
+    """Mirror of the emitting application's ``EnvelopeSource``."""
 
     app_id: str
     app_type: str = "video_forensics"
@@ -299,8 +299,8 @@ def ingest_directory(
     """Scan ``from_dir`` for envelope JSON files, ingest each.
 
     Args:
-        from_dir: directory containing envelope JSON files (typically
-            keti_veritas's ``DD_EXPORT_DIR``).
+        from_dir: directory containing envelope JSON files (the
+            application's envelope export dir).
         workspace_root: ddoc workspace root. The inbox lives at
             ``<workspace_root>/.ddoc/inbox/<site_id>/`` unless
             ``inbox_root`` overrides.

@@ -340,11 +340,11 @@
     },
     export: {
       title: 'Export drift report',
-      help: 'Ship a drift envelope to file:// or keti_veritas (or any plugin-registered target).',
+      help: 'Ship a drift envelope to file:// or an HTTP endpoint (or any plugin-registered target).',
       fields: [
         { name: 'input', label: 'input', type: 'text', required: true, help: 'Drift envelope JSON path.' },
-        { name: 'target', label: 'target', type: 'select', opts: ['file', 'keti_veritas'], default: 'file', required: true },
-        { name: 'config_json', label: 'config (JSON)', type: 'textarea', help: 'file: {"out_dir":"…"}; keti_veritas: {"base_url":"http://…","api_key":"…"}' },
+        { name: 'target', label: 'target', type: 'select', opts: ['file', 'http'], default: 'file', required: true },
+        { name: 'config_json', label: 'config (JSON)', type: 'textarea', help: 'file: {"out_dir":"…"}; http: {"base_url":"http://…","path":"/drift-report","api_key":"…"}' },
         { name: 'timeout_sec', label: 'timeout-sec', type: 'text', default: '120' },
       ],
     },

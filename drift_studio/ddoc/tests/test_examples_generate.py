@@ -1,5 +1,5 @@
-"""Round 9 (D2 Track A) — `ddoc examples generate categorical` smoke
-tests + hybrid framing schema check vs keti.
+"""`ddoc examples generate categorical` smoke
+tests + consumer-shape schema check.
 
 These tests live next to the existing `tests/fixtures/factories.py`
 toy-data generators. Categorical is the first new modality added
@@ -47,15 +47,14 @@ def test_categorical_unsupported_scenario_raises(tmp_path):
         factories.make_pair_categorical(tmp_path, scenario="lopsided")
 
 
-# ── Hybrid framing: keti shape equivalence ──────────────────────────
+# ── Consumer shape equivalence ──────────────────────────────────────
 
 
-# Schema-level expectation pinned independently of any keti import —
-# this mirrors what
-# ``keti_veritas/app/domains/analytics/repository.py:build_camera_stats_window``
-# emits. If keti changes the shape, both sides must update together;
-# this test catches the divergence at PR time on the ddoc side.
-_KETI_REQUIRED_KEYS = {
+# Schema-level expectation pinned independently of any consumer
+# import — this mirrors the camera-stats-window dict a monitoring
+# application emits. If the consumer changes the shape, both sides
+# must update together; this test catches the divergence at PR time.
+_CONSUMER_REQUIRED_KEYS = {
     "color_distribution",
     "type_distribution",
     "hourly_distribution",
@@ -63,14 +62,14 @@ _KETI_REQUIRED_KEYS = {
 }
 
 
-def test_categorical_demo_shape_matches_keti_repository_output(tmp_path):
+def test_categorical_demo_shape_matches_consumer_output(tmp_path):
     ref, _ = factories.make_pair_categorical(tmp_path, scenario="shifted")
     payload = json.loads((ref / "distributions.json").read_text())
 
-    # Top-level keys identical to what keti's
-    # build_camera_stats_window dict carries.
-    assert set(payload.keys()) >= _KETI_REQUIRED_KEYS, (
-        f"missing keys: {_KETI_REQUIRED_KEYS - set(payload.keys())}"
+    # Top-level keys identical to the consumer's
+    # camera-stats-window dict.
+    assert set(payload.keys()) >= _CONSUMER_REQUIRED_KEYS, (
+        f"missing keys: {_CONSUMER_REQUIRED_KEYS - set(payload.keys())}"
     )
     # Each distribution dict's values are numeric counts (or floats
     # for confidence_stats).

@@ -125,7 +125,7 @@ def analyze_drift(req: AnalyzeDriftRequest):
 
     R-D4: when ``req.cfg`` is set, the server materializes the inline
     cfg into temp dist files and invokes path-mode internally. This
-    lets cross-container HTTP callers (keti) send dict-of-counts /
+    lets cross-container HTTP callers send dict-of-counts /
     series without a shared volume.
     """
     if req.cfg:

@@ -93,10 +93,9 @@ ddoc analyze drift --data-path-ref /tmp/cat/ref --data-path-cur /tmp/cat/cur \
     --json --quiet
 ```
 
-생성되는 `distributions.json` 의 shape 는 `keti_veritas` 의
-`AnalyticsRepository.build_camera_stats_window()` 출력과 byte-
-equivalent — 즉 이 demo 는 keti 의 카메라 fingerprint drift 파이프
-라인 회귀 테스트로도 작용합니다.
+생성되는 `distributions.json` 은 실제 카메라 통계 윈도우 출력과
+동일한 shape — 즉 이 demo 는 categorical drift 파이프라인의 회귀
+테스트로도 작용합니다.
 
 ## Tabular EDA report 렌더 (별도 path)
 

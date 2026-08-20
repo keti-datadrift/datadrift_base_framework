@@ -71,8 +71,7 @@ layout (modality 별 `ddoc.yaml` + 데이터 파일) 만 따르면 그대로
 `ddoc analyze drift --data-path-ref X --data-path-cur Y` 가능.
 
 `--detector` 옵션 골라야 할 때는 [detector cookbook](docs/tutorial/detectors.md)
-참고 — modality 별 strategy 선택과 drift severity 임계값 (alpr
-post-train gate 의 default 와 일치).
+참고 — modality 별 strategy 선택과 drift severity 임계값.
 
 ### 다음 단계 — Project / Snapshot / Experiment 워크플로 (heavier path)
 
@@ -158,11 +157,11 @@ ddoc analyze drift baseline production
 Round-2 (2026-05-07) 부터 ddoc 는 **다른 사이트 / 다른 시스템에서 떨군
 envelope JSON** 을 직접 받아 분석에 쓸 수 있습니다.
 
-**예시 — keti_veritas 의 audit export 를 ddoc 로 끌어오기:**
+**예시 — 현장 앱의 audit export 를 ddoc 로 끌어오기:**
 
 ```bash
-# 사이트에서 keti_veritas 가 envelope JSON 을 떨굼
-# (DD_EXPORT_DIR=/mnt/share/site_a/audit)
+# 사이트에서 현장 앱이 envelope JSON 을 떨굼
+# (export dir = /mnt/share/site_a/audit)
 
 # ddoc 로 ingest
 ddoc ingest \
@@ -182,8 +181,8 @@ ddoc ingest --from-dir /tmp/export --json | jq '.decision_rows'
 ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
 ```
 
-**Envelope contract** — protocol 1.1 (keti_veritas 의
-`app/services/audit/envelope.py` 와 mirror). frozen dataclass:
+**Envelope contract** — protocol 1.1 (발신 앱의 envelope 과 mirror).
+frozen dataclass:
 
 ```jsonc
 {
@@ -217,7 +216,7 @@ ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
 ├── site_a/
 │   ├── datasets/    # raw / curated input data
 │   ├── models/      # trained model artifacts
-│   └── audit/       # keti_veritas envelope JSON exports
+│   └── audit/       # 현장 앱 envelope JSON exports
 └── site_b/
     └── ...
 ```
@@ -231,9 +230,7 @@ ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
 `drift_studio/backend/` 는 ddoc 를 *Python library* 로 import 하는 대신
 **subprocess 로 호출** 합니다 (Round-2 reframe). 환경변수
 `BACKEND_USE_DDOC_CLI=true` 일 때 backend 의 `/drift`, `/eda` 엔드포인트
-가 `ddoc analyze drift|eda --json` 을 fork 합니다. 자세한 contract 는
-[`_specs/ddoc_orchestrator_pattern.md`](../../_specs/ddoc_orchestrator_pattern.md)
-참조.
+가 `ddoc analyze drift|eda --json` 을 fork 합니다.
 
 ## 🤝 기여
 

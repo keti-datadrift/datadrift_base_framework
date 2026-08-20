@@ -10,7 +10,9 @@ When the DriftDecisionEngine decides RETRAIN, this orchestrator:
 
 from __future__ import annotations
 
+import json
 import logging
+import os
 import uuid
 from datetime import datetime
 
@@ -20,6 +22,34 @@ from sqlalchemy.orm import Session
 from app.models import FieldDriftReport, TrainerAgent, TrainingJob
 
 logger = logging.getLogger(__name__)
+
+# model-name keyword lists used by _infer_stage. Override with the
+# TRAINING_STAGE_KEYWORDS env var (JSON object with "recognizer" /
+# "detector" keyword arrays, e.g.
+# '{"recognizer": ["ocr"], "detector": ["rcnn"]}').
+_DEFAULT_STAGE_KEYWORDS = {
+    "recognizer": ["recognizer", "crnn", "alpr"],
+    "detector": ["detector", "yolo", "detr"],
+}
+
+
+def _stage_keywords() -> dict[str, list[str]]:
+    raw = os.environ.get("TRAINING_STAGE_KEYWORDS")
+    if not raw:
+        return _DEFAULT_STAGE_KEYWORDS
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("TRAINING_STAGE_KEYWORDS is not valid JSON — using defaults")
+        return _DEFAULT_STAGE_KEYWORDS
+    if not isinstance(parsed, dict):
+        logger.warning("TRAINING_STAGE_KEYWORDS must be a JSON object — using defaults")
+        return _DEFAULT_STAGE_KEYWORDS
+    merged = dict(_DEFAULT_STAGE_KEYWORDS)
+    for stage, words in parsed.items():
+        if isinstance(words, list):
+            merged[str(stage)] = [str(w).lower() for w in words]
+    return merged
 
 
 class TrainingOrchestrator:
@@ -161,11 +191,12 @@ def _dispatch_to_trainer(trainer: TrainerAgent, job: TrainingJob, command: dict)
 
 
 def _infer_stage(model_name: str) -> str:
-    """Infer training stage from model name."""
+    """Infer training stage from model name (see _stage_keywords)."""
     name = model_name.lower()
-    if "recognizer" in name or "crnn" in name or "alpr" in name:
+    keywords = _stage_keywords()
+    if any(w in name for w in keywords.get("recognizer", [])):
         return "recognizer"
-    if "detector" in name or "yolo" in name or "detr" in name:
+    if any(w in name for w in keywords.get("detector", [])):
         return "detector"
     return "both"
 

@@ -15,7 +15,7 @@ router = APIRouter(tags=["export"], dependencies=[Depends(require_api_key)])
 
 @router.post("/export/drift-report")
 def export_drift_report(req: ExportDriftReportRequest):
-    """Ship a drift envelope to an external system (file / keti_veritas
+    """Ship a drift envelope to an external system (file / http
     built-in, or any plugin-registered target)."""
     args = [
         "export", "drift-report", req.input,

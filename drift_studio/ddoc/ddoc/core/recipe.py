@@ -115,7 +115,7 @@ _STEP_KINDS: Dict[str, Dict[str, Any]] = {
         "json_flag": True,
     },
     "train": {
-        # R21 (alpr framework consolidation) — model training as a
+        # Model training as a
         # recipe step. Dispatches to whatever plugin owns the named
         # ``trainer`` via the ``retrain_run`` hookspec.
         "argv": ["train"],
@@ -128,7 +128,7 @@ _STEP_KINDS: Dict[str, Dict[str, Any]] = {
         "json_flag": True,
     },
     "transform": {
-        # R49 (alpr PII/EDA plugin consolidation) — generic transform
+        # Generic transform
         # step. Dispatches to whatever plugin owns the named
         # ``transform`` via the ``transform_apply`` hookspec
         # (ddoc-plugin-pii-eda → ``pii_blur``, etc.). Mirrors ``train``.
@@ -445,8 +445,8 @@ class Recipe:
     steps: List[Dict[str, Any]]
     workspace: Optional[str] = None
     source_path: Optional[Path] = None
-    # R22 — list of plugin entry-point names the recipe needs (e.g.
-    # `["ddoc_vision", "ddoc_alpr"]`). Empty list = no requirement
+    # List of plugin entry-point names the recipe needs (e.g.
+    # `["ddoc_vision", "ddoc_yolo"]`). Empty list = no requirement
     # (back-compat default).
     required_plugins: List[str] = field(default_factory=list)
 

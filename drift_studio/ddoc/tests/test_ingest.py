@@ -28,13 +28,13 @@ def test_parse_envelope_protocol_1_1_ok():
     payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
     src, decisions, drift = _parse_envelope(payload)
     assert src == IngestEnvelopeSource(
-        app_id="keti-veritas-test",
+        app_id="field-app-test",
         app_type="video_forensics",
         instance_id=None,
     )
     assert len(decisions) == 3
     assert {d.decision_type for d in decisions} == {
-        "tessera_match", "detection_accept", "continuous_eval",
+        "identity_match", "detection_accept", "continuous_eval",
     }
     assert drift is None
 
@@ -78,7 +78,7 @@ def test_ingest_directory_round_trip(tmp_path):
         workspace_root=workspace,
     )
 
-    assert outcome.site_id == "keti-veritas-test"
+    assert outcome.site_id == "field-app-test"
     assert outcome.files_seen == 1
     assert outcome.files_processed == 1
     assert outcome.files_skipped == []
@@ -91,8 +91,8 @@ def test_ingest_directory_round_trip(tmp_path):
     with csv_path.open(encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
     assert len(rows) == 3
-    assert rows[0]["decision_type"] == "tessera_match"
-    assert rows[0]["site_id"] == "keti-veritas-test"
+    assert rows[0]["decision_type"] == "identity_match"
+    assert rows[0]["site_id"] == "field-app-test"
     assert rows[0]["source_file"] == "decision_batch_20260507T080030Z_3.json"
     # Nested fields are JSON-encoded strings
     assert json.loads(rows[0]["scores_json"]) == {
@@ -107,7 +107,7 @@ def test_ingest_directory_round_trip(tmp_path):
     assert json.loads(lines[0])["decision_rows"] == 3
 
     # Source moved to .processed/
-    processed = workspace / ".ddoc" / "inbox" / "keti-veritas-test" / ".processed"
+    processed = workspace / ".ddoc" / "inbox" / "field-app-test" / ".processed"
     assert (processed / target.name).exists()
     assert not target.exists()  # original gone
 
@@ -144,7 +144,7 @@ def test_ingest_directory_explicit_site_id_override(tmp_path):
     assert outcome.site_id == "custom-site"
     assert (workspace / ".ddoc" / "inbox" / "custom-site").exists()
     # envelope's app_id is NOT used as a directory
-    assert not (workspace / ".ddoc" / "inbox" / "keti-veritas-test").exists()
+    assert not (workspace / ".ddoc" / "inbox" / "field-app-test").exists()
 
 
 def test_ingest_directory_delete_mode(tmp_path):
@@ -162,7 +162,7 @@ def test_ingest_directory_delete_mode(tmp_path):
     )
     assert outcome.files_processed == 1
     assert not target.exists()
-    processed = workspace / ".ddoc" / "inbox" / "keti-veritas-test" / ".processed"
+    processed = workspace / ".ddoc" / "inbox" / "field-app-test" / ".processed"
     assert not processed.exists() or list(processed.iterdir()) == []
 
 

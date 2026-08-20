@@ -1,8 +1,7 @@
-"""``ddoc ingest`` — read keti_veritas-style envelope JSON into the workspace.
+"""``ddoc ingest`` — read application feedback-envelope JSON into the workspace.
 
-This is the receiving side of the keti_veritas → ddoc bridge described in
-`_specs/ddoc_orchestrator_pattern.md` (Phase 2). The CLI is intentionally
-thin — all parsing / writing logic lives in :mod:`ddoc.core.ingest_service`.
+This is the receiving side of the application → ddoc bridge. The CLI is
+intentionally thin — all parsing / writing logic lives in :mod:`ddoc.core.ingest_service`.
 
 Phase 4 adds a ``--dvc-pull`` flag that runs ``dvc pull`` against the
 source directory before scanning, so air-gapped sites can drop their
@@ -36,7 +35,7 @@ def ingest_command(
         ...,
         "--from-dir",
         "-f",
-        help="Directory containing envelope JSON files (e.g. keti_veritas DD_EXPORT_DIR).",
+        help="Directory containing envelope JSON files (the application's export dir).",
         exists=True,
         file_okay=False,
         dir_okay=True,
@@ -90,15 +89,15 @@ def ingest_command(
 ):
     """Ingest envelope JSON files (protocol 1.1) from a directory.
 
-    The directory typically points at a keti_veritas instance's
-    ``DD_EXPORT_DIR`` — directly, via shared NAS, or after ``dvc pull``.
+    The directory typically points at a monitored application's
+    envelope export dir — directly, via shared NAS, or after ``dvc pull``.
     Each envelope contributes its ``decision_batch`` rows to a CSV
     aggregate file under ``<workspace>/.ddoc/inbox/<site_id>/decisions/``,
     and any ``drift_report`` payload as a sidecar JSON. Source files are
     moved to ``.processed/`` (or deleted with ``--mode delete``).
 
     Examples:
-        ddoc ingest --from-dir /tmp/keti_export
+        ddoc ingest --from-dir /tmp/app_export
         ddoc ingest -f /mnt/nas/site_a/audit -s site_a -w ~/ddoc-ws
         ddoc ingest -f export/ --json   # for scripts
     """

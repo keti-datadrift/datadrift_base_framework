@@ -1,3 +1,0 @@
-[submodule "server/ddoc"]
-	path = server/ddoc
-	url = git@github.com:againeureka/ddoc.git

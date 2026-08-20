@@ -1,6 +1,6 @@
 """``ddoc train`` — invoke a plugin's training implementation.
 
-R21 (alpr framework consolidation) — thin CLI wrapper around the
+Thin CLI wrapper around the
 ``retrain_run`` hookspec (declared in ``ddoc.plugins.hookspecs:91``).
 Plugins responding to ``trainer=<name>`` perform the actual training;
 this command captures the first non-None envelope returned and emits
@@ -14,7 +14,7 @@ Example:
 
     ddoc train \\
       --train-path data/full_train \\
-      --trainer alpr-recognizer \\
+      --trainer my-recognizer \\
       --model-out runs/dd_train \\
       --params-json '{"epochs": 5, "batch": 64, "device": "cpu"}' \\
       --json
@@ -38,8 +38,7 @@ def train_command(
     ),
     trainer: str = typer.Option(
         ..., "--trainer",
-        help="Trainer name claimed by an installed plugin (e.g. alpr-recognizer, "
-             "alpr-detector, yolo).",
+        help="Trainer name claimed by an installed plugin (e.g. yolo).",
     ),
     model_out: str = typer.Option(
         "", "--model-out",

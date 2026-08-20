@@ -59,9 +59,9 @@ def register(app: typer.Typer) -> None:
     app.add_typer(analyze_app, name="analyze")
 
     # ========================================================================
-    # Ingest Command (keti_veritas envelope bridge — Phase 2)
+    # Ingest Command (application envelope bridge)
     # ========================================================================
-    app.command(name="ingest", help="Ingest keti_veritas-style envelope JSON files into the workspace inbox")(ingest_command)
+    app.command(name="ingest", help="Ingest application feedback-envelope JSON files into the workspace inbox")(ingest_command)
     
     # ========================================================================
     # Experiment Commands (heavy deps — mlflow et al; lazy)
@@ -121,7 +121,7 @@ def register(app: typer.Typer) -> None:
     from .report import report_app
     from .export import export_app
     app.add_typer(report_app, name="report", help="Render drift / EDA results as HTML / PDF / Markdown reports")
-    app.add_typer(export_app, name="export", help="Ship drift / EDA results to external systems (keti_veritas / file / ...)")
+    app.add_typer(export_app, name="export", help="Ship drift / EDA results to external systems (http / file / ...)")
 
     # Round 13 — data-source adapter (file:// fallback + plugin extension point for s3:// etc.)
     from .fetch import fetch_command
@@ -141,18 +141,16 @@ def register(app: typer.Typer) -> None:
     from .recipe import recipe_app
     app.add_typer(recipe_app, name="recipe", help="Run a multi-step workflow described in YAML")
 
-    # R21 (alpr framework consolidation) — `ddoc train` invokes the
-    # `retrain_run` hookspec implemented by training plugins
-    # (ddoc-plugin-alpr, ddoc-plugin-yolo, ...).
+    # `ddoc train` invokes the `retrain_run` hookspec implemented by
+    # training plugins (ddoc-plugin-yolo, ...).
     from .train import train_command
     app.command(
         name="train",
         help="Train a model via a plugin's `retrain_run` hook implementation",
     )(train_command)
 
-    # R49 (alpr PII/EDA plugin consolidation) — `ddoc transform`
-    # invokes the `transform_apply` hookspec implemented by transform
-    # plugins (ddoc-plugin-pii-eda for `pii_blur`, ...).
+    # `ddoc transform` invokes the `transform_apply` hookspec
+    # implemented by transform plugins.
     from .transform import transform_command
     app.command(
         name="transform",

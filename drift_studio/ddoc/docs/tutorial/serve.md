@@ -1,8 +1,8 @@
 # `ddoc serve` — REST facade in 2 minutes
 
 Round-14 의 `ddoc serve` 명령어로 ddoc CLI 의 모든 기능을 HTTP 로
-호출할 수 있습니다. curl, scripts, 외부 시스템 (keti_veritas 형제,
-다른 사이트), 또는 brower 의 Swagger UI 에서 즉시 사용 가능.
+호출할 수 있습니다. curl, scripts, 외부 시스템(형제 앱, 다른
+사이트), 또는 browser 의 Swagger UI 에서 즉시 사용 가능.
 
 ## 시작
 
@@ -102,13 +102,13 @@ curl -s -X POST http://localhost:8765/report/render \
   -H 'Content-Type: application/json' \
   -d '{"input":"/tmp/drift.json","out":"/tmp/r.html","format":"html","title":"My drift report"}' | jq
 
-# keti_veritas 로 발신
+# 외부 앱으로 발신
 curl -s -X POST http://localhost:8765/export/drift-report \
   -H 'Content-Type: application/json' \
   -d '{
     "input": "/tmp/drift.json",
-    "target": "keti_veritas",
-    "config": {"base_url": "http://veritas.local:8000", "api_key": "..."}
+    "target": "http",
+    "config": {"base_url": "http://my-app.local:8000", "api_key": "..."}
   }' | jq
 ```
 
@@ -174,7 +174,7 @@ ddoc serve         # http://127.0.0.1:8765
 | Analyze EDA | `POST /analyze/eda` | snapshot / path / workspace 모드 모두 |
 | Examples | `POST /examples/generate` | 4 modality × 2 scenario, 즉시 toy 생성 |
 | Report | `POST /report/render` | HTML / PDF / Markdown |
-| Export | `POST /export/drift-report` | file / keti_veritas / 플러그인 |
+| Export | `POST /export/drift-report` | file / http / 플러그인 |
 | Fetch | `POST /fetch` | file:// 기본, plugin scheme 지원 |
 
 ### 핵심 기능

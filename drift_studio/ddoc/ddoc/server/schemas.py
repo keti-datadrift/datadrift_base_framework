@@ -45,8 +45,8 @@ class AnalyzeDriftRequest(BaseModel):
     current: Optional[str] = None
     # R-D4 (2026-05-19) — inline cfg mode. When set, the server
     # materializes the cfg into temp `distributions[_series].json`
-    # files under a scratch dir and runs CLI path-mode on top. Mirrors
-    # what keti's DDocClient was doing client-side, but server-side so
+    # files under a scratch dir and runs CLI path-mode on top. Moves
+    # what HTTP clients used to do client-side into the server, so
     # cross-container HTTP works without shared volumes. Recognized
     # keys (delegated to whichever plugin claims `detector`):
     #   baseline_categorical / current_categorical                (R26-A plugin)
@@ -100,7 +100,7 @@ class ReportRenderRequest(BaseModel):
 
 class ExportDriftReportRequest(BaseModel):
     input: str = Field(..., description="Drift envelope JSON path.")
-    target: str = Field(..., description="keti_veritas | file (built-in) or any plugin-registered target.")
+    target: str = Field(..., description="http | file (built-in) or any plugin-registered target.")
     config: Optional[Dict[str, Any]] = Field(
         default=None,
         description="Adapter-specific options (passed to --config inline JSON).",

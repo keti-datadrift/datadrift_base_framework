@@ -1,13 +1,13 @@
-"""Round-26 (Track A) — categorical-distribution drift plugin tests.
+"""Categorical-distribution drift plugin tests.
 
-Closes the shape gap discovered in Round 25 — keti's vehicle
-fingerprint drift (color / type / hourly distributions) was not
+Closes a shape gap: categorical fingerprint drift
+(color / type / hourly distributions) was not
 expressible through any existing ddoc modality. This plugin provides
 the jensen_shannon + overlap detectors over dict-of-counts.
 
 Tests cover:
-* pure-function math correctness (reference values from
-  hand-calculated and matched against keti's existing implementation)
+* pure-function math correctness (reference values
+  hand-calculated and cross-checked against an independent implementation)
 * plugin file-mode (read distributions.json from data path)
 * plugin inline-cfg mode (cfg.baseline_categorical / .current_categorical)
 * unsupported-detector envelope shape
@@ -56,11 +56,10 @@ def test_jensen_shannon_in_unit_interval():
     assert 0.0 <= s <= 1.0
 
 
-def test_jensen_shannon_matches_keti_reference():
-    """Match the same math used in
-    ``keti_veritas/app/services/dia/comparison.py:jensen_shannon_divergence``.
-    Reference value computed by directly running keti's implementation
-    on the same inputs (cross-checked 2026-05-10) — *byte-equivalent*
+def test_jensen_shannon_matches_reference():
+    """Reference value computed by an independent implementation of the
+    same base-2 JS divergence on the same inputs
+    (cross-checked 2026-05-10) — *byte-equivalent*
     so a caller switching from local computation to ``ddoc analyze
     drift --modality=categorical`` gets identical scores."""
     a = {"sedan": 60, "suv": 30, "truck": 10}

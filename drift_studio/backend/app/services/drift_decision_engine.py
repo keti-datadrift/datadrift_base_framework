@@ -13,7 +13,9 @@ Actions:
 
 from __future__ import annotations
 
+import json
 import logging
+import os
 from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
@@ -21,6 +23,26 @@ from sqlalchemy.orm import Session
 from app.models import FieldDriftReport, TrainerAgent
 
 logger = logging.getLogger(__name__)
+
+# model-name keyword → trainer_type routing used by _find_trainer.
+# Override with the TRAINER_KEYWORD_MAP env var (JSON object, e.g.
+# '{"crnn": "my-trainer", "yolo": "yolo"}').
+_DEFAULT_TRAINER_KEYWORD_MAP = {"alpr": "alpr", "yolo": "yolo", "detr": "yolo"}
+
+
+def _trainer_keyword_map() -> dict[str, str]:
+    raw = os.environ.get("TRAINER_KEYWORD_MAP")
+    if not raw:
+        return _DEFAULT_TRAINER_KEYWORD_MAP
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("TRAINER_KEYWORD_MAP is not valid JSON — using defaults")
+        return _DEFAULT_TRAINER_KEYWORD_MAP
+    if not isinstance(parsed, dict):
+        logger.warning("TRAINER_KEYWORD_MAP must be a JSON object — using defaults")
+        return _DEFAULT_TRAINER_KEYWORD_MAP
+    return {str(k).lower(): str(v) for k, v in parsed.items()}
 
 
 class Action:
@@ -119,14 +141,14 @@ class DriftDecisionEngine:
         """Find a suitable trainer for the given model.
 
         Matching logic:
-        - 'alpr' in model_name → trainer_type='alpr'
-        - 'yolo' in model_name → trainer_type='yolo'
+        - keyword in model_name → trainer_type, per the configurable
+          TRAINER_KEYWORD_MAP (see module header)
         - fallback: first active trainer
         """
         model_lower = model_name.lower()
 
         # Try specific match
-        for keyword, trainer_type in [("alpr", "alpr"), ("yolo", "yolo"), ("detr", "yolo")]:
+        for keyword, trainer_type in _trainer_keyword_map().items():
             if keyword in model_lower:
                 trainer = (
                     db.query(TrainerAgent)
