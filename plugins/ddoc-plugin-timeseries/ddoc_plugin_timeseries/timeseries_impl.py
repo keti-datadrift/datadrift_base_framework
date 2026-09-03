@@ -117,7 +117,7 @@ class DOCTimeSeriesPlugin:
         """Walk ``data_path`` for ``ddoc.yaml`` -declared timeseries
         datasets and compute the per-column attributes dict in-process.
 
-        Round-6 (2026-05-08) — extracted from ``eda_run`` so that
+        Extracted from ``eda_run`` so that
         ``drift_detect`` path mode (where no analysis cache exists) can
         reuse the exact same attribute computation. Returns the same
         ``{<dataset>/<col>: {...metrics...}}`` shape that the cache
@@ -242,7 +242,7 @@ class DOCTimeSeriesPlugin:
         #    pre-loaded them).
         # 2. Cache service lookup keyed by data_hash (works for both
         #    snapshot mode and warm path-mode caches).
-        # 3. **Path-mode fallback (Round-6)** — compute attributes
+        # 3. **Path-mode fallback** — compute attributes
         #    inline from data_path_*. This is what makes
         #    ``ddoc analyze drift --data-path-ref X --data-path-cur Y``
         #    actually work without any project / snapshot context.
@@ -271,7 +271,7 @@ class DOCTimeSeriesPlugin:
         if not baseline_attr or not current_attr:
             return None  # no timeseries data — silently defer
 
-        # Round-11 (Track B) — detector validation only fires when this
+        # Detector validation only fires when this
         # plugin actually has data to process. Default / mmd / attributes
         # all alias to "abs Δ on mean/var/skew/kurt".
         _SUPPORTED_DETECTORS = {"default", "mmd", "attributes"}
@@ -314,7 +314,7 @@ class DOCTimeSeriesPlugin:
 
     @hookimpl
     def ddoc_supported_detectors(self) -> Dict[str, Any]:
-        """Round-13 (Gap 5) — declare detector strategies."""
+        """Declare detector strategies."""
         return {
             "modality": "timeseries",
             "default": "attributes",

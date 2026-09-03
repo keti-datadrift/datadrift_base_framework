@@ -28,7 +28,7 @@ def _write_dataset(root, name, dates, values, numeric_col="value"):
 
 
 def test_drift_detect_ignores_default_and_other_detectors(tmp_path, monkeypatch):
-    """Round-11/13 broadcast+self-filter convention: this plugin is opt-in
+    """Broadcast+self-filter convention: this plugin is opt-in
     only via detector="reference_engine", it must NOT respond to "default"
     (ddoc-plugin-timeseries already owns that slot for this modality) or to
     an unrelated detector string."""

@@ -12,7 +12,7 @@ CLIP-based vision drift / EDA plugin for ddoc.
 - `drift_detect` — `0.45 · attribute_drift + 0.55 · embedding_drift`.
 - `ddoc_get_metadata` — plugin introspection.
 
-## `--detector` (Round-11)
+## `--detector`
 
 | value | embedding_drift formula |
 |---|---|

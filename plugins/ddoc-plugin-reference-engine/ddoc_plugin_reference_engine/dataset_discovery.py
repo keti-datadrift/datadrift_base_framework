@@ -2,7 +2,7 @@
 (timeseries_impl.py's `_load_ddoc_yaml`/`_compute_attributes_from_path`) --
 confirmed unchanged in this repo version. This is the only part of that
 plugin's scaffolding worth reusing; its statistical logic is replaced
-entirely (see reference_functions.py's module docstring). Round 34.
+entirely (see reference_functions.py's module docstring).
 """
 from pathlib import Path
 from typing import Any, Dict, List, Tuple

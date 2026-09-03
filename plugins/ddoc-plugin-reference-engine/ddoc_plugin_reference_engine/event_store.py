@@ -1,8 +1,8 @@
 """Event ontology (intervention_log + regime_log) as this plugin's own persistent
 store.
 
-No hookspec models a stateful event registry today (all 12 original hooks
-plus the 4 new Round-11/13 hooks are stateless), and no existing plugin
+No hookspec models a stateful event registry today (all existing hooks
+are stateless), and no existing plugin
 imports another plugin's package -- extending core hookspecs.py for a shared
 event_register/event_list hook is a considered v2 follow-up, not this slice.
 Storage mirrors the existing `.ddoc/cache/` convention (flat files under a

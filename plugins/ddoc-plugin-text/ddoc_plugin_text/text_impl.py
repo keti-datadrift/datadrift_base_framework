@@ -276,8 +276,8 @@ class DOCTextPlugin:
             print(f"Error extracting embedding: {e}")
             return None
     
-    # ── Round-12 (Track B Gap 2 closure) ────────────────────────────
-    # Embedding-drift ensemble for text. Mirrors the vision plugin's
+    # ── Embedding-drift ensemble for text ───────────────────────────
+    # Mirrors the vision plugin's
     # philosophy (multiple complementary metrics, normalized to [0, 1],
     # weighted sum) but with a smaller, text-appropriate set: cosine
     # (directional shift), multi-scale MMD (distribution shift), and
@@ -399,7 +399,7 @@ class DOCTextPlugin:
         """Walk ``data_path`` for ddoc.yaml-declared text datasets and
         compute attributes inline (no embeddings).
 
-        Round-7 — extracted from ``eda_run`` so ``drift_detect`` path
+        Extracted from ``eda_run`` so ``drift_detect`` path
         mode can compute baseline/current attributes when no cache
         exists. Embeddings are deliberately skipped in path mode
         because they require the CLIP model which the orchestrator may
@@ -467,7 +467,7 @@ class DOCTextPlugin:
     def _compute_embeddings_from_path(self, data_path) -> Dict[str, Any]:
         """Walk ``data_path`` and compute CLIP embeddings inline.
 
-        Round-10 — companion to ``_compute_attributes_from_path``. Only
+        Companion to ``_compute_attributes_from_path``. Only
         called when the user opts in via ``cfg['with_embeddings']`` (or
         the CLI's ``--with-embeddings`` flag) because CLIP loading is
         expensive (~5s + ~600MB RAM). Returns the same shape that the
@@ -751,7 +751,7 @@ class DOCTextPlugin:
         print(f"🔍 Text Drift Detection Started")
         print(f"=" * 80)
 
-        # 3-tier resolve for attributes (Round-7 path-mode fallback):
+        # 3-tier resolve for attributes (path-mode fallback):
         # cfg → cache → inline compute. Embeddings stay cache-only —
         # path-mode skips them (CLIP not assumed loaded), and drift's
         # overall_score gracefully degrades to attribute-only.
@@ -777,7 +777,7 @@ class DOCTextPlugin:
             'current_cache', snapshot_id_cur, data_hash_cur, data_path_cur,
         )
 
-        # Round-10 — embeddings 3-tier resolve, gated on
+        # Embeddings 3-tier resolve, gated on
         # ``cfg['with_embeddings']`` so the CLIP load (~5s, ~600MB) is
         # opt-in. Without the flag we keep the previous behaviour of
         # cache-only embeddings + attribute-only drift fallback.
@@ -802,11 +802,11 @@ class DOCTextPlugin:
             print("❌ Missing baseline or current data")
             return None  # no text data — silently defer
 
-        # Round-12 — text plugin detector contract (Gap 2 closure):
+        # Text plugin detector contract:
         # * ``default`` / ``mmd`` (CLI legacy default) / ``ensemble`` →
         #   3-metric ensemble (cosine + MMD + PSI-on-PCA, see
         #   ``_calculate_text_embedding_drift_ensemble``).
-        # * ``cosine`` → cosine-only (preserves historical Round-11
+        # * ``cosine`` → cosine-only (preserves the original
         #   behaviour for callers that explicitly opted in).
         # * ``mmd_only`` → MMD-only (single-strategy escape hatch).
         # * ``psi`` → PSI-on-PCA only.
@@ -842,7 +842,7 @@ class DOCTextPlugin:
             
             if ref_values and cur_values:
                 try:
-                    # Round-9 — was ``wasserstein / (mean(ref) + 1e-10)``,
+                    # Was ``wasserstein / (mean(ref) + 1e-10)``,
                     # which exploded to 1e9+ for low-mean attributes
                     # (e.g. whitespace_ratio, where mean ≈ 0). The intent
                     # was a scale-invariant divergence; the divisor floor
@@ -860,7 +860,7 @@ class DOCTextPlugin:
         drift_metrics['attribute_drifts'] = attribute_drifts
         drift_metrics['attribute_drift_overall'] = np.mean(list(attribute_drifts.values())) if attribute_drifts else 0.0
         
-        # Embedding drift — Round-12 ensemble (Gap 2 closure)
+        # Embedding drift — 3-metric ensemble
         if baseline_emb and current_emb:
             print("\n🧠 Embedding Drift:")
             print("-" * 80)
@@ -915,8 +915,8 @@ class DOCTextPlugin:
 
     @hookimpl
     def ddoc_supported_detectors(self) -> Dict[str, Any]:
-        """Round-13 (Gap 5) — declare detector strategies. Mirrors the
-        runtime set inside drift_detect (Round-12 ensemble + Round-11
+        """Declare detector strategies. Mirrors the
+        runtime set inside drift_detect (the ensemble plus its
         legacy aliases)."""
         return {
             "modality": "text",
@@ -925,7 +925,7 @@ class DOCTextPlugin:
                 "default", "mmd", "ensemble", "cosine", "mmd_only", "psi",
             ],
             "notes": (
-                "Round-12 3-metric ensemble (cosine 0.40 + multi-scale "
+                "3-metric ensemble (cosine 0.40 + multi-scale "
                 "MMD 0.40 + PSI-on-PCA 0.20). ``cosine`` is the legacy "
                 "single-metric path kept for backward compat. With "
                 "``--with-embeddings`` (path mode) the plugin loads CLIP "

@@ -167,6 +167,6 @@ class TabularReportPlugin:
                 "Tabular EDA report renderer. Recognizes envelopes with "
                 "modality='tabular' or rows/cols+summary shape and emits "
                 "an HTML/PDF report mirroring drift_studio/backend's "
-                "EDA layout. Round 27 (Track B)."
+                "EDA layout."
             ),
         }

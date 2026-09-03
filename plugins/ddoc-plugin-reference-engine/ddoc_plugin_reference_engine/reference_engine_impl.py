@@ -1,4 +1,4 @@
-"""ddoc plugin: reference-selection-function ladder (drift_tool_analysis.md 3부). Round 34.
+"""ddoc plugin: reference-selection-function ladder (drift_tool_analysis.md 3부).
 
 Adapted to this repo's current conventions (confirmed via direct source
 inspection, not assumption):
@@ -11,7 +11,7 @@ inspection, not assumption):
    `timeseries` modality, since ddoc-plugin-timeseries already owns that
    slot; this stays a separate, explicitly-requested detector, matching how
    ddoc-plugin-keti-temporal/ddoc-plugin-evidently avoid hijacking defaults.
-2. `ddoc_supported_detectors` is implemented (Round-13/Gap-5 convention) so
+2. `ddoc_supported_detectors` is implemented (following the convention other plugins use) so
    `ddoc analyze drift --detector reference_engine` fails fast with a clear
    message if this plugin isn't installed, instead of a silent no-op.
 3. `eda_run` no longer needs the legacy-cache read-merge-write workaround
@@ -165,7 +165,7 @@ class ReferenceEnginePlugin:
 
         # Path mode passes an empty data_hash (no snapshot context) --
         # caching is the orchestrator's job then, same convention as
-        # ddoc-plugin-timeseries's Round-6 fix.
+        # ddoc-plugin-timeseries's earlier fix.
         if data_hash:
             cache_service.save_analysis_cache(
                 snapshot_id=snapshot_id, data_hash=data_hash,

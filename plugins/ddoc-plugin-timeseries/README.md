@@ -11,7 +11,7 @@ Time-series drift / EDA plugin for ddoc — pandas + statsmodels.
   skewness, kurtosis])`. Bounded only by data magnitude; comparable
   across series within the same modality.
 
-## `--detector` (Round-11)
+## `--detector`
 
 | value | drift formula |
 |---|---|

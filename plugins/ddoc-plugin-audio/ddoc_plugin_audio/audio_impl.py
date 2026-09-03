@@ -96,7 +96,7 @@ class DOCAudioPlugin:
     
     def _compute_attributes_from_path(self, data_path) -> Dict[str, Any]:
         """Walk ``data_path`` for ddoc.yaml-declared audio datasets and
-        compute attributes inline. Round-7 — extracted from eda_run so
+        compute attributes inline. Extracted from eda_run so
         ``drift_detect`` path mode can reuse the exact same code path
         when no analysis cache is available.
         """
@@ -198,9 +198,9 @@ class DOCAudioPlugin:
         output_path = Path(output_path)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        # 3-tier resolve (Round-7 path-mode fallback): cfg → cache →
+        # 3-tier resolve (path-mode fallback): cfg → cache →
         # inline compute from data_path. Same contract as the
-        # timeseries plugin (Round-6).
+        # timeseries plugin.
         def _resolve(cfg_key, snap_id, data_hash, data_path):
             attrs = cfg.get(cfg_key)
             if attrs:
@@ -226,7 +226,7 @@ class DOCAudioPlugin:
         if not baseline_attr or not current_attr:
             return None  # no audio data — silently defer to other plugins
 
-        # Round-11 (Track B) — detector validation. Audio uses
+        # Detector validation. Audio uses
         # Wasserstein on three spectral attributes; ``default`` /
         # ``mmd`` / ``wasserstein`` all alias to that single behaviour.
         # Validation happens *after* the no-data branch so this plugin
@@ -273,7 +273,7 @@ class DOCAudioPlugin:
 
     @hookimpl
     def ddoc_supported_detectors(self) -> Dict[str, Any]:
-        """Round-13 (Gap 5) — declare detector strategies."""
+        """Declare detector strategies."""
         return {
             "modality": "audio",
             "default": "wasserstein",

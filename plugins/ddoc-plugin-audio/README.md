@@ -10,7 +10,7 @@ librosa-based audio drift / EDA plugin for ddoc.
 - `drift_detect` — Wasserstein distance on each of the three
   attribute distributions; `overall_score = mean(per-attribute)`.
 
-## `--detector` (Round-11)
+## `--detector`
 
 | value | drift formula |
 |---|---|

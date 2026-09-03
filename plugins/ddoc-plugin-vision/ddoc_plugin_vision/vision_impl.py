@@ -74,16 +74,15 @@ class DDOCVisionPlugin:
             return os.path.basename(dataset_path)
     
     def _compute_embeddings_from_path(self, data_path) -> Dict[str, Any]:
-        """Round-12 — companion to ``_compute_attributes_from_path``.
+        """Companion to ``_compute_attributes_from_path``.
 
         Walks ``data_path`` for images and runs the CLIP embedding
         analyzer on each. Only invoked in path mode when the caller
         passes ``cfg['with_embeddings']`` (i.e. the user opted in via
         ``--with-embeddings``) AND no embedding cache is available;
-        otherwise the plugin's drift falls back to attribute-only
-        (Round-7 contract).
+        otherwise the plugin's drift falls back to attribute-only.
 
-        Mirrors text plugin's path-mode embedding helper (Round-10).
+        Mirrors the text plugin's path-mode embedding contract.
         Returns the same shape that the cache would
         (``{rel_path: {embedding: [...], file_size?: n, file_mtime?: n}}``)
         so ``drift_detect`` doesn't have to branch on source.
@@ -123,7 +122,7 @@ class DDOCVisionPlugin:
 
     def _compute_attributes_from_path(self, data_path) -> Dict[str, Any]:
         """Walk ``data_path`` for image files and run the attribute
-        analyzer on each. Round-7 — minimal helper for ``drift_detect``
+        analyzer on each. Minimal helper for ``drift_detect``
         path-mode fallback. Skips embeddings (CLIP load), incremental
         cache deltas, and file-metadata bookkeeping — those belong to
         the snapshot/cache flow, not the orchestrator path-mode flow.
@@ -562,7 +561,7 @@ class DDOCVisionPlugin:
         if not current_emb:
             current_emb = get_cached_analysis_data(cur_dataset_path, "embedding_analysis")
 
-        # Round-7 path-mode fallback — when no cache (new ddoc cache,
+        # Path-mode fallback — when no cache (new ddoc cache,
         # legacy cache, or at all) is available but the orchestrator
         # passed concrete data paths, compute attributes inline. Drift
         # then runs on the freshly-computed attribute snapshot. This is
@@ -575,8 +574,8 @@ class DDOCVisionPlugin:
         if not current_attr and data_path_cur:
             current_attr = self._compute_attributes_from_path(data_path_cur)
 
-        # Round-12 (Track B Gap follow-up) — vision ``--with-embeddings``.
-        # Symmetric with the text plugin's Round-10 contract: when path
+        # Vision ``--with-embeddings``.
+        # Symmetric with the text plugin's embedding contract: when path
         # mode has no embedding cache AND the user opted in, load CLIP
         # inline and compute embeddings. Without the flag we keep
         # attribute-only drift (path-mode default) so the embedding-
@@ -637,7 +636,7 @@ class DDOCVisionPlugin:
             print("❌ Missing baseline or current data")
             return None  # no image data — silently defer to other plugins
 
-        # Round-11 (Track B) — detector validation at the top of the
+        # Detector validation at the top of the
         # work-doing path so unsupported values are rejected even when
         # embeddings aren't computed (e.g. path mode without CLIP).
         # The full per-strategy mapping for embedding_drift happens
@@ -752,7 +751,7 @@ class DDOCVisionPlugin:
                     ref_emb_array, cur_emb_array
                 )
 
-                # Round-11 (Track B) — wire ``detector`` parameter so
+                # Wire ``detector`` parameter so
                 # operators can request a single metric rather than the
                 # weighted ensemble. Mapping uses the *normalized*
                 # per-metric scores so every option stays in [0, 1].
@@ -1460,10 +1459,10 @@ class DDOCVisionPlugin:
 
     @hookimpl
     def ddoc_supported_detectors(self) -> Dict[str, Any]:
-        """Round-13 (Gap 5) — declare the detector strategies this
+        """Declare the detector strategies this
         plugin honours so the CLI can validate ``--detector`` upfront.
         Mirrors the runtime ``_SUPPORTED_DETECTORS`` set inside
-        ``drift_detect`` (Round-11)."""
+        ``drift_detect``."""
         return {
             "modality": "image",
             "default": "ensemble",

@@ -11,14 +11,14 @@ CLIP-based text drift / EDA plugin for ddoc.
   when embeddings are available; attribute-only otherwise.
 - `ddoc_get_metadata` — plugin introspection.
 
-## `--detector` (Round-12)
+## `--detector`
 
 | value | drift formula |
 |---|---|
 | `default` (CLI default) | 3-metric ensemble: 0.40·cosine + 0.40·MMD-multi-scale + 0.20·PSI-on-PCA. All components normalized to [0, 1]. |
 | `mmd` | alias for `default` (CLI legacy default) |
 | `ensemble` | alias for `default` |
-| `cosine` | legacy: cosine distance only (Round-11 behaviour) |
+| `cosine` | legacy: cosine distance only (original behaviour) |
 | `mmd_only` | normalized multi-scale MMD only |
 | `psi` | normalized PSI-on-PCA only |
 
@@ -27,7 +27,7 @@ unsupported_detector`. The ensemble shape (`embedding_drift_detailed`)
 is preserved across strategies — only the picked `embedding_drift`
 scalar changes.
 
-## `--with-embeddings` (Round-10)
+## `--with-embeddings`
 
 In path mode (no cache available), the plugin defaults to
 attribute-only drift (overall_score = 0.5 · attr + 0.5 · 0). Pass

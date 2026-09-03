@@ -51,7 +51,7 @@ L2와 L4의 차이: **L4는 원래대로 돌아온다는 전제(캠페인), L2�
   + self-filter 관례, keti-temporal/evidently와 동일). `"default"`는 claim하지
   않음 — `ddoc-plugin-timeseries`가 이미 그 자리의 주인.
 - `ddoc_supported_detectors` 구현 — `ddoc analyze drift --detector reference_engine`
-  이 설치 안 됐을 때 조용히 무시되는 대신 명확한 에러를 냄(Round-13 관례).
+  이 설치 안 됐을 때 조용히 무시되는 대신 명확한 에러를 냄(다른 플러그인들과 동일한 관례).
 - `modality`는 여전히 `"timeseries_reference"`(not `"timeseries"`) —
   `_merge_plugin_results`의 modality-key 충돌(last-write-wins, 미해결 확인됨)을
   피하기 위해 유지.

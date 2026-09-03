@@ -1,1 +1,1 @@
-"""Reference-selection-function ladder plugin for ddoc (Round 34)."""
+"""Reference-selection-function ladder plugin for ddoc."""

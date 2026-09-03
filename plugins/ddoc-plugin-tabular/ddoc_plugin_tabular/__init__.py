@@ -1,7 +1,7 @@
 """ddoc-plugin-tabular — report rendering for tabular EDA envelopes.
 
-Round 27 (Track B) — closes Round 25 shape gap #2: backend's tabular
-EDA reports (`{name, rows, cols, missing, summary}`) were not
+Closes a shape gap in the backend's tabular EDA reports: those reports
+(`{name, rows, cols, missing, summary}`) were not
 expressible through any ddoc template (which only knows the modality
 shape). This plugin provides a Jinja template that renders the
 tabular envelope, letting ``drift_studio/backend`` POST its data
