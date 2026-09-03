@@ -131,7 +131,7 @@ def analyze_eda_command(
             or current_data_hash == "unknown"
         )
 
-        # Round-7 (2026-05-08) — provenance-correct cache routing.
+        # Provenance-correct cache routing.
         # When the workspace data does NOT match the requested
         # snapshot, we used to cache the analysis result under the
         # *snapshot's* hash anyway, which silently corrupted drift

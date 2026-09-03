@@ -31,7 +31,7 @@ class StagingService:
     def _init_staging(self) -> Dict[str, Any]:
         """Initialize staging file if missing; return the in-memory shape.
 
-        Round-7 — previously returned None, which broke the
+        Previously returned None, which broke the
         ``return self._init_staging()`` fallback in ``_load_staging``
         whenever the staging file got deleted (e.g. the test suite
         reusing a singleton across tmpdirs).
@@ -253,7 +253,7 @@ _staging_service = None
 def get_staging_service(project_root: str = ".") -> StagingService:
     """Return a staging service for ``project_root``.
 
-    Round-7 — was a singleton that ignored ``project_root`` on every
+    Was a singleton that ignored ``project_root`` on every
     call after the first, which left subsequent callers (notably
     tests using fresh tmpdirs) pointing at a deleted metadata
     directory. Now we cache by ``project_root`` so repeated calls

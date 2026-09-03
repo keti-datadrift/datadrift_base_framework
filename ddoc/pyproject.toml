@@ -52,20 +52,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Round-2 (2026-05-07) — `mlflow` moved out of core and into [exp].
+# 2026-05-07 — `mlflow` moved out of core and into [exp].
 # `experiment/run_train.py` etc. import mlflow; the CLI's commands/__init__.py
 # already wraps that import in try/except so the CLI itself works without it.
 exp = [
   "mlflow>=2.0.0",
 ]
 
-# Round-2 — pyarrow for the parquet writer in `core/ingest_service.py`.
+# pyarrow for the parquet writer in `core/ingest_service.py`.
 # CSV remains the default; --parquet flag opt-in.
 ingest = [
   "pyarrow>=14.0.0",
 ]
 
-# Round-2 — alias for backend orchestrator deployments. Currently no
+# Alias for backend orchestrator deployments. Currently no
 # additional deps beyond core; defined so deployment manifests can pin
 # `pip install ddoc[orchestrator]==2.x.y` and survive future tightening.
 orchestrator = []
@@ -76,7 +76,7 @@ test = [
   "pytest>=7.0",
 ]
 
-# Round-9 — combo extras for the common training scenarios. ``ddoc exp
+# Combo extras for the common training scenarios. ``ddoc exp
 # train yolo`` requires both [exp] (mlflow) and [yolo] (ultralytics +
 # torch); having a single extras name documents that intent and makes
 # deployment manifests one line shorter.
@@ -107,7 +107,7 @@ nlp = [
 vis = [
   "streamlit>=1.28.0",
 ]
-# Round-8 (2026-05-08) — ``all`` rebuilt from the named extras instead
+# 2026-05-08 — ``all`` rebuilt from the named extras instead
 # of duplicating their content. The previous incarnation also bundled
 # three plugin packages via ``file://`` paths bound to a
 # specific developer's local checkout — those would silently fail to

@@ -1,4 +1,4 @@
-/* ddoc serve · GUI · Round 15 — gpu-tunnel-style minimal layout */
+/* ddoc serve · GUI — gpu-tunnel-style minimal layout */
 
 :root {
   --bg: #f7f8fa;
@@ -255,7 +255,7 @@ button.recipe-save.recipe-delete:hover {
   font: inherit;
 }
 
-/* Round-16 result viz ───────────────────────────────────────────── */
+/* Result viz ───────────────────────────────────────────────────── */
 .viz { margin: 0.6em 0 1em; }
 .viz-card {
   border: 1px solid var(--border);
@@ -378,7 +378,7 @@ button.recipe-save.recipe-delete:hover {
   flex-shrink: 0;
 }
 
-/* Round-22 recipe diff card ──────────────────────────────────────── */
+/* Recipe diff card ─────────────────────────────────────────────── */
 .diff-card .diff-pre {
   background: #0f1115;
   color: #d8e0eb;
@@ -399,7 +399,7 @@ button.recipe-save.recipe-delete:hover {
 .diff-pre .diff-file { color: #9bb6ff; font-weight: 600; display: block; }
 .diff-pre .diff-ctx  { color: #c5cdda; display: block; }
 
-/* Round-23 word-level highlight inside +/- lines */
+/* Word-level highlight inside +/- lines */
 .diff-pre mark.diff-word {
   background: rgba(255, 213, 0, 0.30);
   color: inherit;
@@ -409,7 +409,7 @@ button.recipe-save.recipe-delete:hover {
 .diff-pre .diff-add mark.diff-word { background: rgba(122, 217, 122, 0.55); }
 .diff-pre .diff-del mark.diff-word { background: rgba(255, 138, 133, 0.55); }
 
-/* Round-19 timeseries SVG line chart ─────────────────────────────── */
+/* Timeseries SVG line chart ──────────────────────────────────────── */
 .ts-chart {
   margin-top: 0.8em;
   border-top: 1px dashed var(--border);

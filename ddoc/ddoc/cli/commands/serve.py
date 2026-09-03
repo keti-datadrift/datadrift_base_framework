@@ -1,4 +1,4 @@
-"""``ddoc serve`` — Round-14 FastAPI facade entry.
+"""``ddoc serve`` — FastAPI facade entry.
 
 Spins up uvicorn with the FastAPI app from ``ddoc/server/app.py``.
 Defaults to localhost-only binding. ``DDOC_API_KEY`` env (or

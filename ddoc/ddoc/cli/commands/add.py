@@ -15,11 +15,11 @@ def add(
     ),
     no_dvc: bool = typer.Option(
         False, "--no-dvc",
-        help="Skip DVC tracking even if .dvc/ exists (Round-9: explicit opt-out for path-mode usage outside a ddoc workspace).",
+        help="Skip DVC tracking even if .dvc/ exists (explicit opt-out for path-mode usage outside a ddoc workspace).",
     ),
     no_git: bool = typer.Option(
         False, "--no-git",
-        help="Skip git staging (Round-9: explicit opt-out for path-mode usage in non-git directories).",
+        help="Skip git staging (explicit opt-out for path-mode usage in non-git directories).",
     ),
 ):
     """
@@ -62,7 +62,7 @@ def add(
             for item in result["added_items"]:
                 print(f"   📁 {item}")
 
-            # Round-9 — surface the (previously silent) "tracking was
+            # Surface the (previously silent) "tracking was
             # skipped" cases so users running ``ddoc add`` outside a
             # ddoc workspace (no .dvc/, no .git/) understand the result.
             if no_dvc:

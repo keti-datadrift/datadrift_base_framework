@@ -1,6 +1,6 @@
 """``ddoc fetch`` — materialize a remote data source into a local dir.
 
-Round 13 — first concrete user of the ``data_source_read`` hookspec.
+First concrete user of the ``data_source_read`` hookspec.
 Built-in fallback handles ``file://`` (and bare paths) by copying or
 sym-linking the source dir; plugins can register additional schemes
 (``s3://``, ``gs://``, ``http(s)://``, ``kafka://``) via the same

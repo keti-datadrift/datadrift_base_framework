@@ -100,16 +100,16 @@ def vis_run() -> Optional[Dict[str, Any]]:
     """Run monitors once or on schedule."""
 
 
-# --- Detector Preset Registry (Round-13 / Gap 5) ---
+# --- Detector Preset Registry (Gap 5) ---
 
 
 @hookspec
 def ddoc_supported_detectors() -> Optional[Dict[str, Any]]:
     """Plugin self-declares the detector strategies it supports.
 
-    Round-13 (Gap 5 from ``_specs/embedding_drift_design.md``) — closes
-    the gap evidently.ai-style detector configurability covers
-    naturally. Plugins return:
+    Closes the gap evidently.ai-style detector configurability covers
+    naturally (Gap 5 from ``_specs/embedding_drift_design.md``). Plugins
+    return:
 
         {
             "modality": "image",
@@ -125,13 +125,13 @@ def ddoc_supported_detectors() -> Optional[Dict[str, Any]]:
     ``unsupported_detector`` envelopes after.
 
     Returns ``None`` if the plugin doesn't implement the convention
-    (legacy plugins continue to work — the per-plugin runtime
-    validation from Round-11/12 still catches unsupported values).
+    (legacy plugins continue to work — the existing per-plugin runtime
+    validation still catches unsupported values).
     """
     ...
 
 
-# --- Data Source Adapter (Round-13) ---
+# --- Data Source Adapter ---
 
 
 @hookspec(firstresult=True)
@@ -143,7 +143,7 @@ def data_source_read(
     """Materialize a remote / abstract data source into a local
     directory ddoc plugins can analyze.
 
-    Round-13 — opens the door for non-file-based inputs (S3, GCS, HTTP,
+    Opens the door for non-file-based inputs (S3, GCS, HTTP,
     Kafka, ...). The CLI's ``ddoc analyze drift`` path mode currently
     accepts only on-disk paths; this hook lets a plugin transparently
     pull data from anywhere into ``dest_dir`` first.
@@ -167,7 +167,7 @@ def data_source_read(
     ...
 
 
-# --- Reporting / Export (Round-11 / Track C) ---
+# --- Reporting / Export (Track C) ---
 
 
 @hookspec(firstresult=True)
@@ -180,7 +180,7 @@ def report_render(
 ) -> Optional[Dict[str, Any]]:
     """Render a drift / EDA result to a report file.
 
-    Round-11 (Track C) — lifts report generation from backend-internal
+    Track C — lifts report generation from backend-internal
     (pdfkit + Jinja in ``drift_studio/backend/app/routers/report.py``)
     to a ddoc-CLI plugin-extensible hookspec. The CLI subcommand
     ``ddoc report render`` invokes this hook; if no plugin returns a

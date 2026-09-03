@@ -1,4 +1,4 @@
-"""File-backed write-token store (Round 24).
+"""File-backed write-token store.
 
 Single JSON file at ``<library_dir>/.tokens.json`` holding non-revoked
 write credentials. Only the SHA-256 hash of each secret is persisted;
@@ -25,7 +25,7 @@ Schema (forward-compat ``version`` field):
    }
 
 The store coexists with ``DDOC_RECIPES_WRITE_TOKEN`` (single env
-secret, Round 22) — a write request is accepted if its header value
+secret) — a write request is accepted if its header value
 matches *either* the env secret *or* the hash of any active token.
 """
 from __future__ import annotations

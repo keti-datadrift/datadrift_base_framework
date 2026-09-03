@@ -46,7 +46,7 @@ def list_plugins() -> Dict[str, Any]:
 def list_detector_registry() -> Dict[str, Any]:
     """Mirror of ``ddoc plugin detectors`` — calls the
     ``ddoc_supported_detectors`` hookspec across all installed
-    plugins (Round 13)."""
+    plugins."""
     try:
         from ddoc.cli.commands.utils import get_pmgr
     except Exception as e:

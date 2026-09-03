@@ -57,7 +57,7 @@ def healthz(request: Request) -> Dict[str, Any]:
 
 @router.get("/metrics", include_in_schema=False)
 def metrics():
-    """Prometheus text-format metrics. Round 19 — bypasses auth so
+    """Prometheus text-format metrics. Bypasses auth so
     standard scrapers (Prometheus, OpenMetrics) work without keys.
     Operators who want auth on this endpoint should put it behind a
     reverse proxy with IP allowlist (see deploy.md §"보안 체크리스트")."""

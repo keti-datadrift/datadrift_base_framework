@@ -77,7 +77,7 @@ class WorkspaceService:
             with open(dvcignore_path, 'w') as f:
                 f.write(dvcignore_content)
 
-            # Create starter README.md (Round-7 — matches the long-
+            # Create starter README.md (matches the long-
             # standing test expectation and gives the user a foothold).
             readme_path = target_path / "README.md"
             if not readme_path.exists():
@@ -105,7 +105,7 @@ class WorkspaceService:
             # Initialize dvc
             dvc_result = self._init_dvc(target_path)
 
-            # Round-7 — commit the initial scaffolding so the workspace
+            # Commit the initial scaffolding so the workspace
             # leaves a clean ``git status``. Previously the .gitignore /
             # .dvcignore / README.md / .dvc/config files sat untracked
             # after init, surfacing as ``has_uncommitted_changes`` for

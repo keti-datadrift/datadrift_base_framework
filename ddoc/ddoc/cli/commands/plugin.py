@@ -57,15 +57,15 @@ def plugin_list_command():
 
 
 def plugin_detectors_command():
-    """Round-13 — print every plugin's advertised detector preset.
+    """Print every plugin's advertised detector preset.
 
     Reads each registered plugin's ``ddoc_supported_detectors`` hookimpl
-    (Gap 5) and prints a consolidated table. Use this to find the right
+    and prints a consolidated table. Use this to find the right
     ``--detector`` value before running ``ddoc analyze drift``.
 
     Plugins that don't implement the registry hook are listed as
     "(no preset declared)" — their per-plugin runtime validation
-    (Round-11/12) still works.
+    elsewhere still works.
     """
     pmgr = get_pmgr()
     pm = pmgr.pm
@@ -102,7 +102,7 @@ def plugin_install_command(
 ):
     """Install a ddoc plugin via pip.
 
-    Round-10 — promoted from doc-only example to a real subcommand.
+    Promoted from doc-only example to a real subcommand.
     Thin wrapper over ``pip install`` so users can stay inside the
     ddoc CLI for plugin lifecycle.
 

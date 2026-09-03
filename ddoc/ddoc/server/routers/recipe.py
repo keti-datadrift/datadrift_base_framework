@@ -1,6 +1,6 @@
-"""``/recipe/{validate,run,run/stream}`` — Round 17.
+"""``/recipe/{validate,run,run/stream}``.
 
-Wraps the Round-16 recipe layer over HTTP. Supports both inline YAML
+Wraps the recipe layer over HTTP. Supports both inline YAML
 text (``body.yaml``) and on-disk paths (``body.path``); inline is the
 ergonomic mode for the GUI's recipe builder, path mode mirrors the
 ``ddoc recipe run <path>`` CLI invocation for scripted callers that

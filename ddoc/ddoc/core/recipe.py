@@ -1,4 +1,4 @@
-"""Multi-step recipe execution — Round 16.
+"""Multi-step recipe execution.
 
 A *recipe* is a YAML file describing an ordered sequence of ddoc CLI
 invocations chained by file paths in/out. Each step's output (e.g.
@@ -29,7 +29,7 @@ The executor invokes the same hermetic ``ddoc`` subprocess each step
 uses, captures the JSON envelope, and feeds it to the substitution
 machinery. Failures stop the recipe; the error envelope is bubbled.
 
-Why a recipe layer? Round 15 GUI / Round 14 REST cover one operation
+Why a recipe layer? The GUI and the REST API each cover one operation
 at a time. Real workflows are usually `fetch → analyze → report →
 export`. Recipes turn that 4-step dance into one invocation, and
 shareable as a YAML file.
@@ -176,7 +176,7 @@ import operator
 _REF_PATTERN = re.compile(r"\$\{([^}]+)\}")
 
 
-# ── ``when:`` mini-evaluator (Round 17) ──────────────────────────────
+# ── ``when:`` mini-evaluator ──────────────────────────────────────────
 
 
 _ALLOWED_BINOPS = {
@@ -521,7 +521,7 @@ class Recipe:
             if not isinstance(step, dict):
                 issues.append(f"{label}: must be a mapping")
                 continue
-            # Round 18 — parallel block: each child must validate too.
+            # parallel block: each child must validate too.
             if "parallel" in step:
                 children = step.get("parallel") or []
                 if not isinstance(children, list) or not children:
@@ -612,7 +612,7 @@ def execute_recipe(
     out_steps: List[Dict[str, Any]] = []
 
     for raw_step in recipe.steps:
-        # Round 18 — ``parallel:`` block. The block's children are run
+        # ``parallel:`` block. The block's children are run
         # via a ThreadPoolExecutor; each sees the same ctx-snapshot
         # taken just before the block (so siblings cannot reference
         # each other, only earlier serial steps). After the group

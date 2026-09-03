@@ -67,7 +67,7 @@ class AnalyzeDriftRequest(BaseModel):
 class ReportRenderRequest(BaseModel):
     """Render a drift / EDA envelope to a report file.
 
-    Two modes supported (Round 25 — added inline mode for HTTP
+    Two modes supported (inline mode added for HTTP
     consumers without shared filesystem):
 
     * **Path mode** (original): set ``input`` and ``out`` to filesystem
@@ -83,7 +83,7 @@ class ReportRenderRequest(BaseModel):
         None, description="Path to a drift / EDA envelope JSON (path mode).",
     )
     envelope: Optional[Dict[str, Any]] = Field(
-        None, description="Inline drift / EDA envelope (inline mode, Round 25).",
+        None, description="Inline drift / EDA envelope (inline mode).",
     )
     out: Optional[str] = Field(
         None, description="Output report path (path mode). Omit for streamed bytes.",
@@ -130,7 +130,7 @@ class HealthResponse(BaseModel):
     bind: str
 
 
-# ── /recipe (Round 17) ───────────────────────────────────────────────
+# ── /recipe ────────────────────────────────────────────────────────────
 
 
 class RecipeBody(BaseModel):

@@ -20,7 +20,7 @@ def create_snapshot(
     alias: Optional[str] = typer.Option(None, "-a", "--alias", help="Alias for this snapshot"),
     no_auto_commit: bool = typer.Option(
         False, "--no-auto-commit",
-        help="Skip the automatic dvc add + git commit step. By default (Round-5 onward) auto-commit is safe on a clean working tree (it detects 'nothing to commit' and skips); use this flag only if you want to stage changes manually first.",
+        help="Skip the automatic dvc add + git commit step. By default, auto-commit is safe on a clean working tree (it detects 'nothing to commit' and skips); use this flag only if you want to stage changes manually first.",
     ),
 ):
     """Create a new snapshot.
@@ -170,7 +170,7 @@ def checkout_snapshot(
 def _diff_snapshots(version1: str, version2: str) -> None:
     """Shared snapshot-diff logic, callable from either the
     ``--diff v1 v2`` parent option (legacy) or the new
-    ``ddoc snapshot diff v1 v2`` subcommand (Round-8). Prints the diff
+    ``ddoc snapshot diff v1 v2`` subcommand. Prints the diff
     or exits non-zero on failure."""
     from ddoc.core.snapshot_service import get_snapshot_service
     from ddoc.core.git_service import get_git_service
@@ -216,7 +216,7 @@ def diff_snapshots(
 ):
     """Compare two snapshots (data + code).
 
-    Round-8 — promoted from the parent's ``--diff`` option to a proper
+    Promoted from the parent's ``--diff`` option to a proper
     subcommand for consistency with create/list/inspect/checkout. The
     legacy ``ddoc snapshot --diff v1 v2`` form still works.
     """
@@ -289,7 +289,7 @@ def snapshot(
     
     # ========================================================================
     # COMPARE SNAPSHOTS (legacy --diff option — kept for backward compat;
-    # prefer ``ddoc snapshot diff <v1> <v2>`` subcommand introduced in Round-8)
+    # prefer ``ddoc snapshot diff <v1> <v2>`` subcommand)
     # ========================================================================
     if diff and len(diff) >= 2:
         _diff_snapshots(diff[0], diff[1])

@@ -1,4 +1,4 @@
-"""``/recipes`` — site-shared recipe library (Round 19 → Round 21).
+"""``/recipes`` — site-shared recipe library.
 
 The library is whatever directory ``DDOC_RECIPES_DIR`` env points to,
 or ``recipes/`` next to the ddoc install. One YAML file = one recipe.
@@ -7,14 +7,14 @@ Endpoints:
 
 * ``GET    /recipes``                       → list `{name, file, display_name, step_count}`
 * ``GET    /recipes/{name}``                → YAML text + parsed metadata + validation issues
-* ``PUT    /recipes/{name}``                → save / update YAML (Round 20, write-mode only)
-* ``DELETE /recipes/{name}``                → soft-delete (auto-archive) (Round 21)
-* ``POST   /recipes/{name}/restore/{ts}``   → restore active from a snapshot (Round 21)
-* ``GET    /recipes/{name}/diff``           → unified diff between two refs (Round 21)
-* ``GET    /recipes/{name}/versions``       → snapshot history under .history/ (Round 20)
+* ``PUT    /recipes/{name}``                → save / update YAML (write-mode only)
+* ``DELETE /recipes/{name}``                → soft-delete (auto-archive)
+* ``POST   /recipes/{name}/restore/{ts}``   → restore active from a snapshot
+* ``GET    /recipes/{name}/diff``           → unified diff between two refs
+* ``GET    /recipes/{name}/versions``       → snapshot history under .history/
 * ``GET    /recipes/{name}/versions/{ts}``  → one historical YAML
-* ``GET    /git-log``                       → recent commits (when DDOC_RECIPES_GIT=1) (Round 23)
-* ``GET    /tokens``                        → list write tokens (admin-gated) (Round 24)
+* ``GET    /git-log``                       → recent commits (when DDOC_RECIPES_GIT=1)
+* ``GET    /tokens``                        → list write tokens (admin-gated)
 * ``POST   /tokens``                        → mint a new write token (admin-gated)
 * ``DELETE /tokens/{tok_id}``               → revoke a write token (admin-gated)
 
@@ -65,9 +65,9 @@ def _write_token_required() -> Optional[str]:
 
 
 def _write_token_active() -> bool:
-    """True iff *some* write-token gate is configured — env single
-    secret (Round 22) and/or the token store has been initialized
-    (Round 24). Once the store exists, the gate stays on even if all
+    """True iff *some* write-token gate is configured — the env single
+    secret and/or the token store has been initialized. Once the store
+    exists, the gate stays on even if all
     tokens are revoked, so revoking-then-anonymous writes is
     impossible."""
     if _write_token_required() is not None:
@@ -78,7 +78,7 @@ def _write_token_active() -> bool:
     return token_store.is_initialized(base.resolve())
 
 
-# ── Round 23 — git-backed audit trail ───────────────────────────────
+# ── git-backed audit trail ────────────────────────────────────────────
 
 
 def _git_enabled() -> bool:
@@ -169,8 +169,8 @@ def _check_write_token(request: Request) -> None:
 
     Validation: header must equal the env secret, or its hash must
     match a non-revoked token in ``<library>/.tokens.json``. Either
-    suffices — deployments can mix the env single-secret (Round 22)
-    with multi-token rotation (Round 24).
+    suffices — deployments can mix the env single-secret
+    with multi-token rotation.
     """
     env_expected = _write_token_required()
     base = _resolve_library_dir()
@@ -192,7 +192,7 @@ def _check_write_token(request: Request) -> None:
     )
 
 
-# ── Round 24 — admin gate (token CRUD endpoints) ────────────────────
+# ── admin gate (token CRUD endpoints) ─────────────────────────────────
 
 
 def _admin_token_required() -> Optional[str]:
@@ -365,7 +365,7 @@ def get_recipe(name: str) -> Dict[str, Any]:
     }
 
 
-# ── Round 20 — write + versioning ───────────────────────────────────
+# ── write + versioning ─────────────────────────────────────────────────
 
 
 def _atomic_write(path: Path, text: str) -> None:
@@ -534,7 +534,7 @@ def get_version(name: str, ts: str) -> Dict[str, Any]:
     }
 
 
-# ── Round 21 — delete / restore / diff ──────────────────────────────
+# ── delete / restore / diff ───────────────────────────────────────────
 
 
 def _resolve_ref_yaml(base: Path, name: str, ref: str) -> str:
@@ -717,7 +717,7 @@ def diff_recipe(
     }
 
 
-# ── Round 23 — git log endpoint ─────────────────────────────────────
+# ── git log endpoint ──────────────────────────────────────────────────
 
 
 @router.get("/git-log")
@@ -764,7 +764,7 @@ def git_log(limit: int = Query(50, ge=1, le=500)) -> Dict[str, Any]:
     }
 
 
-# ── Round 24 — token CRUD ───────────────────────────────────────────
+# ── token CRUD ─────────────────────────────────────────────────────────
 
 
 _TOKEN_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}$")

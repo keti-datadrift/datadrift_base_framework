@@ -59,9 +59,9 @@ class _StdoutToStderr:
     a backend orchestrator's ``_try_parse_last_json_object`` won't be
     confused by it.
 
-    Round-7 (2026-05-08) — added after the audio path-mode smoke
-    showed plugins' "⚠️ Skipping ..." banners leaking onto stdout in
-    ``--json`` mode, breaking strict JSON parsers.
+    Added after the audio path-mode smoke test showed plugins'
+    "⚠️ Skipping ..." banners leaking onto stdout in ``--json`` mode,
+    breaking strict JSON parsers.
     """
 
     def __init__(self, enabled: bool):
@@ -80,7 +80,7 @@ class _StdoutToStderr:
 
 
 class _SilencePluginIO:
-    """Round-9 — context manager that fully suppresses plugin stdout
+    """Context manager that fully suppresses plugin stdout
     AND stderr noise during hook invocation.
 
     Two modes (mutually exclusive):
@@ -161,12 +161,12 @@ def emit_progress(
 
 
 def _validate_detector_against_registry(detector: str, json_out: bool) -> None:
-    """Round-13 (Gap 5) — sanity-check ``--detector`` against the
+    """Sanity-check ``--detector`` against the
     detector preset registry (``ddoc_supported_detectors`` hook) before
     forking the plugins.
 
     Plugins that don't implement the registry hook are silently skipped
-    (their per-plugin runtime validation from Round-11/12 still catches
+    (their per-plugin runtime validation elsewhere still catches
     bad inputs). When at least one plugin advertises the strategy, we
     pass through. When *every* responding plugin says no, we fail fast
     with a single error envelope listing the union of supported names.
@@ -307,7 +307,7 @@ def _merge_plugin_results(
 ) -> dict:
     """Collapse multi-plugin output into a single dict.
 
-    Round-12 (Track B Gap 3 closure) — added ``fusion`` parameter so
+    Added ``fusion`` parameter so
     the CLI can compute a single combined score across modalities. The
     single-modality hoist still applies when there's effectively one
     plugin returning a useful result. Multi-modality + ``fusion="none"``
@@ -359,7 +359,7 @@ def analyze_drift_command(
     detector: str = typer.Option(
         "default", "--detector",
         help=(
-            "Drift detector strategy. Round-11 (Track B) wired this through "
+            "Drift detector strategy, wired through "
             "to the plugin. ``default`` (the default) keeps each plugin's "
             "historical behaviour (vision: ensemble, text: cosine, "
             "audio: wasserstein, timeseries: attributes). Explicit values: "
@@ -390,11 +390,11 @@ def analyze_drift_command(
     ),
     with_embeddings: bool = typer.Option(
         False, "--with-embeddings",
-        help="Round-10: in path mode, ask plugins to compute embeddings inline (e.g. text plugin will load CLIP) instead of falling back to attribute-only drift. Slower; requires the plugin's embedding deps (torch + CLIP for text/vision).",
+        help="In path mode, ask plugins to compute embeddings inline (e.g. text plugin will load CLIP) instead of falling back to attribute-only drift. Slower; requires the plugin's embedding deps (torch + CLIP for text/vision).",
     ),
     fusion: str = typer.Option(
         "none", "--fusion",
-        help="Round-12: combine multi-modality results into a single fused_score. Strategies: none (default — keep stacked shape), weighted (Σ wᵢ·scoreᵢ), max (most pessimistic), joint (1-∏(1-scoreᵢ); requires bounded ∈[0,1]). Single-modality runs ignore this flag.",
+        help="Combine multi-modality results into a single fused_score. Strategies: none (default — keep stacked shape), weighted (Σ wᵢ·scoreᵢ), max (most pessimistic), joint (1-∏(1-scoreᵢ); requires bounded ∈[0,1]). Single-modality runs ignore this flag.",
     ),
     fusion_weights: Optional[str] = typer.Option(
         None, "--fusion-weights",
@@ -428,9 +428,9 @@ def analyze_drift_command(
         )
         raise typer.Exit(code=2)
 
-    # Round-13 (Gap 5) — fail fast if --detector isn't advertised by
+    # Fail fast if --detector isn't advertised by
     # any plugin's supported-detectors registry. This complements the
-    # per-plugin runtime checks in Round-11/12: catches typos before the
+    # per-plugin runtime checks elsewhere: catches typos before the
     # fork and gives a single consolidated error envelope.
     _validate_detector_against_registry(detector, json_out=json_out)
 
@@ -447,7 +447,7 @@ def analyze_drift_command(
             "current_cache": None,
             "baseline_metadata": None,
             "current_metadata": None,
-            # Round-10 — opt-in for plugins to compute embeddings
+            # Opt-in for plugins to compute embeddings
             # inline in path mode (otherwise drift falls back to
             # attribute-only). Only the text/vision plugins honour it.
             "with_embeddings": with_embeddings,

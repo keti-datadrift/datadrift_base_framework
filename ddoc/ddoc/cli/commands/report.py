@@ -1,6 +1,6 @@
 """``ddoc report render`` — render a drift / EDA result to a report file.
 
-Round 11 (Track C) — first concrete user of the new ``report_render``
+First concrete user of the new ``report_render``
 hookspec. The CLI:
 
 1. Reads the ``--input`` JSON (drift or EDA envelope).
@@ -35,9 +35,8 @@ def _normalize_attribute_drifts(value: Any) -> list[tuple[str, Optional[float], 
     """Normalize the many possible ``attribute_drifts`` shapes into a
     uniform list of ``(name, score, extras)`` tuples.
 
-    Round 28 (Track C) — closes the markdown renderer's ``{v:.4f}``
-    crash on non-flat shapes (discovered while writing Round 25 tests).
-    Accepted inputs:
+    Closes the markdown renderer's ``{v:.4f}``
+    crash on non-flat shapes. Accepted inputs:
 
     * Flat dict: ``{"blur": 0.18, "exposure": 0.07}`` — original shape.
     * Nested dict: ``{"blur": {"score": 0.18, "status": "warning"}, ...}``.
@@ -160,7 +159,7 @@ def _builtin_render(
 
     if drift_result is not None:
         tpl = env.get_template("drift_report.html")
-        # Round 28 (Track C) — pre-normalize attribute_drifts so the
+        # Pre-normalize attribute_drifts so the
         # template iterates a uniform shape regardless of how the
         # producing detector serialized it.
         attr_rows = _normalize_attribute_drifts(

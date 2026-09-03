@@ -1,6 +1,6 @@
 """ddoc REST facade — `ddoc serve`.
 
-Round 14 — wraps the ddoc CLI (every analyze / report / export /
+Wraps the ddoc CLI (every analyze / report / export /
 examples / fetch / plugin command) behind a thin FastAPI server so
 external systems and scripted automation can call ddoc over HTTP
 without spawning subprocesses themselves.

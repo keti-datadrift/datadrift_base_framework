@@ -1,6 +1,6 @@
 """``ddoc recipe`` — chain multiple ddoc steps via a YAML file.
 
-Round 16 — turns the Round 15 GUI's one-shot dance (fetch → analyze →
+Turns the GUI's one-shot dance (fetch → analyze →
 report → export through 4 separate submits) into a single declarative
 file. Useful for CI, scheduled jobs, and "I always run these 4 things
 together" workflows.

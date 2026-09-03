@@ -1,6 +1,6 @@
 """``ddoc examples`` — generate ready-to-analyze toy datasets.
 
-Round 11 (Track A) — exposes the ``tests/fixtures/factories.py``
+Exposes the ``tests/fixtures/factories.py``
 toy-data generators as a user-facing CLI so people learning ddoc can
 get a first drift result in 5 minutes without producing real data:
 

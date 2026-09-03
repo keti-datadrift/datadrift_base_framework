@@ -50,6 +50,6 @@ ENV PORT=8000
 
 EXPOSE 8000
 
-# `ddoc serve` is the REST entry point (Round 14). Listen on all
+# `ddoc serve` is the REST entry point. Listen on all
 # interfaces so the container is reachable from the docker network.
 ENTRYPOINT ["ddoc", "serve", "--host", "0.0.0.0", "--port", "8000"]

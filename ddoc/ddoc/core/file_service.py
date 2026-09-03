@@ -85,7 +85,7 @@ class FileService:
                     result["dvc_warning"] = dvc_result.get("error", "DVC add failed")
                 
                 # Also git add the data.dvc file (skipped when auto_git
-                # is False or there's no .git/ — Round-9).
+                # is False or there's no .git/).
                 if dvc_result["success"] and auto_git:
                     git_result = self._git_add_dvc_file()
                     result["git_staged"] = git_result["success"]

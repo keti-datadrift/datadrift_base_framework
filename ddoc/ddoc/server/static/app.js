@@ -1,13 +1,13 @@
-// ddoc serve · GUI · Round 15 (+ Round 16 viz / i18n)
+// ddoc serve · GUI (+ viz / i18n)
 //
 // Single-file JS that drives the 6 form builders, validation, CLI
-// command preview, and result rendering against the REST endpoints
-// shipped in Round 14. No frameworks; no build step.
+// command preview, and result rendering against the REST endpoints.
+// No frameworks; no build step.
 
 (() => {
   'use strict';
 
-  // ── Round-16 i18n ───────────────────────────────────────────────
+  // ── i18n ────────────────────────────────────────────────────────
   // Tiny string table — `?lang=ko` query (or localStorage cache)
   // switches headings/tab labels to Korean. Body labels (CLI option
   // names) stay verbatim because they map 1-to-1 to ddoc CLI flags.
@@ -194,7 +194,7 @@
     if (lib.git_enabled) tags.push('git: ON');
     $('#meta').textContent = '· ' + tags.join(' · ');
 
-    // Language toggle button (Round 16 — switches en ↔ ko).
+    // Language toggle button (switches en ↔ ko).
     if (!$('#lang-toggle')) {
       const btn = el('button', {
         id: 'lang-toggle', class: 'link', style: 'margin-left: 0.6em;',
@@ -363,13 +363,13 @@
       title: 'Recipe · multi-step workflow',
       help: 'Paste a recipe YAML or specify a server-side path. ddoc executes the steps in order and shows per-step progress as SSE events.',
       fields: [
-        // Round 20 — load from library dropdown (populated lazily on
+        // Load from library dropdown (populated lazily on
         // tab activate via /recipes).
         { name: 'library_pick', label: 'load from library', type: 'select', opts: () => libraryRecipeOptions(), default: '' },
         { name: 'mode', label: 'input mode', type: 'select', opts: ['inline', 'path'], default: 'inline' },
         { name: 'yaml', label: 'YAML', type: 'textarea', default: SAMPLE_RECIPE_YAML, help: 'Top-level: name, vars, steps[]. Each step needs id + run + with.' },
         { name: 'path', label: 'recipe path', type: 'text', help: 'Server-side path to a YAML file (use this instead of YAML when --inline isn\'t convenient).' },
-        { name: 'save_as', label: 'save as (name)', type: 'text', help: 'Round 20: save current YAML to library at /recipes/<name>. Requires DDOC_RECIPES_WRITE=1 server-side.' },
+        { name: 'save_as', label: 'save as (name)', type: 'text', help: 'Save current YAML to library at /recipes/<name>. Requires DDOC_RECIPES_WRITE=1 server-side.' },
         { name: 'dry_run', label: 'dry-run', type: 'check', default: false, help: 'Resolve substitutions and print argv but skip subprocess execution.' },
         { name: 'use_streaming', label: 'Use streaming (SSE)', type: 'check', default: true, help: 'Show per-step progress live (uses /recipe/run/stream).' },
         { name: 'validate_only', label: 'validate only', type: 'check', default: false, help: 'Call /recipe/validate instead of running.' },
@@ -447,7 +447,7 @@
       }
       if (hasCheckboxes) root.appendChild(checkRow);
     }
-    // Round 20 — recipe tab needs extra wiring beyond the generic
+    // Recipe tab needs extra wiring beyond the generic
     // schema-driven form: load-from-library (dropdown change → fetch
     // /recipes/<name> and prefill YAML) and Save button.
     wireRecipeTab();
@@ -480,8 +480,8 @@
       });
     }
 
-    // Inject Save + Round 21 controls (Delete / Restore latest / Diff
-    // vs latest) into the actions row if not already present.
+    // Inject Save + Delete / Restore latest / Diff vs latest controls
+    // into the actions row if not already present.
     if (!$('#recipe-save-btn')) {
       const saveBtn = el('button', {
         id: 'recipe-save-btn',
@@ -527,9 +527,9 @@
     refreshWriteTokenInput();
   }
 
-  // Round 22 — surface a write-token input only when the server
-  // demands one (DDOC_RECIPES_WRITE_TOKEN env). Cached in localStorage
-  // so users don't retype on every save.
+  // Surface a write-token input only when the server demands one
+  // (DDOC_RECIPES_WRITE_TOKEN env). Cached in localStorage so users
+  // don't retype on every save.
   function refreshWriteTokenInput() {
     const required = !!(STATE.library && STATE.library.write_token_required);
     let row = $('#recipe-write-token-row');
@@ -599,7 +599,7 @@
     renderForms();
   }
 
-  // Round 21 — diff / restore / delete handlers.
+  // Diff / restore / delete handlers.
   function _recipeNameFromForm(action) {
     const formState = STATE.forms.recipe || {};
     const name = (formState.save_as || '').trim();
@@ -944,7 +944,7 @@
     }
   }
 
-  // ── Round-16 result viz ─────────────────────────────────────────
+  // ── Result viz ─────────────────────────────────────────────────
   // Renders score / status / per-attribute bars from the envelope. Pure
   // CSS (no chart libs). Falls back to "raw only" when nothing to viz.
   function renderViz(envelope, ok) {
@@ -952,8 +952,8 @@
     viz.innerHTML = '';
     if (!envelope || typeof envelope !== 'object') { viz.hidden = true; return; }
 
-    // Round 22 — recipe diff envelope: render unified-diff with line
-    // colors (purely visual; raw text remains in #result-body).
+    // Recipe diff envelope: render unified-diff with line colors
+    // (purely visual; raw text remains in #result-body).
     if (typeof envelope.diff === 'string' &&
         (typeof envelope.from !== 'undefined' || typeof envelope.to !== 'undefined')) {
       viz.appendChild(diffCard(envelope));
@@ -1054,12 +1054,12 @@
       card.appendChild(block);
     }
 
-    // Round 18 — embedding ensemble breakdown.
+    // Embedding ensemble breakdown.
     if (sub.embedding_drift_detailed && typeof sub.embedding_drift_detailed === 'object') {
       card.appendChild(embeddingEnsembleBlock(sub.embedding_drift_detailed));
     }
 
-    // Round 19 — modality-specific raw chart (timeseries first; other
+    // Modality-specific raw chart (timeseries first; other
     // modalities follow once their raw-data plumbing lands).
     if (name === 'timeseries' && sub.attribute_drifts) {
       card.appendChild(timeseriesAttributeChart(sub.attribute_drifts));
@@ -1068,7 +1068,7 @@
     return card;
   }
 
-  // Round-19 timeseries chart — pure SVG line plot of attribute drift
+  // Timeseries chart — pure SVG line plot of attribute drift
   // values. No external libs. Each attribute (mean / variance / skew /
   // kurt) becomes one point on the polyline; useful as a quick "where
   // did the drift come from" visual cue.
@@ -1161,7 +1161,7 @@
   }
 
   // Render the per-component breakdown of an ensemble embedding-drift
-  // result (Round-12 vision, Round-12 text). Two parts:
+  // result (vision, text). Two parts:
   //   1. Stacked contribution bar — width = weight × normalized score
   //   2. Per-metric row showing weight, normalized score, raw value
   function embeddingEnsembleBlock(detail) {
@@ -1269,11 +1269,10 @@
     return card;
   }
 
-  // Round 22 — unified-diff card. Lines starting with '+' / '-' /
-  // '@@' / 'diff/index' are colored.
-  // Round 23 — for adjacent (-, +) line pairs, also highlight changed
-  // *words* via an LCS-based token diff. No syntax highlighter
-  // dependency.
+  // Unified-diff card. Lines starting with '+' / '-' /
+  // '@@' / 'diff/index' are colored. For adjacent (-, +) line pairs,
+  // also highlight changed *words* via an LCS-based token diff. No
+  // syntax highlighter dependency.
   function diffCard(env) {
     const card = el('div', { class: 'viz-card diff-card' });
     const heading = `${env.name || 'recipe'} · ${env.from || 'HEAD'} → ${env.to || '∅'}`;

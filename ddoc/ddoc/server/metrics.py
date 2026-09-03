@@ -1,4 +1,4 @@
-"""Prometheus metrics for ``ddoc serve`` (Round 19).
+"""Prometheus metrics for ``ddoc serve``.
 
 Uses ``prometheus_client`` if installed; falls back to a pure-Python
 zero-deps text-format generator so the endpoint is always available

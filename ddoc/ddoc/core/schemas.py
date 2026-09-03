@@ -47,7 +47,7 @@ class Snapshot(BaseModel):
     experiment: Optional[ExperimentSnapshot] = Field(default=None, description="Experiment results")
     lineage: Optional[LineageSnapshot] = Field(default=None, description="Lineage information")
     
-    # Round-9 — migrated from class-based ``class Config`` to
+    # Migrated from class-based ``class Config`` to
     # ``model_config`` per Pydantic V2 (the legacy form raises a
     # PydanticDeprecatedSince20 warning under pydantic >= 2.0).
     model_config = ConfigDict(

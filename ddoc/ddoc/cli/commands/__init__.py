@@ -1,6 +1,6 @@
 """CLI commands module - modularized structure.
 
-Round-2 (2026-05-07) — *core import surface stays light*. Heavy
+*core import surface stays light*. Heavy
 deps (mlflow, ultralytics, etc.) live behind the ``experiment`` and
 ``legacy`` command groups. Those are loaded **inside** ``register()``
 with try/except so ``pip install ddoc`` (core only) keeps working
@@ -122,31 +122,31 @@ def register(app: typer.Typer) -> None:
     plugin_app.command("detectors")(plugin_detectors_command)
     app.add_typer(plugin_app, name="plugin")
 
-    # Round 11 (Track A) — toy data generators for tutorials.
+    # Toy data generators for tutorials.
     from .examples import examples_app
     app.add_typer(examples_app, name="examples", help="Generate ready-to-analyze toy datasets")
 
-    # Round 11 (Track C) — report rendering + export to external systems.
+    # Report rendering + export to external systems.
     from .report import report_app
     from .export import export_app
     app.add_typer(report_app, name="report", help="Render drift / EDA results as HTML / PDF / Markdown reports")
     app.add_typer(export_app, name="export", help="Ship drift / EDA results to external systems (http / file / ...)")
 
-    # Round 13 — data-source adapter (file:// fallback + plugin extension point for s3:// etc.)
+    # Data-source adapter (file:// fallback + plugin extension point for s3:// etc.)
     from .fetch import fetch_command
     app.command(
         name="fetch",
         help="Materialize an external data source (file/s3/gs/http) into a local directory",
     )(fetch_command)
 
-    # Round 14 — REST facade (`ddoc serve`).
+    # REST facade (`ddoc serve`).
     from .serve import serve_command
     app.command(
         name="serve",
         help="Start a FastAPI server exposing every ddoc CLI command over HTTP",
     )(serve_command)
 
-    # Round 16 — multi-step recipes.
+    # Multi-step recipes.
     from .recipe import recipe_app
     app.add_typer(recipe_app, name="recipe", help="Run a multi-step workflow described in YAML")
 

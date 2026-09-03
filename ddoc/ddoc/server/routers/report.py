@@ -1,9 +1,9 @@
 """``POST /report/render`` — wraps ``ddoc report render``.
 
-Round 25 — added *inline* mode: callers can POST the envelope dict
+Supports an *inline* mode: callers can POST the envelope dict
 directly (no shared filesystem needed) and receive the rendered file
-as response bytes. Path mode (Round 11+) still works for callers that
-already write the envelope to disk.
+as response bytes. Path mode (the original) still works for callers
+that already write the envelope to disk.
 """
 from __future__ import annotations
 

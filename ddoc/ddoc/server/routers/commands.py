@@ -1,10 +1,9 @@
 """``GET /commands`` — CLI introspection for GUI auto-population.
 
 Returns the structure of ``ddoc --help`` (and every subcommand)
-parsed into a machine-readable shape. The Round-15 GUI consumes this
+parsed into a machine-readable shape. The GUI consumes this
 to render form builders without hardcoding option lists. Mirrors the
-``fleet help-json`` pattern from the gpu-tunnel reference (Round 14
-plan §1).
+``fleet help-json`` pattern from the gpu-tunnel reference.
 """
 from __future__ import annotations
 

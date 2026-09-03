@@ -44,7 +44,7 @@ _HTTP_STATUS_BY_RUN_ERROR_TYPE: Dict[str, int] = {
 
 def map_run_error_to_response(err: RunError) -> JSONResponse:
     """Translate a ``RunError`` into the JSON envelope + HTTP status
-    contract documented in the Round-14 plan.
+    contract documented in the server design plan.
 
     When the CLI emitted a structured error envelope on stdout
     (``status: error`` + ``error_code`` + ``message``), prefer that
@@ -98,7 +98,7 @@ def create_app(*, bind_info: str = "127.0.0.1:8765") -> FastAPI:
     )
     app.state.bind_info = bind_info
 
-    # Round 19 — install request-level metrics middleware before
+    # Install request-level metrics middleware before
     # routers so even health-check / static-asset GETs are counted.
     from .metrics import install_middleware
     install_middleware(app)
@@ -112,7 +112,7 @@ def create_app(*, bind_info: str = "127.0.0.1:8765") -> FastAPI:
         recipes_lib, report as report_router,
     )
 
-    # Round 15 — mount the GUI before any router that could claim
+    # Mount the GUI before any router that could claim
     # ``/``. FastAPI matches routes in registration order, so the GUI
     # ``/`` must be registered first to win over health.router's
     # legacy JSON-metadata ``/``. When the static dir is missing
