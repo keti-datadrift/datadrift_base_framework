@@ -1,4 +1,4 @@
-"""Smoke tests for the Round-15 ``ddoc serve`` GUI static assets."""
+"""Smoke tests for the ``ddoc serve`` GUI static assets."""
 from __future__ import annotations
 
 import os

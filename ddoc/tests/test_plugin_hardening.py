@@ -1,4 +1,4 @@
-"""Round 22 — plugin hardening tests (ffmpeg-style discipline).
+"""Plugin hardening tests (ffmpeg-style discipline).
 
 Verifies:
 - `ddoc --version` includes hookspec version + plugin manifest

@@ -1,4 +1,4 @@
-"""Round-19 — recipe library, Prometheus metrics, GUI line chart."""
+"""Recipe library endpoints and Prometheus metrics."""
 from __future__ import annotations
 
 import os

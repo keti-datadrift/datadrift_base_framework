@@ -1,4 +1,4 @@
-"""Round 11 (D2 Track C) — recipe catalog tests.
+"""Recipe catalog tests.
 
 Two new standalone recipes ship in `recipes/` (alongside the
 existing `timeseries_smoke.yaml`):

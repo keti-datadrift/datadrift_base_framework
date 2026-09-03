@@ -1,4 +1,4 @@
-"""Round 16-D (alpr R21) — unit tests for the `ddoc train` CLI.
+"""Unit tests for the `ddoc train` CLI (alpr R21 framework consolidation).
 
 Exercises argv parsing, --params-json validation, plugin fan-out
 (via a fake plugin), and the JSON envelope output mode.

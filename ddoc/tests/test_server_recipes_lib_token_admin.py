@@ -1,4 +1,4 @@
-"""Round-24 — write-token rotation / revocation API."""
+"""Write-token rotation / revocation API."""
 from __future__ import annotations
 
 import os

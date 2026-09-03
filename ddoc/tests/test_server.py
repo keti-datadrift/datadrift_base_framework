@@ -1,4 +1,4 @@
-"""End-to-end tests for the ``ddoc serve`` REST facade (Round 14).
+"""End-to-end tests for the ``ddoc serve`` REST facade.
 
 Uses FastAPI TestClient + the toy-data factories from
 ``tests/fixtures/factories.py``. Each test forks ddoc CLI as a real
@@ -48,12 +48,12 @@ def _plugin_installed(name: str) -> bool:
 
 
 def test_root(client: TestClient):
-    """``GET /`` serves the Round-15 GUI when static assets are
+    """``GET /`` serves the GUI when static assets are
     packaged; the JSON metadata previously served at ``/`` now lives
     only at ``/healthz``."""
     r = client.get("/")
     assert r.status_code == 200
-    # Round 15 — static assets ship with the wheel, so / returns HTML.
+    # Static assets ship with the wheel, so / returns HTML.
     assert "text/html" in r.headers["content-type"]
     assert "<title>ddoc" in r.text and "data doctor" in r.text
 
@@ -83,7 +83,7 @@ def test_commands_introspection(client: TestClient):
     body = r.json()
     assert "tree" in body
     sub = body["tree"]["subcommands"]
-    # Round 14 — these should always be present.
+    # These should always be present.
     for required in ("analyze", "examples", "fetch", "report", "export", "plugin"):
         assert required in sub, f"missing top-level subcommand: {required}"
 
@@ -282,7 +282,7 @@ def test_export_drift_report_to_file(client: TestClient, tmp_path: Path):
         json={
             "input": str(drift_path),
             "target": "file",
-            "config": {"out_dir": str(out_dir), "model_name": "round14-test"},
+            "config": {"out_dir": str(out_dir), "model_name": "serve-facade-test"},
         },
     )
     assert r.status_code == 200, r.text
@@ -297,7 +297,7 @@ def test_export_drift_report_to_file(client: TestClient, tmp_path: Path):
 def test_auth_required_when_env_set(monkeypatch):
     """When DDOC_API_KEY is set, requests without the header are
     rejected and requests with the matching header pass."""
-    monkeypatch.setenv("DDOC_API_KEY", "round14-secret")
+    monkeypatch.setenv("DDOC_API_KEY", "test-api-secret")
     from ddoc.server.app import create_app
     app = create_app(bind_info="testclient:0")
     client = TestClient(app)
@@ -312,5 +312,5 @@ def test_auth_required_when_env_set(monkeypatch):
     assert r_no.status_code == 401
     assert r_no.json()["detail"]["error_code"] == "missing_or_bad_api_key"
 
-    r_ok = client.get("/plugins", headers={"X-API-Key": "round14-secret"})
+    r_ok = client.get("/plugins", headers={"X-API-Key": "test-api-secret"})
     assert r_ok.status_code == 200

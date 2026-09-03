@@ -1,6 +1,6 @@
-"""Round-27 (Track B) — tabular EDA report plugin tests.
+"""Tabular EDA report plugin tests.
 
-Closes Round 25 shape gap #2: backend's tabular EDA reports
+Closes a shape gap in the backend's tabular EDA reports
 (``{name, rows, cols, missing, summary}``) had no compatible
 template in ddoc. This plugin recognizes the shape and renders a
 proper EDA-styled HTML/PDF report so backend can hand off rendering
@@ -202,7 +202,7 @@ def test_entry_point_registered():
     assert "ddoc_tabular" in found
 
 
-# ── e2e via /report/render inline mode (Round 25 + Round 27) ────────
+# ── e2e via /report/render inline mode ───────────────────────────────
 
 
 fastapi = pytest.importorskip("fastapi")

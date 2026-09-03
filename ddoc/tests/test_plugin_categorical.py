@@ -171,9 +171,9 @@ def test_plugin_returns_none_when_no_distributions(tmp_path: Path):
 
 
 def test_plugin_inline_cfg_overrides_file(tmp_path: Path):
-    """Round 25 friction precedent: inline cfg lets callers skip the
-    disk round-trip entirely. baseline_categorical / current_categorical
-    in cfg take precedence over distributions.json."""
+    """Inline cfg lets callers skip the disk round-trip entirely.
+    baseline_categorical / current_categorical in cfg take precedence
+    over distributions.json."""
     plugin = CategoricalDriftPlugin()
     ref, cur = _identical_pair(tmp_path)  # files exist but inline overrides
     out = tmp_path / "out"

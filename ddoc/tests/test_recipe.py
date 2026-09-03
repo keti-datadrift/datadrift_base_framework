@@ -1,4 +1,4 @@
-"""Round-16 recipe layer — unit tests for parser, substitution,
+"""Recipe layer — unit tests for parser, substitution,
 validation, and a light smoke for end-to-end execution.
 """
 from __future__ import annotations

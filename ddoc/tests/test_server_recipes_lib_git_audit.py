@@ -1,4 +1,4 @@
-"""Round-23 — git-backed audit trail."""
+"""Git-backed audit trail for the recipe library."""
 from __future__ import annotations
 
 import os

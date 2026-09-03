@@ -1,9 +1,9 @@
 """Toy-data factories — single source for both pytest fixtures and the
 ``ddoc examples generate`` user-facing CLI.
 
-Round 11 (Track A) — Round 2~10 generated these datasets ad-hoc in
-``/tmp`` during dev rounds; this module promotes them to permanent
-factories so the same code path drives:
+These datasets used to be generated ad-hoc in ``/tmp`` by hand during
+early development; this module promotes them to permanent factories
+so the same code path drives:
 
 * the regression test suite (``tests/test_plugin_drift_e2e.py``), and
 * the user onboarding command (``ddoc examples generate <modality>``).
@@ -206,7 +206,7 @@ def make_toy_vision(
     return dataset_dir
 
 
-# ── Categorical (Round 9 — D2 demo path) ─────────────────────────────
+# ── Categorical (demo path) ───────────────────────────────────────────
 
 
 # Default distributions used by the categorical pair builder. Shape
@@ -240,7 +240,7 @@ def make_toy_categorical(
 ) -> Path:
     """Write a categorical-drift dataset directly under ``out_dir``.
 
-    The plugin (``ddoc-plugin-categorical``, Round 26-A) reads
+    The plugin (``ddoc-plugin-categorical``) reads
     ``distributions.json`` directly from ``data_path`` — no
     sub-directory walking. So ``out_dir`` IS the dataset dir.
     ``distributions`` defaults to the canonical "ref" shape — pass an

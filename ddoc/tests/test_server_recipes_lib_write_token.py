@@ -1,4 +1,4 @@
-"""Round-22 — recipe-library write-token gating + library exposure
+"""Recipe-library write-token gating + library exposure
 of `write_token_required`."""
 from __future__ import annotations
 

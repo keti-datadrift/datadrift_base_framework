@@ -1,4 +1,4 @@
-"""Round 15 — detector cookbook auto-renderer tests.
+"""Detector cookbook auto-renderer tests.
 
 The renderer (`scripts/render_detector_cookbook.py`) shells out to
 `ddoc examples generate` + `ddoc analyze drift --json`. Tests

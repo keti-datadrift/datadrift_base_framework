@@ -1,4 +1,4 @@
-"""Round 10 (D2 Track B) — detector cookbook consistency.
+"""Detector cookbook consistency.
 
 The cookbook (`docs/tutorial/detectors.md`) tells users which
 detectors each plugin supports. These tests confirm the documentation

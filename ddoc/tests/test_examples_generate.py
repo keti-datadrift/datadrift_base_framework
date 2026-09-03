@@ -3,7 +3,7 @@ tests + consumer-shape schema check.
 
 These tests live next to the existing `tests/fixtures/factories.py`
 toy-data generators. Categorical is the first new modality added
-since Round 11 (Track A).
+since the original toy-data factories were introduced.
 """
 from __future__ import annotations
 

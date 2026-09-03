@@ -1,4 +1,4 @@
-"""Round-21 — recipe library DELETE / restore / diff."""
+"""Recipe library DELETE / restore / diff."""
 from __future__ import annotations
 
 import os

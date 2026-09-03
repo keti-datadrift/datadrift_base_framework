@@ -1,4 +1,4 @@
-"""Round-17 — REST endpoints for the recipe layer."""
+"""REST endpoints for the recipe layer."""
 from __future__ import annotations
 
 import importlib.metadata as md

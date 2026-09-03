@@ -1,5 +1,5 @@
-"""Round 16-D (alpr R21 framework consolidation) — unit tests for the
-`train` step kind added to the recipe DSL.
+"""Unit tests for the `train` step kind added to the recipe DSL
+(alpr R21 framework consolidation).
 
 Covers:
 - argv composition (params dict → JSON-serialized --params-json)

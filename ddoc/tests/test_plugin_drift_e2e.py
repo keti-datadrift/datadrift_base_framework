@@ -2,8 +2,8 @@
 path through the orchestrator pivot (--json envelope on stdout, NDJSON
 progress on stderr, plugin path-mode contract).
 
-Round 11 (Track A) — these replace the ad-hoc /tmp/toy_* scenarios we
-ran by hand during Round 2~10. Each test:
+These replace the ad-hoc /tmp/toy_* scenarios we used to run by hand
+during early development. Each test:
 
 1. Builds a (ref, cur) pair via the factory fixtures (conftest.py).
 2. Forks ``python -m ddoc.cli.main analyze drift --data-path-ref/-cur

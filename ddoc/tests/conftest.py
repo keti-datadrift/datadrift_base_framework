@@ -1,6 +1,6 @@
 """Pytest fixtures for ddoc tests.
 
-Round 11 (Track A) — additive new conftest. The legacy
+This is an additive conftest. The legacy
 ``__conftest.py`` (with double-underscore disabled prefix) stays
 parked. This file exposes the ``tests/fixtures/factories.py`` toy-data
 generators as ready-to-use ``(ref, cur)`` pair fixtures so plugin

@@ -1,14 +1,14 @@
-"""Round-28 (Track C) — ``attribute_drifts`` shape tolerance.
+"""``attribute_drifts`` shape tolerance.
 
-Round 25 tests revealed that the markdown renderer's
+Earlier tests revealed that the markdown renderer's
 ``f"- ``{k}``: {v:.4f}"`` line crashes when ``attribute_drifts`` is a
 list of dicts or a nested dict — natural shapes coming from many
 real-world drift detectors. The HTML template had the same issue
 silently (``"%.4f"|format(v)`` fails on dict).
 
-Round 28 normalizes these shapes via ``_normalize_attribute_drifts``
-and threads the result through both the markdown renderer and the
-Jinja template via ``attribute_drifts_rows``.
+``_normalize_attribute_drifts`` normalizes these shapes and threads
+the result through both the markdown renderer and the Jinja template
+via ``attribute_drifts_rows``.
 """
 from __future__ import annotations
 
@@ -119,7 +119,8 @@ def test_markdown_render_flat_dict_shape(client: TestClient):
 
 
 def test_markdown_render_list_of_dicts_shape(client: TestClient):
-    """Round 25 originally crashed here. Round 28 makes it work."""
+    """This shape originally crashed the markdown renderer; the
+    normalizer makes it work."""
     r = client.post(
         "/report/render",
         json={

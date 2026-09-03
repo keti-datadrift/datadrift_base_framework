@@ -1,13 +1,14 @@
-"""Round-25 — /report/render inline-envelope mode.
+"""/report/render inline-envelope mode.
 
-Round 11 's path-mode renderer required the caller to write the
+The original path-mode renderer required the caller to write the
 envelope JSON to a filesystem path that ddoc could read, and the
 output was likewise written to disk. That assumes shared FS — a
 non-starter for HTTP consumers (e.g., ``drift_studio/backend``).
 
-Round 25 adds an inline mode: POST the envelope as a dict, get the
-rendered file as response bytes. This test file covers the new mode
-plus the validation that the two modes are mutually exclusive."""
+The inline mode added later lets callers POST the envelope as a dict
+and get the rendered file back as response bytes. This test file
+covers that mode plus the validation that the two modes are mutually
+exclusive."""
 from __future__ import annotations
 
 import os
@@ -38,12 +39,12 @@ _EDA_ENVELOPE = {
     },
 }
 
-# Originally Round 25 found that the markdown renderer crashed on
-# anything but a flat ``{name: float}`` dict (the natural list-of-dict
-# and nested-dict shapes both broke). Round 28 (Track C) added
-# ``_normalize_attribute_drifts`` so all three shapes are accepted —
-# we use the list-of-dict shape here to exercise the normalization path
-# end-to-end through the inline-envelope route.
+# The markdown renderer originally crashed on anything but a flat
+# ``{name: float}`` dict (the natural list-of-dict and nested-dict
+# shapes both broke). ``_normalize_attribute_drifts`` was added so all
+# three shapes are accepted — we use the list-of-dict shape here to
+# exercise the normalization path end-to-end through the
+# inline-envelope route.
 _DRIFT_ENVELOPE = {
     "modality": "vision",
     "status": "success",

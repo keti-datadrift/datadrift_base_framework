@@ -1,4 +1,4 @@
-"""Round 49 (alpr-paired) — unit tests for the `ddoc transform` CLI.
+"""Unit tests for the `ddoc transform` CLI (alpr-paired).
 
 Exercises argv parsing, --args-json validation, plugin fan-out (via a
 fake plugin), and JSON envelope emission. Mirrors test_train_command.
