@@ -1,8 +1,8 @@
 """HTML / PDF report generation for ``drift_studio/backend``.
 
-Round 19 — pdfkit (wkhtmltopdf wrapper) replaced with weasyprint.
-Same PDF engine ddoc CLI's ``ddoc report render`` uses (Round 11),
-so the two paths share rendering quality + system dependencies.
+pdfkit (wkhtmltopdf wrapper) was replaced with weasyprint, the same
+PDF engine ddoc CLI's ``ddoc report render`` uses, so the two paths
+share rendering quality + system dependencies.
 Removes the wkhtmltopdf binary requirement from the backend's
 deployment story.
 

@@ -134,7 +134,7 @@ def deploy_model(req: DeployRequest, db: Session = Depends(get_db)):
         target_app_id=req.target_app_id,
     )
 
-    # Round 35 — record this as the new champion for future promotion-gate
+    # Record this as the new champion for future promotion-gate
     # comparisons. A human explicitly calling this endpoint already IS the
     # approval (unlike the fully-autonomous DD_AUTO_DEPLOY path, which now
     # goes through promotion_gate_service.evaluate_promotion first) -- this
@@ -151,7 +151,7 @@ def deploy_model(req: DeployRequest, db: Session = Depends(get_db)):
     )
 
 
-# ── Promotion gate (Round 35) ──────────────────────────────────────
+# ── Promotion gate ──────────────────────────────────────
 
 
 @router.get("/promotions", response_model=list[PromotionInfo])

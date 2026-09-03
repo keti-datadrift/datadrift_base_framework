@@ -1,8 +1,8 @@
-"""Drift Decision Engine 이벤트 보정 레이어 (Round 36).
+"""Drift Decision Engine 이벤트 보정 레이어.
 
 context_workplace/drift_tool_analysis.md 3부(레벨4 개입보정)·12부(설명
 후보이지 확정이 아니다, 자동화된 주장을 과신하지 않는다)를 이 백엔드에
-적용한 것 -- promotion_gate_service.py(Round 35)가 재학습 결과의 자체보고
+적용한 것 -- promotion_gate_service.py가 재학습 결과의 자체보고
 gate_passed를 블라인드로 믿지 않게 만든 것과 정확히 같은 원칙을, 파이프라인
 반대쪽 끝(재학습 결과가 아니라 드리프트 판정 자체)에 적용한다.
 DriftDecisionEngine.evaluate()는 필드 에이전트가 자체 계산해 보고한
@@ -137,7 +137,7 @@ def _find_matching_events(db: Session, report: FieldDriftReport) -> list[DriftIn
 
 
 def _event_summary(e: DriftInterventionEvent) -> dict:
-    # action_taken은 JSON 컬럼 -- raw datetime을 넣으면 commit 시 에러(Round 34의
+    # action_taken은 JSON 컬럼 -- raw datetime을 넣으면 commit 시 에러(과거
     # NaN-in-JSON 버그와 같은 종류). 여기서 전부 문자열로 바꿔둔다.
     return {
         "id": e.id, "model_name": e.model_name, "field_agent_id": e.field_agent_id,

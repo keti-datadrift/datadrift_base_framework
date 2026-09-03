@@ -1,4 +1,4 @@
-"""One-off generator for the reference-engine demo fixture (Round 37).
+"""One-off generator for the reference-engine demo fixture.
 
 Run ONCE, from anywhere (paths resolve relative to this file):
 

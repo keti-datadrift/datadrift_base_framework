@@ -79,7 +79,7 @@ class DriftDecisionEngine:
         """Evaluate a single drift report and return the recommended action.
 
         Prefer `drift_corroboration_service.evaluate_corroborated()` over
-        calling this directly (Round 36) -- it wraps this same result with
+        calling this directly -- it wraps this same result with
         an event-based corroboration check before any caller acts on it.
         """
         severity = report.severity or "low"

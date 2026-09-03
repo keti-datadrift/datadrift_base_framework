@@ -23,7 +23,7 @@ RUN cd /build/ddoc/plugins/ddoc-plugin-vision && \
 RUN cd /build/ddoc/plugins/ddoc-plugin-yolo && \
     python -m build --wheel --outdir /build/wheels
 
-# ddoc-plugin-reference-engine wheel 생성 (Round 34/37 — /reference-engine/demo가 필요로 함)
+# ddoc-plugin-reference-engine wheel 생성 (/reference-engine/demo가 필요로 함)
 RUN cd /build/ddoc/plugins/ddoc-plugin-reference-engine && \
     python -m build --wheel --outdir /build/wheels
 

@@ -1,4 +1,4 @@
-"""DVC service — Phase 4 (Round-2 Orchestrator Pivot).
+"""DVC service — Phase 4 (Orchestrator Pivot).
 
 Wraps `dvc` CLI commands for the backend. Pre-Phase 4 this module only
 exposed ``dvc add``; Phase 4 expands it to ``push`` / ``pull`` /

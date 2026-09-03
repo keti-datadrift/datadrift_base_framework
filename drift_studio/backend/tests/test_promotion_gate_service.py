@@ -1,4 +1,4 @@
-"""Champion/challenger promotion gate (Round 35, drift_tool_analysis.md
+"""Champion/challenger promotion gate (drift_tool_analysis.md
 5부/12부). Formalizes the ad-hoc verification run during implementation.
 """
 from app.models import TrainingJob

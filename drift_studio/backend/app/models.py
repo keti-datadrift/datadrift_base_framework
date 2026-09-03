@@ -158,7 +158,7 @@ class ModelPromotion(Base):
 
 
 # ── Drift Intervention Events (DriftDecisionEngine 보정, context_workplace/
-# drift_tool_analysis.md 3부·12부, Round 36) ────────────────────────────
+# drift_tool_analysis.md 3부·12부) ────────────────────────────
 #
 # DriftDecisionEngine은 필드 에이전트가 자체 보고한 severity 문자열을
 # 검증 없이 그대로 신뢰한다 — ModelPromotion이 고친 gate_passed 블라인드 신뢰

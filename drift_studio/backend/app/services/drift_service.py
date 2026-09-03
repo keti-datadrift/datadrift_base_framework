@@ -9,7 +9,7 @@ flag flips to default-on.
 Set ``BACKEND_USE_DDOC_CLI=true`` in the backend env to route ``/drift``
 through ``ddoc analyze drift --data-path-ref ... --data-path-cur ...
 --json`` instead of ``run_drift`` here. See
-``_specs/architecture_consolidation.md`` Round-2 for the rationale.
+``_specs/architecture_consolidation.md`` for the rationale.
 """
 import os
 import json

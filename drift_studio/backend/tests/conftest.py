@@ -2,7 +2,7 @@
 anywhere under drift_studio/backend/ before this file -- the extensive
 test_server*.py/test_plugin_*.py suite lives under drift_studio/ddoc/tests/
 and covers the CLI, not this FastAPI app). This conftest is scoped to what
-Round 35 (promotion gate) needs: an isolated in-memory DB per test, not a
+the promotion gate tests need: an isolated in-memory DB per test, not a
 full app fixture.
 """
 import os

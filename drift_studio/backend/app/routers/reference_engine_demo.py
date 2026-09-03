@@ -1,8 +1,8 @@
-"""Reference-engine ladder demo (Round 37).
+"""Reference-engine ladder demo.
 
-Standalone, additive proof-of-life for ddoc-plugin-reference-engine
-(Round 34) -- the plugin has its own pytest suite and was CLI-smoke-
-tested manually, but until this router nothing in drift_studio
+Standalone, additive proof-of-life for ddoc-plugin-reference-engine --
+the plugin has its own pytest suite and was CLI-smoke-tested manually,
+but until this router nothing in drift_studio
 backend/frontend ever invoked --detector reference_engine, and there
 was no UI showing its output.
 

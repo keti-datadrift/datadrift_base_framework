@@ -1,4 +1,4 @@
-"""DriftDecisionEngine 이벤트 보정 레이어 (Round 36, drift_tool_analysis.md
+"""DriftDecisionEngine 이벤트 보정 레이어 (drift_tool_analysis.md
 3부/12부). promotion_gate_service의 자체보고-블라인드-신뢰-금지 원칙을
 파이프라인 반대쪽 끝(드리프트 판정 자체)에 적용한 것을 검증한다.
 """

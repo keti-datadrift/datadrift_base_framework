@@ -2,7 +2,7 @@
 
 When DD_AUTO_TRIGGER=true, incoming drift reports are automatically:
 1. Evaluated by DriftDecisionEngine, then corroborated against known
-   intervention events (drift_corroboration_service, Round 36)
+   intervention events (drift_corroboration_service)
 2. If action=retrain → training dispatched to trainer agent
 3. On training completion → model deployed to field agent
 
@@ -11,7 +11,7 @@ This is the "Stage 3.5" self-evolving loop.
 Safety:
 - Only triggers on medium (repeated) or high severity
 - A confirmed, overlapping intervention event downgrades retrain to alert
-  instead of triggering blindly (Round 36)
+  instead of triggering blindly
 - Quality gate must pass on trainer side
 - Field agent can reject deployment (DD_AUTO_ACCEPT_MODELS)
 - All actions are logged in TrainingJob and FieldDriftReport
@@ -54,7 +54,7 @@ def on_drift_report_received(db: Session, report: FieldDriftReport) -> dict:
     if not is_auto_trigger_enabled():
         return {"auto_trigger": False, "action": "manual_review_required"}
 
-    # Step 1: Evaluate (+ event-based corroboration, Round 36)
+    # Step 1: Evaluate (+ event-based corroboration)
     decision = drift_corroboration_service.evaluate_corroborated(db, report)
     logger.info(
         "[AutoLoop] Report %s: severity=%s → action=%s",

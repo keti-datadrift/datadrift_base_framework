@@ -1,8 +1,8 @@
-"""Reference-engine ladder demo router (Round 37). No DB dependency --
+"""Reference-engine ladder demo router. No DB dependency --
 mounts just this router on a throwaway FastAPI() instance rather than
 importing app.main, which pulls in every other router's (heavier) deps
 at module load time (sqlalchemy/torch/etc -- the same friction hit
-during Round 36's manual HTTP smoke test). Mock target is
+during this endpoint's manual HTTP smoke test). Mock target is
 app.routers.reference_engine_demo.run_ddoc (the name copied into this
 module's namespace via `from ... import run_ddoc`), not
 app.services.ddoc_runner.run_ddoc -- patching the source module is a

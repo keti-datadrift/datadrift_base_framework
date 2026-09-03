@@ -1,4 +1,4 @@
-"""Drift Intervention Events API (Round 36).
+"""Drift Intervention Events API.
 
 사람이 "이미 알려진 의도적/일시적 변화"를 등록/조회하는 엔드포인트.
 drift_corroboration_service가 이 이벤트들을 읽어 DriftDecisionEngine의

@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# Phase 6 (Round-2 Orchestrator Pivot) — surface DeprecationWarning from
+# Phase 6 (Orchestrator Pivot) — surface DeprecationWarning from
 # legacy services (drift_service / eda_service module-load warnings).
 # Default Python filter hides them; we explicitly enable so the migration
 # nudge appears once in container logs.
@@ -47,11 +47,11 @@ app.include_router(field_agents.router)
 # ── Training Orchestration (Stage 2) ─────────────────────
 app.include_router(training.router)
 
-# ── Drift Intervention Events (Round 36 — DriftDecisionEngine 보정) ────
+# ── Drift Intervention Events (DriftDecisionEngine 보정) ────
 app.include_router(drift_events.router)
 
-# ── Reference-Engine Ladder Demo (Round 37 — Round 34 플러그인 proof-of-life,
-#    고정 토이 픽스처, DB 없음) ─────────────────────────────
+# ── Reference-Engine Ladder Demo (ddoc-plugin-reference-engine 플러그인
+#    proof-of-life, 고정 토이 픽스처, DB 없음) ─────────────────────────────
 app.include_router(reference_engine_demo.router)
 
 # ── Model Deployment (Stage 3) ───────────────────────────
@@ -132,9 +132,9 @@ def healthz():
     ``legacy_calls_*`` over a release window. Phase 6 of the
     orchestrator pivot — see ``_specs/ddoc_orchestrator_pattern.md``.
 
-    Round-10 — surfaces ``warnings`` when the legacy in-process path
-    is still being exercised, so monitoring/health-checks can flag
-    deployments that haven't yet flipped to CLI orchestrator mode.
+    Surfaces ``warnings`` when the legacy in-process path is still
+    being exercised, so monitoring/health-checks can flag deployments
+    that haven't yet flipped to CLI orchestrator mode.
     """
     try:
         from .services.ddoc_runner import get_counters
