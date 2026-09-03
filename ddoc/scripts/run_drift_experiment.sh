@@ -5,7 +5,7 @@
 # 이 스크립트는 드리프트 점수와 모델 성능 간 상관관계를 검증하는
 # 전체 실험 파이프라인을 실행합니다.
 #
-# Round-5 update — v1 명령어를 v2 로 마이그레이션:
+# v1 명령어를 v2 로 마이그레이션:
 #   `ddoc drift-compare`  → `ddoc analyze drift`
 #   `ddoc train`          → `ddoc exp train`     ([exp] extras 필요)
 #

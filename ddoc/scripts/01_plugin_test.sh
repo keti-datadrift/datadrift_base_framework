@@ -1,4 +1,4 @@
-# Quick smoke for the plugin subsystem (Round-5 update — v1 names removed).
+# Quick smoke for the plugin subsystem (v1 names removed).
 # These commands are safe to copy-paste line-by-line.
 
 # 도움말

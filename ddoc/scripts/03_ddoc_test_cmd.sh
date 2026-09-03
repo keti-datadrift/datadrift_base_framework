@@ -1,4 +1,4 @@
-# Documentation snippets for `ddoc exp` (Round-5 conversion).
+# Documentation snippets for `ddoc exp`.
 # These are NOT meant to be executed as-is — the original file used
 # leading `$` prompts which bash evaluated as variable expansions and
 # silently truncated the lines. Kept as commented examples.

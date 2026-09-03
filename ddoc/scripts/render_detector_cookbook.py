@@ -1,4 +1,4 @@
-"""Round 15 — auto-render detector cookbook scores.
+"""Auto-render detector cookbook scores.
 
 Generates a Markdown table of `overall_score` per `--detector` value
 on the canonical shifted demo data for both `categorical` and

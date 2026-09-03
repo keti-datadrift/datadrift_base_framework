@@ -23,7 +23,7 @@ ML 모델의 건강 상태를 일관되게 점검합니다.
 # 가벼운 코어 — init / add / snapshot / ingest / analyze (path mode)
 pip install ddoc
 
-# Use-case 별 extras (Round-2 정리, 2026-05-07)
+# Use-case 별 extras (2026-05-07 정리)
 pip install ddoc[ingest]        # parquet writer (pyarrow)
 pip install ddoc[exp]           # exp train / eval / best (mlflow)
 pip install ddoc[orchestrator]  # backend subprocess orchestrator alias
@@ -183,7 +183,7 @@ ddoc analyze drift baseline production
 
 ### Multi-site / 사이트-간 통합 (`ingest` + DVC)
 
-Round-2 (2026-05-07) 부터 ddoc 는 **다른 사이트 / 다른 시스템에서 떨군
+2026-05-07 부터 ddoc 는 **다른 사이트 / 다른 시스템에서 떨군
 envelope JSON** 을 직접 받아 분석에 쓸 수 있습니다.
 
 **예시 — 현장 앱의 audit export 를 ddoc 로 끌어오기:**
@@ -257,7 +257,7 @@ frozen dataclass:
 ### Backend orchestrator 와의 관계
 
 `drift_studio/backend/` 는 ddoc 를 *Python library* 로 import 하는 대신
-**subprocess 로 호출** 합니다 (Round-2 reframe). 환경변수
+**subprocess 로 호출** 합니다. 환경변수
 `BACKEND_USE_DDOC_CLI=true` 일 때 backend 의 `/drift`, `/eda` 엔드포인트
 가 `ddoc analyze drift|eda --json` 을 fork 합니다.
 

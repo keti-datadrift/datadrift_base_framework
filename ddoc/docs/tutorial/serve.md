@@ -1,6 +1,6 @@
 # `ddoc serve` — REST facade in 2 minutes
 
-Round-14 의 `ddoc serve` 명령어로 ddoc CLI 의 모든 기능을 HTTP 로
+`ddoc serve` 명령어로 ddoc CLI 의 모든 기능을 HTTP 로
 호출할 수 있습니다. curl, scripts, 외부 시스템(형제 앱, 다른
 사이트), 또는 browser 의 Swagger UI 에서 즉시 사용 가능.
 
@@ -155,7 +155,7 @@ curl -H 'X-API-Key: mysecret' http://server.local:8765/plugins
 같은 머신에서 둘 다 실행 가능 (다른 포트). 같은 ddoc CLI 를 공유하므로
 결과는 byte-for-byte 동일.
 
-## Browser GUI (Round 15)
+## Browser GUI
 
 `ddoc serve` 가 띄운 그 서버의 루트(`/`) 에 vanilla HTML/JS GUI 가
 같이 service 됩니다. 별도 npm / 빌드 단계 없이 wheel 안에 그대로
@@ -215,7 +215,7 @@ ddoc serve         # http://127.0.0.1:8765
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-### Round-16 추가
+### 추가된 기능
 
 - **Result viz** — drift / EDA envelope 이 도착하면 raw JSON 이 아니라
   modality 카드 (overall_score, status, attribute drift bars) 형태로
@@ -227,11 +227,11 @@ ddoc serve         # http://127.0.0.1:8765
 - **한국어 i18n** — 우측 상단 토글 (또는 `?lang=ko` 쿼리). localStorage
   에 캐싱. CLI 옵션명은 (CLI 와 1대1 매핑이라) 영문 유지.
 
-### Round-17+ 후속
+### 후속
 
 - modality 별 결과 시각화 심화 (vision: 썸네일, text: 단어 통계,
   audio: 파형, timeseries: 라인 차트 — 차트 라이브러리 도입 검토)
-- GUI 에서 직접 recipe 작성 / 실행 (Round 16 의 `ddoc recipe` 와 결합)
+- GUI 에서 직접 recipe 작성 / 실행 (`ddoc recipe` 와 결합)
 - vis plugin 의 DVC-centric tab 점진 이관
 
 브라우저 우측 위 `Swagger /docs` 링크는 자동 생성된 OpenAPI 문서로

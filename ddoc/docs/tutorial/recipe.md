@@ -1,6 +1,6 @@
 # `ddoc recipe` — multi-step workflows in one YAML
 
-Round-16 — chain ddoc 의 여러 명령어를 YAML 한 파일로 묶어 한 번에
+chain ddoc 의 여러 명령어를 YAML 한 파일로 묶어 한 번에
 실행. CI / 스케줄 작업 / "이 4 단계 항상 같이 돌림" 워크플로의 단일
 입력. gpu-tunnel `recipes/` 패턴 참조.
 
@@ -127,11 +127,11 @@ with: { out: "${vars.x}", scenario: shifted }
 ## REST API 와의 관계
 
 레시피는 CLI 우선 — `ddoc recipe run` 이 메인 path. `ddoc serve` 의
-신규 GUI 안에서 한 번에 실행하는 multi-step 통합은 Round-17+ 후속.
+신규 GUI 안에서 한 번에 실행하는 multi-step 통합은 아직 후속 과제로 남아있음.
 이미 GUI 의 result viz 패널은 `{status, recipe, steps: [...]}` 형태의
 envelope 을 카드 + 단계 목록으로 표시.
 
-## REST endpoints (Round 17)
+## REST endpoints
 
 `ddoc serve` 띄우면 동일한 동작이 HTTP 로 노출됨:
 
@@ -159,7 +159,7 @@ curl -N -X POST http://localhost:8765/recipe/run/stream \
   -d '{"path": "recipes/timeseries_smoke.yaml"}'
 ```
 
-## Conditional step — `when:` (Round 17)
+## Conditional step — `when:`
 
 각 step 에 optional `when:` 표현식을 붙여 조건부 실행:
 
@@ -180,7 +180,7 @@ null), 비교 (`==`, `!=`, `<`, `<=`, `>`, `>=`), 불 연산 (`and`, `or`,
 `not`), 단항 (+/-), 괄호만 허용. `Name` / `Call` / `Attribute` 같은
 임의 평가는 거부 (보안).
 
-## GUI Recipe tab (Round 17)
+## GUI Recipe tab
 
 `ddoc serve` 의 7번째 탭 `Recipe` 에서 :
 * YAML 텍스트 편집 (default 로 샘플 시나리오 포함)
@@ -188,10 +188,10 @@ null), 비교 (`==`, `!=`, `<`, `<=`, `>`, `>=`), 불 연산 (`and`, `or`,
 * `dry-run`, `validate only`, `Use streaming` 토글
 * SSE 모드 시 step 별 chip (`gen_pair (examples.generate) — ok`,
   `report_md (report.render) — skip·when`) 누적
-* 결과 패널이 recipe envelope 을 카드로 시각화 (Round 16 의 viz 와
+* 결과 패널이 recipe envelope 을 카드로 시각화 (기존 result viz 와
   연결)
 
-## Parallel block — `parallel:` (Round 18)
+## Parallel block — `parallel:`
 
 독립 step 들을 동시 실행:
 
@@ -222,7 +222,7 @@ steps:
   envelope 이 결과의 `error` 필드로 bubble.
 * `dry_run` 도 parallel 그대로 처리 (substitution 만 해소된 argv 출력).
 
-## Library (Round 19) — `/recipes` 엔드포인트
+## Library — `/recipes` 엔드포인트
 
 `ddoc serve` 가 디렉터리의 YAML 들을 카탈로그로 노출:
 
@@ -245,7 +245,7 @@ curl -s localhost:8765/recipes/timeseries_smoke | jq
 URL slug 는 파일 stem (`timeseries_smoke.yaml` → `/recipes/timeseries_smoke`).
 recipe 의 `name:` 필드는 `display_name` 으로 별도 보존.
 
-## Library write + versioning (Round 20)
+## Library write + versioning
 
 라이브러리는 기본은 read-only. `DDOC_RECIPES_WRITE=1` 환경변수가
 설정된 경우만 write 모드 활성화 — 검증 통과 후 atomic 으로 저장하고,
@@ -282,10 +282,10 @@ curl -s http://localhost:8765/recipes/demo/versions/20260508T234810Z | jq -r .ya
   "validation_failed", issues:[...]}`.
 * archive 디렉터리 (`.history/`) 는 listing API 에서 노출되지 않음 —
   hidden prefix 로 스킵.
-* git 백엔드 versioning 은 별도 deploy 옵션 (현재 라운드는 plain
+* git 백엔드 versioning 은 별도 deploy 옵션 (현재는 plain
   파일).
 
-## GUI Recipe library dropdown (Round 20)
+## GUI Recipe library dropdown
 
 `ddoc serve` 의 Recipe 탭에 **Load from library** dropdown 추가:
 
@@ -296,11 +296,11 @@ curl -s http://localhost:8765/recipes/demo/versions/20260508T234810Z | jq -r .ya
   현재 textarea 내용을 PUT 으로 저장.
 * 저장 성공 시 dropdown 을 자동으로 reload.
 
-## CRUD 마무리: delete / restore / diff (Round 21)
+## CRUD 마무리: delete / restore / diff
 
 write 모드에서 라이브러리 풀-CRUD 를 노출. 모든 destructive 동작은
 삭제/덮기 *직전* 의 콘텐츠를 `.history/<name>/<UTC ts>.yaml` 로 자동
-archive — Round 20 의 versioning 위에서 reversibility 를 보장.
+archive — 기존 versioning 위에서 reversibility 를 보장.
 
 ```bash
 DDOC_RECIPES_DIR=/srv/ddoc/recipes DDOC_RECIPES_WRITE=1 ddoc serve
@@ -338,7 +338,7 @@ controls: **Save to library** / **Compare** (HEAD vs latest) /
 **Restore latest** / **Delete**. Restore 와 Delete 는 confirm
 dialog 로 한번 더 묻고, Delete 는 빨간 outline 으로 시각 구분.
 
-## Write-token gating (Round 22)
+## Write-token gating
 
 write 모드는 단순한 boolean toggle 외에, optional secret 으로
 한층 게이트할 수 있음. 이 패턴은 *anonymous read + token-gated
@@ -380,7 +380,7 @@ GUI 의 Recipe 탭에서는 서버가 토큰을 요구하면 actions row 아래�
 **write token** password-style 입력박스가 자동 노출되고, 입력값은
 `localStorage` (`ddoc_serve_write_token`) 에 캐시됨.
 
-## Diff UI rendering (Round 22)
+## Diff UI rendering
 
 `GET /recipes/{name}/diff` 응답을 result panel 이 unified-diff 카드로
 색상 강조 렌더:
@@ -394,7 +394,7 @@ GUI 의 Recipe 탭에서는 서버가 토큰을 요구하면 actions row 아래�
 snapshot 0 개 → "no snapshots yet" 메시지. 라이브러리 의존성 없는
 순수 vanilla.
 
-## Git-backed audit trail (Round 23)
+## Git-backed audit trail
 
 `.history/` archive 위에 *full git history* 까지 옵션으로 켤 수 있음.
 켜지면 매 PUT/DELETE/restore 후에 라이브러리 디렉터리에서 자동
@@ -427,7 +427,7 @@ ddoc serve
 GUI topbar 에 `git: ON` 배지가 표시 (bootstrap 에서 `/recipes` 한 번
 fetch).
 
-## Diff UI word-level highlighting (Round 23)
+## Diff UI word-level highlighting
 
 기존 line-level 색상 위에, 인접한 `-`/`+` 줄 쌍에 대해 토큰 단위
 LCS diff 가 추가로 실행되어 *바뀐 단어/공백 토큰만* `<mark>` 으로
@@ -437,9 +437,9 @@ LCS diff 가 추가로 실행되어 *바뀐 단어/공백 토큰만* `<mark>` �
 * `-` 줄 안의 제거된 단어 → 진빨강 mark
 * 컨텍스트 줄 / hunk header / file header 는 영향 없음
 
-## Write-token rotation API (Round 24)
+## Write-token rotation API
 
-Round 22 의 단일 env-secret 위에 *multi-token store* 추가 — admin
+기존 단일 env-secret 위에 *multi-token store* 추가 — admin
 이 token 을 발급/취소(rotation)할 수 있고, 모든 secret 은 disk 에는
 SHA-256 해시로만 저장 (plaintext 는 발급 시 *한 번만* 응답).
 
@@ -476,7 +476,7 @@ curl -s -X DELETE -H "X-Recipes-Admin-Token: $ADMIN" \
   `/tokens` 엔드포인트는 `403 admin_disabled`. 즉 평소 ddoc serve
   띄움이 실수로 token CRUD 를 노출하지 않음.
 * **Validator 우선순위** — write 요청은 *env single-secret OR 토큰
-  스토어 활성 hash* 둘 중 하나에 매칭되면 통과 (Round 22 와 backward-
+  스토어 활성 hash* 둘 중 하나에 매칭되면 통과 (기존 방식과 backward-
   compatible).
 * **Sticky gate** — 한 번이라도 `POST /tokens` 가 호출되어 `.tokens.json`
   파일이 만들어지면, 모든 토큰을 취소해도 *anonymous write 로 돌아가지
@@ -488,7 +488,7 @@ curl -s -X DELETE -H "X-Recipes-Admin-Token: $ADMIN" \
   `X-Recipes-Admin-Token` 자동 첨부 → 브라우저 콘솔에서
   `await fetch('/tokens', ...)` 로도 admin 작업 가능.
 
-## 후속 (Round 25+)
+## 후속
 
 * `with` 안의 표현식 확장 (`${steps.x.json | length}` 같은 filter)
 * parallel + recipe library 의 multi-recipe orchestrator

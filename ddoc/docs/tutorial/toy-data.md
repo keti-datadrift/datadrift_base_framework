@@ -99,7 +99,7 @@ ddoc analyze drift --data-path-ref /tmp/cat/ref --data-path-cur /tmp/cat/cur \
 
 ## Tabular EDA report 렌더 (별도 path)
 
-`ddoc-plugin-tabular` (Round 27-B) 는 *drift 검출* 이 아니라 *EDA
+`ddoc-plugin-tabular` 는 *drift 검출* 이 아니라 *EDA
 envelope 의 PDF/HTML 렌더* 를 담당합니다. 이미 만들어진 envelope
 JSON (예: `drift_studio/backend` 가 emit 하는 EDA dict) 을 받아
 컬럼별 summary / missing-rate 표를 포함한 보고서로 출력합니다.
@@ -128,7 +128,7 @@ ddoc report render -i /tmp/eda.json -o /tmp/iris.html --format html
 ddoc report render -i /tmp/eda.json -o /tmp/iris.pdf --format pdf
 ```
 
-ddoc serve 띄워둔 상태라면 inline-envelope mode 로도 가능 (Round 25):
+ddoc serve 띄워둔 상태라면 inline-envelope mode 로도 가능:
 
 ```bash
 curl -s -X POST http://localhost:8765/report/render \

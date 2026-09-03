@@ -1,7 +1,6 @@
 # `ddoc serve` — production deploy
 
-Round-18 — `ddoc serve` 를 실 운영에 띄우기 위한 패턴. dev 모드 (Round
-14) 의 `ddoc serve --port 8765` 위에 TLS / 리버스 프록시 / Docker /
+`ddoc serve` 를 실 운영에 띄우기 위한 패턴. dev 모드의 `ddoc serve --port 8765` 위에 TLS / 리버스 프록시 / Docker /
 systemd 를 더해서 그대로 ship 가능한 구성으로.
 
 기본 보안 모델:
@@ -266,7 +265,7 @@ sudo systemctl status ddoc-serve
 
 ---
 
-## 후속 (Round 19+)
+## 후속
 
 * OAuth / 사용자 계정 (per-user API key 가 아니라 SSO)
 * role-based access control (recipe 별 권한, plugin 별 권한)
