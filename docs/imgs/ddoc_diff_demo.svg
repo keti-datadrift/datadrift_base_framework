@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="SF Mono, Menlo, Consolas, monospace" font-size="14">
+  <!-- terminal window -->
+  <rect x="4" y="4" width="712" height="292" rx="12" fill="#1e2430"/>
+  <rect x="4" y="4" width="712" height="34" rx="12" fill="#2a3140"/>
+  <rect x="4" y="26" width="712" height="12" fill="#2a3140"/>
+  <circle cx="26" cy="21" r="6" fill="#ff5f57"/>
+  <circle cx="46" cy="21" r="6" fill="#febc2e"/>
+  <circle cx="66" cy="21" r="6" fill="#28c840"/>
+  <text x="360" y="26" fill="#8a93a5" font-size="12" text-anchor="middle">drift check — 10 seconds</text>
+
+  <!-- prompt + typed command -->
+  <text x="28" y="72" fill="#7ee787">$</text>
+  <text x="46" y="72" fill="#e6edf3">
+    <tspan opacity="0">ddoc<set attributeName="opacity" to="1" begin="0.5s"/></tspan>
+    <tspan opacity="0"> diff<set attributeName="opacity" to="1" begin="1.1s"/></tspan>
+    <tspan opacity="0"> shop_2024/<set attributeName="opacity" to="1" begin="1.8s"/></tspan>
+    <tspan opacity="0"> shop_2025/<set attributeName="opacity" to="1" begin="2.6s"/></tspan>
+  </text>
+  <!-- caret -->
+  <rect x="46" y="60" width="8" height="16" fill="#e6edf3">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="3.4"/>
+    <set attributeName="opacity" to="0" begin="3.4s"/>
+    <animate attributeName="x" values="46;46" begin="0s" dur="0.01s" fill="freeze"/>
+    <set attributeName="x" to="88" begin="0.5s"/>
+    <set attributeName="x" to="128" begin="1.1s"/>
+    <set attributeName="x" to="212" begin="1.8s"/>
+    <set attributeName="x" to="296" begin="2.6s"/>
+  </rect>
+
+  <!-- verdict -->
+  <g opacity="0">
+    <set attributeName="opacity" to="1" begin="3.8s"/>
+    <text x="28" y="112" fill="#ff7b72" font-weight="bold">⚠ DRIFT</text>
+    <text x="110" y="112" fill="#c9d1d9">— severity: high · score 0.311 (threshold 0.15)</text>
+  </g>
+  <g opacity="0">
+    <set attributeName="opacity" to="1" begin="4.6s"/>
+    <text x="46" y="138" fill="#8b949e">가장 변한 속성:</text>
+    <text x="158" y="138" fill="#e3b341">price 1.000</text>
+    <text x="252" y="138" fill="#e3b341">· channel 0.243</text>
+  </g>
+  <g opacity="0">
+    <set attributeName="opacity" to="1" begin="5.4s"/>
+    <text x="46" y="164" fill="#8b949e">⤷ 처방: 'price' 축의 최근 샘플을 재계측/재라벨 후보로 검토</text>
+  </g>
+  <g opacity="0">
+    <set attributeName="opacity" to="1" begin="6.0s"/>
+    <text x="46" y="190" fill="#8b949e">⤷ 소견서: --report note.html (판정 + 근거 분포 + 처방)</text>
+  </g>
+
+  <!-- exit code / CI line -->
+  <g opacity="0">
+    <set attributeName="opacity" to="1" begin="7.0s"/>
+    <text x="28" y="230" fill="#7ee787">$</text>
+    <text x="46" y="230" fill="#e6edf3">echo $?</text>
+    <text x="46" y="256" fill="#79c0ff">1</text>
+    <text x="70" y="256" fill="#8b949e">— exit code = 판정 (0 OK · 1 DRIFT · 2 BLIND) → CI 데이터 게이트로 그대로</text>
+  </g>
+</svg>

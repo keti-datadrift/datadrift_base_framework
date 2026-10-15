@@ -163,7 +163,8 @@ ddoc diff camA_ref/ camA_now/ --attr-threshold 0.3
 
 **옵션:** `--threshold`(전체 점수 기준, 기본 0.15) ·
 `--attr-threshold`(단일 속성 기준, 기본 0.25 — 평균에 묻힌 국소 드리프트 방지) ·
-`--detector` · `--json` · `--verbose`
+`--report note.html`(**소견서** — 판정+속성별 근거 분포+처방을 담은 자체완결
+1페이지 HTML, 의존성 0) · `--detector` · `--json` · `--verbose`
 
 ### `ddoc analyze eda`
 

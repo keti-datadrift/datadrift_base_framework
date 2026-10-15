@@ -1,0 +1,23 @@
+# Self-contained smoke: generate a shifted timeseries toy pair, then
+# run a drift check on it. No env vars needed.
+#
+#   ddoc recipe run recipes/timeseries_smoke.yaml --json
+name: timeseries_smoke
+description: Toy timeseries pair generation + drift check (no inputs required)
+vars:
+  out_root: /tmp/ddoc_ts_smoke
+steps:
+  - id: gen
+    run: examples.generate
+    with:
+      modality: timeseries
+      out: "${vars.out_root}"
+      scenario: shifted
+    out: "${vars.out_root}"
+
+  - id: drift
+    run: analyze.drift
+    with:
+      data_path_ref: "${vars.out_root}/ref"
+      data_path_cur: "${vars.out_root}/cur"
+      quiet: true

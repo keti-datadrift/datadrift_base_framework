@@ -1,0 +1,63 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # weasyprint (report backend) needs system pango/cairo at runtime
+      - name: System deps for report rendering
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf-2.0-0
+      - name: Install ddoc + light plugins
+        run: |
+          python -m pip install -q --upgrade pip
+          pip install -q -e drift_studio/ddoc
+          pip install -q -e drift_studio/ddoc/plugins/ddoc-plugin-categorical
+          pip install -q -e drift_studio/ddoc/plugins/ddoc-plugin-tabular
+          pip install -q pytest httpx2  # starlette TestClient dependency
+      - name: Core test set (diff / zoo / ingest / categorical / recipes)
+        working-directory: drift_studio/ddoc
+        run: |
+          pytest -q \
+            tests/test_diff_cli.py \
+            tests/test_zoo.py \
+            tests/test_ingest.py \
+            tests/test_plugin_categorical.py \
+            tests/test_examples_generate.py \
+            tests/test_recipe_catalog.py
+
+  # Dogfood: ddoc diff as a data gate in our own CI.
+  # exit code carries the verdict — 0 OK / 1 DRIFT / 2 BLIND.
+  drift-gate-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q -e drift_studio/ddoc
+      - name: Zoo regime_shift must gate (expect DRIFT → exit 1)
+        working-directory: drift_studio/ddoc/zoo/regime_shift
+        run: |
+          python make.py
+          if ddoc diff data/ref.csv data/cur.csv; then
+            echo "::error::expected DRIFT (exit 1) but got OK"; exit 1
+          else
+            code=$?
+            [ "$code" -eq 1 ] || { echo "::error::expected exit 1, got $code"; exit 1; }
+          fi
+      - name: Zoo rhythm_not_drift must pass (expect OK → exit 0)
+        working-directory: drift_studio/ddoc/zoo/rhythm_not_drift
+        run: |
+          python make.py
+          ddoc diff data/ref.csv data/cur.csv

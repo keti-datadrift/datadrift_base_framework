@@ -49,6 +49,8 @@ pip install ddoc[all]           # ⚠️ all 의 plugin file:// 경로는 개발
 | `ddoc vis` (Streamlit GUI) | ✓ | | | | ✓ |
 | `drift_studio` backend subprocess orchestrator | ✓ | | | | |
 
+![ddoc diff demo](../../docs/imgs/ddoc_diff_demo.svg)
+
 ### 10 초 quick start — `ddoc diff`
 
 가지고 있는 데이터 두 벌을 그대로 가리키면 됩니다. 설정 없음:
@@ -68,8 +70,12 @@ ddoc diff baseline_data/ todays_data/
 - **exit code = 판정** (`0`/`1`/`2`) → CI 에서 그대로 데이터 게이트로
 
 ```bash
-ddoc diff jan.csv aug.csv --json     # 스크립트/CI: JSON 한 객체
+ddoc diff jan.csv aug.csv --json                # 스크립트/CI: JSON 한 객체
+ddoc diff jan.csv aug.csv --report note.html    # 소견서: 판정+근거 분포+처방 1페이지 HTML
 ```
+
+고전 드리프트 패턴 갤러리(레짐 전환·점진 열화·주기 함정)는
+[Drift Zoo](zoo/) — 케이스마다 한 명령 재현 + 회귀 테스트.
 
 toy 데이터로 바로 체험하려면:
 

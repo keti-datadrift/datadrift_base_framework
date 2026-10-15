@@ -136,7 +136,9 @@ def csv_diff(ref_files: List[str], cur_files: List[str], bins: int = 20) -> Dict
 
     Numeric columns → shared-range histogram JS divergence;
     non-numeric columns → value-count JS divergence.
-    ``overall_score`` = mean over shared columns.
+    ``overall_score`` = mean over shared columns. The per-column
+    ref/cur distributions ride along under ``distributions`` so the
+    consultation report can show *evidence*, not just scores.
     """
     import numpy as np
     import pandas as pd
@@ -148,7 +150,11 @@ def csv_diff(ref_files: List[str], cur_files: List[str], bins: int = 20) -> Dict
             f"no shared columns between ref {list(ref.columns)} and cur {list(cur.columns)}"
         )
 
+    def _fmt_edge(x: float) -> str:
+        return f"{x:.4g}"
+
     attribute_drifts: Dict[str, float] = {}
+    distributions: Dict[str, Dict[str, Dict[str, float]]] = {}
     for col in shared:
         r, c = ref[col].dropna(), cur[col].dropna()
         if r.empty and c.empty:
@@ -165,11 +171,25 @@ def csv_diff(ref_files: List[str], cur_files: List[str], bins: int = 20) -> Dict
             attribute_drifts[col] = _js_divergence(
                 dict(enumerate(rh.tolist())), dict(enumerate(ch.tolist()))
             )
+            labels = [f"{_fmt_edge(edges[i])}–{_fmt_edge(edges[i+1])}"
+                      for i in range(len(edges) - 1)]
+            distributions[col] = {
+                "ref": {labels[i]: int(rh[i]) for i in range(len(labels)) if rh[i] or ch[i]},
+                "cur": {labels[i]: int(ch[i]) for i in range(len(labels)) if rh[i] or ch[i]},
+            }
         else:
-            attribute_drifts[col] = _js_divergence(
-                r.astype(str).value_counts().to_dict(),
-                c.astype(str).value_counts().to_dict(),
-            )
+            rvc = r.astype(str).value_counts()
+            cvc = c.astype(str).value_counts()
+            attribute_drifts[col] = _js_divergence(rvc.to_dict(), cvc.to_dict())
+            # Evidence: top categories by combined mass + an "(other)" bucket.
+            top = list((rvc.add(cvc, fill_value=0)).sort_values(ascending=False).index[:8])
+            def _bucket(vc) -> Dict[str, float]:
+                d = {k: float(vc.get(k, 0)) for k in top}
+                other = float(vc.sum() - sum(d.values()))
+                if other > 0:
+                    d["(other)"] = other
+                return d
+            distributions[col] = {"ref": _bucket(rvc), "cur": _bucket(cvc)}
 
     overall = sum(attribute_drifts.values()) / len(attribute_drifts) if attribute_drifts else 0.0
     return {
@@ -178,6 +198,7 @@ def csv_diff(ref_files: List[str], cur_files: List[str], bins: int = 20) -> Dict
         "detector": "builtin:csv_js",
         "overall_score": round(overall, 4),
         "attribute_drifts": {k: round(v, 4) for k, v in attribute_drifts.items()},
+        "distributions": distributions,
         "rows": {"ref": int(len(ref)), "cur": int(len(cur))},
         "columns_compared": shared,
     }
@@ -238,7 +259,28 @@ def _print_human(payload: Dict[str, Any]) -> None:
         rprint(f"   ⤷ {hint}")
 
 
-def _finish(payload: Dict[str, Any], *, json_out: bool) -> None:
+def _write_report(payload: Dict[str, Any], report: Optional[Path],
+                  distributions: Optional[Dict[str, Any]] = None) -> None:
+    """Render the consultation note when ``--report`` was given.
+    Best-effort: a report failure must not change the verdict/exit."""
+    if report is None:
+        return
+    try:
+        from .diff_report import build_consultation_html
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(
+            build_consultation_html(payload, distributions), encoding="utf-8",
+        )
+        payload["report_path"] = str(report)
+        payload.setdefault("hints", []).insert(0, f"소견서: {report}")
+    except Exception as e:  # noqa: BLE001
+        payload["report_error"] = str(e)
+
+
+def _finish(payload: Dict[str, Any], *, json_out: bool,
+            report: Optional[Path] = None,
+            distributions: Optional[Dict[str, Any]] = None) -> None:
+    _write_report(payload, report, distributions)
     if json_out:
         _emit_json(payload)
     else:
@@ -248,13 +290,41 @@ def _finish(payload: Dict[str, Any], *, json_out: bool) -> None:
 
 
 def _blind(reason: str, *, ref: str, cur: str, json_out: bool,
-           modality: Optional[str] = None, hints: Optional[List[str]] = None) -> None:
+           modality: Optional[str] = None, hints: Optional[List[str]] = None,
+           report: Optional[Path] = None) -> None:
     _finish({
         "verdict": "BLIND", "severity": "unknown", "overall_score": None,
         "modality": modality, "engine": None, "detector": None,
         "ref": ref, "cur": cur, "reason": reason, "hints": hints or [],
         "top_attributes": [], "threshold": None,
-    }, json_out=json_out)
+    }, json_out=json_out, report=report)
+
+
+def _collect_evidence(kind: str, ref: Path, cur: Path,
+                      result: Dict[str, Any]) -> Dict[str, Any]:
+    """Per-attribute ref/cur distributions for the evidence section.
+
+    * builtin CSV results carry ``distributions`` already;
+    * categorical marker layouts: read both ``distributions.json``;
+    * other engines: empty (score bars only in the report).
+    """
+    if isinstance(result.get("distributions"), dict):
+        return result["distributions"]
+    if kind == "categorical":
+        try:
+            rd = json.loads((ref / "distributions.json").read_text(encoding="utf-8"))
+            cd = json.loads((cur / "distributions.json").read_text(encoding="utf-8"))
+            out: Dict[str, Any] = {}
+            for attr, rv in rd.items():
+                cv = cd.get(attr)
+                if (isinstance(rv, dict) and isinstance(cv, dict)
+                        and all(isinstance(x, (int, float)) for x in rv.values())
+                        and all(isinstance(x, (int, float)) for x in cv.values())):
+                    out[attr] = {"ref": rv, "cur": cv}
+            return out
+        except Exception:  # noqa: BLE001 — evidence is optional
+            return {}
+    return {}
 
 
 # ── Command ───────────────────────────────────────────────────────────
@@ -282,6 +352,11 @@ def diff_command(
     verbose: bool = typer.Option(
         False, "--verbose", help="Show plugin diagnostics instead of silencing them.",
     ),
+    report: Optional[Path] = typer.Option(
+        None, "--report",
+        help="Write a self-contained HTML consultation note (verdict + "
+             "evidence + prescription) to this path.",
+    ),
 ):
     """One-line drift verdict between REF and CUR.
 
@@ -296,7 +371,7 @@ def diff_command(
     for label, p in (("ref", ref), ("cur", cur)):
         if not p.exists():
             _blind(f"{label} 경로가 존재하지 않습니다: {p}",
-                   ref=ref_s, cur=cur_s, json_out=json_out)
+                   ref=ref_s, cur=cur_s, json_out=json_out, report=report)
 
     ref_kind, ref_detail = sniff_modality(ref)
     cur_kind, cur_detail = sniff_modality(cur)
@@ -336,7 +411,7 @@ def diff_command(
             engine = "builtin"
         except Exception as e:  # noqa: BLE001
             _blind(f"CSV 비교 실패: {e}", ref=ref_s, cur=cur_s,
-                   json_out=json_out, modality="tabular")
+                   json_out=json_out, modality="tabular", report=report)
 
     # 3) Still nothing → honest BLIND with a prescription.
     if result is None:
@@ -350,6 +425,7 @@ def diff_command(
         _blind(
             f"감지된 입력 종류 '{kind}' 를 처리할 엔진이 응답하지 않았습니다",
             ref=ref_s, cur=cur_s, json_out=json_out, modality=kind, hints=hints,
+            report=report,
         )
 
     verdict, severity, top = compute_verdict(
@@ -359,8 +435,10 @@ def diff_command(
     if verdict == "DRIFT":
         worst = top[0][0] if top else "?"
         hints.append(f"처방: '{worst}' 축의 최근 샘플을 재계측/재라벨 후보로 검토")
-        hints.append("소견서: ddoc report render 로 근거 리포트 생성 (--json 출력 저장 후 입력으로)")
+        if report is None:
+            hints.append("소견서: --report note.html 로 근거 포함 리포트 생성")
 
+    evidence = _collect_evidence(kind, ref, cur, result)
     _finish({
         "verdict": verdict,
         "severity": severity,
@@ -374,4 +452,4 @@ def diff_command(
         "ref": ref_s, "cur": cur_s,
         "hints": hints,
         "raw": result,
-    }, json_out=json_out)
+    }, json_out=json_out, report=report, distributions=evidence)

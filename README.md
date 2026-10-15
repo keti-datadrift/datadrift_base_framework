@@ -3,7 +3,12 @@
 **Drift Studio / ddoc** — a plugin-based framework for detecting, diagnosing,
 and acting on data drift in ML systems.
 
-![About](docs/imgs/dd01_about.png)
+![ddoc diff demo](docs/imgs/ddoc_diff_demo.svg)
+
+```bash
+pip install -e drift_studio/ddoc
+ddoc diff baseline_data/ todays_data/     # OK / DRIFT / BLIND — exit code = verdict
+```
 
 ## What is in this repository
 
@@ -68,6 +73,28 @@ docker-compose up -d
 
 Each plugin is an independent pip package registered through the
 `ddoc` entry-point group.
+
+## Use it as a CI data gate
+
+`ddoc diff`'s exit code carries the verdict (0 = OK, 1 = DRIFT,
+2 = BLIND), so it drops straight into CI — a linter for data:
+
+```yaml
+- uses: againeureka/datadrift_base_framework@main
+  with:
+    ref: data/baseline
+    cur: data/incoming
+    report: drift_note.html   # self-contained evidence report
+- uses: actions/upload-artifact@v4
+  if: failure()
+  with: { name: drift-note, path: drift_note.html }
+```
+
+Our own [CI](.github/workflows/ci.yml) dogfoods this on the
+[Drift Zoo](drift_studio/ddoc/zoo/) — a gallery of classic drift
+patterns (regime shift, creeping degradation, and a rhythm-not-drift
+trap case that must stay **OK**), each reproducible in one command and
+pinned as a regression test.
 
 ## Screenshots
 
