@@ -1,1 +1,0 @@
-grep -r "ddoc_plugin_ks" .
