@@ -121,6 +121,15 @@ all = [
 [project.scripts]
 ddoc = "ddoc.cli.main:app"
 
+[tool.pytest.ini_options]
+# Plugins/examples are separate installable packages, each with its own
+# tests/test_plugin.py — prepend-mode collection (the default) registers
+# bare "test_plugin" in sys.modules and collides across them the moment
+# pytest is invoked from the repo root instead of per-package. importlib
+# mode keys modules by file path instead, so no top-level rootdir
+# __init__.py convention is required anywhere in the tree.
+addopts = "--import-mode=importlib"
+
 [tool.setuptools]
 packages = {find = {where = ["."], include = ["ddoc*"]}}
 include-package-data = true  # ✅ 이 줄을 여기에 두세요 (boolean 값)
