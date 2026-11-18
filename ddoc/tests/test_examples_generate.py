@@ -90,18 +90,24 @@ def test_categorical_demo_e2e_via_cli_subprocess(tmp_path):
     `ddoc analyze drift --data-path-ref X/ref --data-path-cur X/cur --json`
     yields a categorical envelope with overall_score > 0."""
     import subprocess
-    cli = "ddoc"  # pytest runs inside .venv via 12_pytest.sh, so this resolves.
+    import sys
+    # Bind to the interpreter running the tests rather than looking up
+    # ``ddoc`` on PATH. The console script is not on PATH in every
+    # environment (a venv whose bin/ was never activated, CI shells);
+    # the previous form raised FileNotFoundError before reaching the
+    # skip below, so a packaging assumption surfaced as a test failure.
+    cli = [sys.executable, "-m", "ddoc.cli.main"]
     out = tmp_path / "demo"
     gen = subprocess.run(
-        [cli, "examples", "generate", "categorical",
+        [*cli, "examples", "generate", "categorical",
          "--out", str(out), "--scenario", "shifted"],
         capture_output=True, text=True, timeout=30,
     )
-    if gen.returncode != 0 or not (out / "ref" / "distributions.json").is_file():
-        pytest.skip(f"ddoc CLI not on PATH or failed: {gen.stderr[:200]}")
+    assert gen.returncode == 0, gen.stderr
+    assert (out / "ref" / "distributions.json").is_file(), gen.stdout
 
     drift = subprocess.run(
-        [cli, "analyze", "drift",
+        [*cli, "analyze", "drift",
          "--data-path-ref", str(out / "ref"),
          "--data-path-cur", str(out / "cur"),
          "--json", "--quiet"],
