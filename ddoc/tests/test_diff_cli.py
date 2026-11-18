@@ -220,3 +220,46 @@ def test_build_consultation_html_minimal():
         "raw": {"attribute_drifts": {"a": 0.01}}, "hints": [],
     })
     assert "<html>" in html_out and "OK" in html_out
+
+
+# ── plugin isolation ──────────────────────────────────────────────────
+
+
+def test_failing_plugin_does_not_silence_the_others():
+    """One plugin raising on an input it does not understand must not
+    hide the answer of another plugin that handled it."""
+    import pluggy
+
+    from ddoc.cli.commands.diff import _drift_detect_isolated
+    from ddoc.plugins import hookspecs
+
+    hookimpl = pluggy.HookimplMarker("ddoc")
+
+    class Broken:
+        @hookimpl
+        def drift_detect(self, data_path_ref, **_):
+            raise NotADirectoryError(data_path_ref)
+
+    class Declines:
+        @hookimpl
+        def drift_detect(self, **_):
+            return None
+
+    class Works:
+        @hookimpl
+        def drift_detect(self, **_):
+            return {"modality": "csv", "overall_score": 0.4}
+
+    pm = pluggy.PluginManager("ddoc")
+    pm.add_hookspecs(hookspecs)
+    for plugin in (Broken(), Declines(), Works()):
+        pm.register(plugin)
+
+    results = _drift_detect_isolated(
+        pm, verbose=False,
+        snapshot_id_ref="__path__", snapshot_id_cur="__path__",
+        data_path_ref="model.pth", data_path_cur="cur",
+        data_hash_ref="", data_hash_cur="",
+        detector="default", cfg={}, output_path="analysis/diff",
+    )
+    assert results == [{"modality": "csv", "overall_score": 0.4}]
