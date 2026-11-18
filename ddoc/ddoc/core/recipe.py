@@ -471,7 +471,7 @@ class Recipe:
         steps = data.get("steps") or []
         if not isinstance(steps, list) or not steps:
             raise RecipeError("recipe must have at least one step", code="bad_recipe")
-        # R22 — top-level ``required_plugins:`` field. Validation is
+        # Top-level ``required_plugins:`` field. Validation is
         # done lazily (against the actual entry-points) inside
         # ``check_plugin_requirements`` so loading stays cheap.
         req = data.get("required_plugins") or []
@@ -579,7 +579,7 @@ def execute_recipe(
             details={"issues": issues},
         )
 
-    # R22 — check required_plugins BEFORE any step runs so the
+    # Check required_plugins BEFORE any step runs so the
     # operator gets a focused install-this-plugin error rather than a
     # mid-pipeline failure with traceback.
     missing = recipe.check_plugin_requirements()

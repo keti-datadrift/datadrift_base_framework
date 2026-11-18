@@ -1,11 +1,11 @@
 """Drift analysis command.
 
-Two input modes (Phase 3 — orchestrator pivot):
+Two input modes:
 
 1. **Snapshot mode** (legacy / interactive): pass two snapshot IDs or
    aliases as positional arguments. The CLI resolves snapshots, loads
    the per-snapshot analysis cache, and feeds plugins.
-2. **Path mode** (Phase 3 / backend orchestrator): pass
+2. **Path mode** (for backend orchestrators): pass
    ``--data-path-ref`` and ``--data-path-cur`` to skip snapshot/cache
    resolution entirely. Plugins receive the paths directly. Used by the
    drift_studio backend when it subprocess-invokes ddoc instead of
@@ -138,9 +138,9 @@ def emit_progress(
     *,
     enabled: bool = False,
 ) -> None:
-    """Emit one NDJSON progress line on stderr (Phase 6 — orchestrator).
+    """Emit one NDJSON progress line on stderr for orchestrating callers.
 
-    Schema (per `_specs/ddoc_orchestrator_pattern.md`):
+    Schema:
         {"progress": 0.0..1.0, "stage": "<short id>", "message": "..."}
 
     Stderr is the channel because stdout is reserved for the final

@@ -100,7 +100,7 @@ def vis_run() -> Optional[Dict[str, Any]]:
     """Run monitors once or on schedule."""
 
 
-# --- Detector Preset Registry (Gap 5) ---
+# --- Detector Preset Registry ---
 
 
 @hookspec
@@ -108,7 +108,7 @@ def ddoc_supported_detectors() -> Optional[Dict[str, Any]]:
     """Plugin self-declares the detector strategies it supports.
 
     Closes the gap evidently.ai-style detector configurability covers
-    naturally (Gap 5 from ``_specs/embedding_drift_design.md``). Plugins
+    naturally. Plugins
     return:
 
         {

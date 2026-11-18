@@ -78,9 +78,9 @@ def _materialize_cfg(cfg: Dict[str, Any]) -> Iterator[Tuple[str, str]]:
 
     Supported cfg shapes:
       - dict-of-counts: ``baseline_categorical / current_categorical``
-        (R26-A `ddoc-plugin-categorical`)
+        (`ddoc-plugin-categorical`)
       - series-of-dists: ``baseline_categorical_series / current_categorical_series``
-        (R33 `ddoc-plugin-keti-temporal`)
+        (`ddoc-plugin-keti-temporal`)
     """
     base_cat = cfg.get("baseline_categorical")
     cur_cat = cfg.get("current_categorical")

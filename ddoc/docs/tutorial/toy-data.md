@@ -183,5 +183,5 @@ ddoc analyze drift --data-path-ref /tmp/sane/ref --data-path-cur /tmp/sane/cur \
 
 - snapshot mode 워크플로 (Git + DVC 통합): [snapshots](../guides/snapshots.md)
 - backend orchestrator 패턴 (`drift_studio` 가 ddoc CLI 를 subprocess
-  로 호출): [`_specs/ddoc_orchestrator_pattern.md`](../../../_specs/ddoc_orchestrator_pattern.md)
+  로 호출): `ddoc analyze drift --help` 의 path mode 설명
 - modality 별 plugin contract: 각 plugin 의 `README.md`

@@ -1,6 +1,6 @@
 """EDA analysis command.
 
-Three input modes (Phase 3 — orchestrator pivot):
+Three input modes:
 
 1. **Workspace** (default): no positional args, no ``--data-path`` → analyses
    the current workspace.

@@ -3,7 +3,7 @@
 This is the receiving side of the application → ddoc bridge. The CLI is
 intentionally thin — all parsing / writing logic lives in :mod:`ddoc.core.ingest_service`.
 
-Phase 4 adds a ``--dvc-pull`` flag that runs ``dvc pull`` against the
+A ``--dvc-pull`` flag that runs ``dvc pull`` against the
 source directory before scanning, so air-gapped sites can drop their
 envelopes into a DVC remote and let the receiving site pull them in one
 command.
@@ -78,7 +78,7 @@ def ingest_command(
     dvc_pull: bool = typer.Option(
         False,
         "--dvc-pull",
-        help="Run 'dvc pull <from-dir>' before scanning (Phase 4 — pulls "
+        help="Run 'dvc pull <from-dir>' before scanning (pulls "
              "envelope files from the configured DVC remote first).",
     ),
     json_out: bool = typer.Option(
@@ -105,7 +105,7 @@ def ingest_command(
         rprint(f"[red]error:[/red] --mode must be 'move' or 'delete', got {mode!r}")
         raise typer.Exit(code=2)
 
-    # Phase 4 — opportunistic DVC pull. If `dvc` is on PATH and the cwd
+    # Opportunistic DVC pull. If `dvc` is on PATH and the cwd
     # has a `.dvc/` directory, pull the target dir; otherwise warn and
     # carry on (the local from_dir might still have content).
     if dvc_pull:

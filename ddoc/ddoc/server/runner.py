@@ -1,7 +1,7 @@
 """Subprocess wrapper for ``ddoc serve`` to invoke the ddoc CLI.
 
 ddoc-self-contained mirror of ``drift_studio/backend/app/services/
-ddoc_runner.py`` (Phase 6). Living in the ddoc package
+ddoc_runner.py``. Living in the ddoc package
 itself so ``ddoc serve`` works without the drift_studio backend
 checked out. The two implementations are intentionally similar —
 they can converge later, but for now keeping them separate avoids

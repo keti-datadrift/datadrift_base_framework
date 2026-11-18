@@ -85,7 +85,7 @@ def _list_installed_plugins() -> list[tuple[str, str]]:
 
     Pure entry-point metadata scan — does NOT import plugin modules
     (so this stays cheap, matching ffmpeg's ``ffmpeg -version`` which
-    lists codecs without exercising them). R22 plugin hardening.
+    lists codecs without exercising them).
     """
     import importlib.metadata as _md
     rows: list[tuple[str, str]] = []
@@ -121,7 +121,7 @@ def print_meta_info(is_show_logo=True, full=False):
     if RELEASE_DATE:
         click.echo(f"📅 Release Date  : {RELEASE_DATE}")
 
-    # R22 — ffmpeg-style manifest. Always show hookspec version + a
+    # ffmpeg-style manifest. Always show hookspec version + a
     # one-line plugin summary so reproducibility is built into the
     # version banner. `--about` (full) expands to per-plugin versions.
     try:

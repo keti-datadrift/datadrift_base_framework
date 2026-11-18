@@ -49,8 +49,8 @@ class AnalyzeDriftRequest(BaseModel):
     # what HTTP clients used to do client-side into the server, so
     # cross-container HTTP works without shared volumes. Recognized
     # keys (delegated to whichever plugin claims `detector`):
-    #   baseline_categorical / current_categorical                (R26-A plugin)
-    #   baseline_categorical_series / current_categorical_series   (R33 plugin)
+    #   baseline_categorical / current_categorical                (categorical plugin)
+    #   baseline_categorical_series / current_categorical_series   (temporal plugin)
     cfg: Optional[Dict[str, Any]] = None
     # common
     detector: str = "default"
