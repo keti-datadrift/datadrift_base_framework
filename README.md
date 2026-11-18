@@ -6,16 +6,16 @@ and acting on data drift in ML systems.
 ![ddoc diff demo](docs/imgs/ddoc_diff_demo.svg)
 
 ```bash
-pip install -e drift_studio/ddoc
+pip install -e ddoc
 ddoc diff baseline_data/ todays_data/     # OK / DRIFT / BLIND — exit code = verdict
 ```
 
 ## What is in this repository
 
 ```
+ddoc/              # Core: the `ddoc` CLI / REST / GUI (pluggy hookspecs + YAML recipe DSL)
+plugins/           # Plugins, each an independent pip package (vision, text, timeseries, ...)
 drift_studio/
-├── ddoc/          # Core: the `ddoc` CLI / REST / GUI (pluggy hookspecs + YAML recipe DSL)
-│   └── plugins/   # In-tree plugins (vision, text, timeseries, audio, categorical, ...)
 ├── backend/       # Drift Studio server (FastAPI) — orchestrates ddoc runs, model registry,
 │                  # training dispatch, promotion gates
 ├── frontend/      # Drift Studio web UI (React 18 + Vite + Tailwind)
@@ -33,7 +33,7 @@ Three ways to use it:
 ## Core ideas
 
 - **The framework is light; plugins carry the weight.** `ddoc` core defines
-  [pluggy hookspecs](drift_studio/ddoc/ddoc/plugins/hookspecs.py)
+  [pluggy hookspecs](ddoc/ddoc/plugins/hookspecs.py)
   (`eda_run`, `drift_detect`, `retrain_run`, `report_render`, ...).
   Adding a new detector or trainer means writing a plugin — zero framework changes.
 - **Recipes.** A YAML DSL (`ddoc recipe run <file>`) chains fetch → analyze →
@@ -46,8 +46,7 @@ Three ways to use it:
 ## Quick start
 
 ```bash
-cd drift_studio/ddoc
-pip install -e .                       # core CLI
+pip install -e ddoc                        # core CLI
 pip install -e plugins/ddoc-plugin-vision   # add a domain plugin
 
 ddoc init
@@ -91,7 +90,7 @@ Each plugin is an independent pip package registered through the
 ```
 
 Our own [CI](.github/workflows/ci.yml) dogfoods this on the
-[Drift Zoo](drift_studio/ddoc/zoo/) — a gallery of classic drift
+[Drift Zoo](ddoc/zoo/) — a gallery of classic drift
 patterns (regime shift, creeping degradation, and a rhythm-not-drift
 trap case that must stay **OK**), each reproducible in one command and
 pinned as a regression test.
@@ -108,4 +107,4 @@ pinned as a regression test.
 Apache License 2.0 — see [LICENSE](LICENSE).
 Vendored third-party code retains its original license
 (e.g. OpenAI CLIP under MIT, see
-`drift_studio/ddoc/plugins/ddoc-plugin-vision/ddoc_plugin_vision/clip/LICENSE`).
+`plugins/ddoc-plugin-vision/ddoc_plugin_vision/clip/LICENSE`).
