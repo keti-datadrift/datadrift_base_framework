@@ -1,0 +1,7 @@
+{
+  "detector": "toy",
+  "ref_lines": 3,
+  "cur_lines": 4,
+  "diff_ratio": 0.25,
+  "is_drift": true
+}

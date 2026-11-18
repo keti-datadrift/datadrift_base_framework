@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "written": "out.txt",
+  "transform": "text.upper"
+}

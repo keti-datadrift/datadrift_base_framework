@@ -1,0 +1,37 @@
+# Fetch two sources (file:// or plugin-provided schemes), then drift +
+# report. Demonstrates runtime step-output chaining:
+#
+#   SOURCE_REF=file:///data/ref SOURCE_CUR=file:///data/cur WORK_ROOT=/tmp/w \
+#     ddoc recipe run recipes/fetch_then_analyze.yaml --json
+#
+# NOT dry-runnable by design: ${steps.fetch_*.json.local_path} only
+# exists after the fetch steps actually ran.
+name: fetch_then_analyze
+description: Fetch ref/cur sources, then drift check + markdown report
+steps:
+  - id: fetch_ref
+    run: fetch
+    with:
+      source_uri: "${env.SOURCE_REF}"
+      dest: "${env.WORK_ROOT}/ref"
+
+  - id: fetch_cur
+    run: fetch
+    with:
+      source_uri: "${env.SOURCE_CUR}"
+      dest: "${env.WORK_ROOT}/cur"
+
+  - id: drift
+    run: analyze.drift
+    with:
+      data_path_ref: "${steps.fetch_ref.json.local_path}"
+      data_path_cur: "${steps.fetch_cur.json.local_path}"
+      quiet: true
+
+  - id: report
+    run: report.render
+    with:
+      input: "${steps.drift.output}"
+      out: "${env.WORK_ROOT}/report.md"
+      format: md
+      title: "fetch_then_analyze"

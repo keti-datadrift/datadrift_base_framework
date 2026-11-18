@@ -1,0 +1,23 @@
+# Env-var driven drift check + markdown report over two data paths.
+#
+#   DATA_PATH_REF=/data/ref DATA_PATH_CUR=/data/cur REPORT_OUT=/tmp/drift.md \
+#     ddoc recipe run recipes/csv_drift.yaml --json
+#
+# Dry-runnable: only ${env.*} refs are needed to build argv.
+name: csv_drift
+description: Drift check between two data paths, rendered as a markdown report
+steps:
+  - id: drift
+    run: analyze.drift
+    with:
+      data_path_ref: "${env.DATA_PATH_REF}"
+      data_path_cur: "${env.DATA_PATH_CUR}"
+      quiet: true
+
+  - id: report
+    run: report.render
+    with:
+      input: "${steps.drift.output}"
+      out: "${env.REPORT_OUT}"
+      format: md
+      title: "csv_drift recipe"
