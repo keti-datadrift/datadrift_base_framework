@@ -6,12 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "ddoc-plugin-evidently"
 version = "0.1.0"
 license = {text = "Apache-2.0"}
-description = "Evidently-backed drift detector plugin for ddoc (R32)"
+description = "Evidently-backed drift detector plugin for ddoc"
 requires-python = ">=3.9"
 dependencies = [
     "pluggy>=1.5.0",
     "evidently>=0.7",
-    "pandas>=1.3",
+    # evidently 0.7.x imports pandas internals removed in pandas 3
+    "pandas>=1.3,<3",
 ]
 
 [project.entry-points."ddoc"]
