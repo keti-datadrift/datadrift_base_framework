@@ -1,0 +1,28 @@
+# Copy to .github/workflows/drift-gate.yml in your repository and adjust
+# the two paths. The job fails when the incoming data drifted from the
+# baseline (exit 1) or when ddoc cannot judge it (exit 2, BLIND).
+name: drift-gate
+
+on:
+  pull_request:
+    paths:
+      - "data/**"
+
+jobs:
+  drift-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: keti-datadrift/datadrift_base_framework@main
+        with:
+          ref: data/baseline
+          cur: data/incoming
+          report: drift_note.html
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: drift-note
+          path: drift_note.html
