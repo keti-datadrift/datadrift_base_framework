@@ -3,53 +3,34 @@
 > Diagnose data drift across modalities. CLI · REST · GUI in one wheel.
 
 **ddoc** (data doctor) 은 데이터의 분포 변화를 *진단* 하는 도구입니다.
-멀티모달 (vision / text / timeseries / audio) drift detection + EDA +
-report rendering 을 단일 CLI / REST facade / vanilla HTML GUI 로 묶어
-ML 모델의 건강 상태를 일관되게 점검합니다.
+멀티모달 (vision / text / timeseries / audio / categorical / tabular)
+drift detection + EDA + report rendering 을 단일 CLI / REST facade /
+vanilla HTML GUI 로 묶어 ML 모델이 보는 데이터의 상태를 일관되게 점검합니다.
 
 ## ✨ 주요 기능
 
-- 📦 **Workspace Management**: 자동 프로젝트 스캐폴딩
-- 📸 **Snapshot System**: Git-like 버전 관리 (데이터 + 코드 + 실험)
-- 🔬 **Data Analysis**: EDA 및 Drift 감지
-- 🧪 **Experiment Tracking**: Trainer 기반 실험 시스템
-- 🔌 **Plugin Architecture**: 확장 가능한 플러그인 시스템
+- 🩺 **한 줄 판정**: `ddoc diff` — `OK` / `DRIFT` / `BLIND`, exit code 가 곧 판정
+- 🔬 **분석**: 플러그인 기반 drift 감지 및 EDA (`ddoc analyze drift|eda`)
+- 📝 **리포트와 내보내기**: HTML / PDF / Markdown 리포트, file / HTTP export
+- 🧾 **레시피**: fetch → analyze → report → export 를 YAML 한 파일로
+- 🌐 **REST + GUI**: `ddoc serve` 로 모든 명령을 HTTP 와 브라우저에서
+- 🔌 **플러그인 구조**: 새 검출기는 플러그인으로 — 프레임워크 수정 없음
 
 ## 🚀 빠른 시작
 
 ### 설치
 
+이 저장소에서 설치 (저장소 루트 기준):
+
 ```bash
-# 가벼운 코어 — init / add / snapshot / ingest / analyze (path mode)
-pip install ddoc
-
-# Use-case 별 extras (2026-05-07 정리)
-pip install ddoc[ingest]        # parquet writer (pyarrow)
-pip install ddoc[exp]           # exp train / eval / best (mlflow)
-pip install ddoc[orchestrator]  # backend subprocess orchestrator alias
-pip install ddoc[vision]        # CLIP / torch / image stack
-pip install ddoc[yolo]          # ultralytics / opencv
-pip install ddoc[vis]           # Streamlit GUI
-
-# 모두
-pip install ddoc[all]           # ⚠️ all 의 plugin file:// 경로는 개발자
-                                # local checkout 에 묶임 — 일반 사용자는
-                                # 위 개별 extras 조합 권장
+pip install -e ddoc                              # 가벼운 코어 — CSV 는 플러그인 없이 판정
+pip install -e plugins/ddoc-plugin-categorical   # 필요한 modality 플러그인을 추가
 ```
 
-**install matrix** — 어떤 명령어가 어떤 extras 를 요구하는지:
+플러그인은 각각 독립 패키지입니다 (`plugins/ddoc-plugin-*`).
+`plugins/ddoc-full` 은 기본 플러그인 묶음을 한 번에 설치하는 메타 패키지입니다.
 
-| 명령어 / 사용 사례 | core | ingest | exp | vision/yolo | vis |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `ddoc init / add / snapshot` | ✓ | | | | |
-| `ddoc ingest` (CSV) | ✓ | | | | |
-| `ddoc ingest --parquet` | ✓ | ✓ | | | |
-| `ddoc analyze drift|eda` (path mode + plugin) | ✓ | | | ✓ | |
-| `ddoc exp train / eval / best` | ✓ | | ✓ | ✓ (trainer 의존) | |
-| `ddoc vis` (Streamlit GUI) | ✓ | | | | ✓ |
-| `drift_studio` backend subprocess orchestrator | ✓ | | | | |
-
-![ddoc diff demo](../../docs/imgs/ddoc_diff_demo.svg)
+![ddoc diff demo](../docs/imgs/ddoc_diff_demo.svg)
 
 ### 10 초 quick start — `ddoc diff`
 
@@ -84,8 +65,7 @@ ddoc examples generate categorical --out /tmp/d --scenario shifted
 ddoc diff /tmp/d/ref /tmp/d/cur
 ```
 
-정밀 제어(detector 선택·fusion·스냅샷 모드)는 저수준 명령
-`ddoc analyze drift` 로:
+정밀 제어(detector 선택·fusion)는 저수준 명령 `ddoc analyze drift` 로:
 
 ```bash
 ddoc analyze drift --data-path-ref /tmp/d/ref --data-path-cur /tmp/d/cur --json --quiet
@@ -93,177 +73,55 @@ ddoc analyze drift --data-path-ref /tmp/d/ref --data-path-cur /tmp/d/cur --json 
 
 → `overall_score: 0.11` 같은 envelope 한 줄로 떨어집니다.
 
-5 modality 지원 (`timeseries / audio / text / vision / categorical`),
-2 scenario (`shifted / identical`). 자세한 [toy-data 튜토리얼](docs/tutorial/toy-data.md)
-이 *primary onboarding*. 본인 데이터로 옮길 때는 같은 dataset
-layout (modality 별 `ddoc.yaml` + 데이터 파일) 만 따르면 그대로
-`ddoc analyze drift --data-path-ref X --data-path-cur Y` 가능.
+5 modality 의 toy 데이터 (`timeseries / audio / text / vision / categorical`),
+2 scenario (`shifted / identical`) 를 제공합니다. 자세한 내용은
+[toy-data 튜토리얼](docs/tutorial/toy-data.md). 본인 데이터로 옮길 때는 같은
+dataset layout (modality 별 `ddoc.yaml` + 데이터 파일) 만 따르면 그대로
+`ddoc analyze drift --data-path-ref X --data-path-cur Y` 가 동작합니다.
 
-`--detector` 옵션 골라야 할 때는 [detector cookbook](docs/tutorial/detectors.md)
+`--detector` 옵션을 골라야 할 때는 [detector cookbook](docs/tutorial/detectors.md)
 참고 — modality 별 strategy 선택과 drift severity 임계값.
 
-### 다음 단계 — Project / Snapshot / Experiment 워크플로 (heavier path)
+## 🧰 명령 한눈에 보기
 
-```bash
-# 1. 프로젝트 초기화
-ddoc init myproject
-cd myproject
+| 명령 | 하는 일 |
+|---|---|
+| `ddoc diff <ref> <cur>` | 한 줄 판정 (exit 0/1/2), `--report` 로 HTML 소견서 |
+| `ddoc analyze drift` / `eda` | 플러그인 기반 저수준 분석, `--json` envelope |
+| `ddoc report render` | drift / EDA envelope → HTML · PDF · Markdown |
+| `ddoc export drift-report` | drift 결과를 file / HTTP 로 전송 |
+| `ddoc fetch <uri>` | file / s3 / gs / http 데이터를 로컬로 가져오기 |
+| `ddoc recipe run <file>` | 여러 단계를 YAML 로 묶어 실행 |
+| `ddoc serve` | REST API + 브라우저 GUI |
+| `ddoc plugin list` / `detectors` | 설치된 플러그인과 검출기 확인 |
+| `ddoc examples generate` | toy 데이터셋 생성 |
 
-# 2. 데이터 추가
-ddoc add --data ./datasets/train_data
-
-# 3. 첫 스냅샷 생성
-git add . && git commit -m "Initial setup"
-ddoc snapshot create -m "baseline" -a baseline
-
-# 4. 데이터 분석
-ddoc analyze eda
-
-# 5. 실험 실행
-ddoc exp train yolo --dataset train_data
-```
-
-더 자세한 튜토리얼은 [시작하기 가이드](docs/tutorial/quick-start.md)를 참조하세요.
+전체 옵션은 [명령어 레퍼런스](docs/reference/commands.md) 참고.
 
 ## 📚 문서
 
-### 시작하기
-- **[설치 가이드](docs/tutorial/installation.md)** - 설치 및 요구사항
-- **[빠른 시작](docs/tutorial/quick-start.md)** - 5분 튜토리얼
-- **[핵심 개념](docs/tutorial/concepts.md)** - Workspace, Snapshot, Alias 이해하기
-
-### 사용자 가이드
-- **[워크스페이스 관리](docs/guides/workspace.md)** - 프로젝트 초기화 및 파일 관리
-- **[스냅샷 관리](docs/guides/snapshots.md)** - 버전 관리 및 복원
-- **[Trainer 시스템](docs/guides/trainer.md)** - Trainer 기반 실험 시스템
-- **[데이터 분석](docs/guides/analysis.md)** - EDA 및 Drift 감지
-- **[실험 관리](docs/guides/experiments.md)** - 실험 실행 및 추적
-
-### 레퍼런스
-- **[명령어 레퍼런스](docs/reference/commands.md)** - 모든 명령어 상세 설명
-
-### 고급 사용법
-- **[워크플로우](docs/advanced/workflows.md)** - 고급 워크플로우 및 베스트 프랙티스
-- **[문제 해결](docs/advanced/troubleshooting.md)** - 자주 발생하는 문제 해결
-
-### 마이그레이션
-- **[v1.x → v2.0 마이그레이션](docs/migration/v1-to-v2.md)** - v1.x에서 업그레이드
+- **[빠른 시작](docs/tutorial/quick-start.md)** · **[핵심 개념](docs/tutorial/concepts.md)** · **[설치](docs/tutorial/installation.md)**
+- **[toy 데이터](docs/tutorial/toy-data.md)** · **[detector cookbook](docs/tutorial/detectors.md)** · **[데이터 분석](docs/guides/analysis.md)**
+- **[레시피](docs/tutorial/recipe.md)** · **[REST / GUI](docs/tutorial/serve.md)** · **[배포](docs/tutorial/deploy.md)**
+- **[명령어 레퍼런스](docs/reference/commands.md)**
 
 전체 문서는 [docs/](docs/) 디렉토리에서 확인하세요.
+[변경 이력](docs/changelog.md) | [릴리스 노트](docs/releases/)
 
-## 📦 버전
+## 🔗 애플리케이션과의 연동
 
-- **v2.0.3** (Current) - [릴리스 노트](docs/releases/v2.0.3.md)
-- **v2.0.2** - [릴리스 노트](docs/releases/v2.0.2.md)
-- **v2.0.1** - [릴리스 노트](docs/releases/v2.0.1.md)
-- **v2.0.0** - [릴리스 노트](docs/releases/v2.0.0.md)
-- **v1.3.6** (Legacy) - [릴리스 노트](docs/releases/v1.3.6.md)
+ddoc 는 모니터링 대상 애플리케이션과 Python 의존성을 공유하지 않습니다.
+데이터는 `ddoc fetch` 로 들여오고, drift 결과는 안정된 JSON envelope 로
+`ddoc export` 가 file 또는 HTTP 로 내보냅니다.
 
-[전체 변경 이력](docs/changelog.md) | [릴리스 노트](docs/releases/)
-
-## 🎯 주요 사용 사례
-
-### 데이터 버전 관리
-```bash
-ddoc init myproject
-ddoc add --data ./datasets/train_data
-ddoc snapshot create -m "baseline dataset" -a baseline
-```
-
-### 실험 추적
-```bash
-ddoc exp train yolo --dataset train_data --model yolov8n.pt
-ddoc exp best train_data  # 최고 성능 실험 찾기
-```
-
-### 데이터 드리프트 감지
-```bash
-ddoc analyze drift baseline production
-```
-
-### Multi-site / 사이트-간 통합 (`ingest` + DVC)
-
-2026-05-07 부터 ddoc 는 **다른 사이트 / 다른 시스템에서 떨군
-envelope JSON** 을 직접 받아 분석에 쓸 수 있습니다.
-
-**예시 — 현장 앱의 audit export 를 ddoc 로 끌어오기:**
-
-```bash
-# 사이트에서 현장 앱이 envelope JSON 을 떨굼
-# (export dir = /mnt/share/site_a/audit)
-
-# ddoc 로 ingest
-ddoc ingest \
-    --from-dir /mnt/share/site_a/audit \
-    --site-id site_a \
-    --workspace ~/ddoc-workspace
-
-# 결과:
-#   ~/ddoc-workspace/.ddoc/inbox/site_a/decisions/decisions_<ts>.csv
-#   ~/ddoc-workspace/.ddoc/inbox/site_a/_manifest.jsonl
-#   원본은 .processed/ 로 이동 (재실행 idempotent)
-
-# 머신러닝 친화적 JSON 출력 (스크립트 / 백엔드 orchestrator 용)
-ddoc ingest --from-dir /tmp/export --json | jq '.decision_rows'
-
-# DVC 통한 자동 pull (사이트-간 sync)
-ddoc ingest --from-dir audit/ --dvc-pull --site-id site_b
-```
-
-**Envelope contract** — protocol 1.1 (발신 앱의 envelope 과 mirror).
-frozen dataclass:
-
-```jsonc
-{
-  "protocol_version": "1.1",
-  "source": {"app_id": "...", "app_type": "...", "instance_id": null},
-  "payload_kinds": ["decision_batch"] | ["drift_report"],
-  "decision_batch": [{"id":"...", "decision_type":"...", ...}, ...],
-  "drift_report": {...},
-  "sent_at": "2026-05-07T00:00:00Z"
-}
-```
-
-**On-disk inbox layout:**
-
-```
-<workspace>/.ddoc/inbox/<site_id>/
-├── decisions/decisions_<UTC ts>.csv      (or .parquet w/ --parquet)
-├── drift_reports/drift_<UTC ts>_<src>.json
-├── _manifest.jsonl                       (one line per ingest run)
-└── .processed/<original_envelope>.json
-```
-
-### DVC remote layout (multi-site sync)
-
-`drift_studio` backend (orchestrator) 는 시작 시점에 `DVC_REMOTE_URL` +
-`DVC_SITE_ID` 환경변수가 있으면 자동으로 default remote 를 설정합니다.
-권장 layout:
-
-```
-<DVC_REMOTE_URL>/
-├── site_a/
-│   ├── datasets/    # raw / curated input data
-│   ├── models/      # trained model artifacts
-│   └── audit/       # 현장 앱 envelope JSON exports
-└── site_b/
-    └── ...
-```
-
-`s3://`, `gs://`, `azure://`, `ssh://`, 또는 로컬 마운트 NAS 경로 모두
-지원. `ddoc ingest --dvc-pull` 이 `dvc pull <from-dir>` 을 선행 실행해
-원격 → 로컬 → ingest 한 줄로 처리합니다.
-
-### Backend orchestrator 와의 관계
-
-`drift_studio/backend/` 는 ddoc 를 *Python library* 로 import 하는 대신
-**subprocess 로 호출** 합니다. 환경변수
-`BACKEND_USE_DDOC_CLI=true` 일 때 backend 의 `/drift`, `/eda` 엔드포인트
-가 `ddoc analyze drift|eda --json` 을 fork 합니다.
+`drift_studio/backend/` 도 ddoc 를 *Python library* 로 import 하는 대신
+**subprocess 로 호출** 합니다. 환경변수 `BACKEND_USE_DDOC_CLI=true` 일 때
+backend 의 `/drift`, `/eda` 엔드포인트가 `ddoc analyze drift|eda --json` 을
+실행합니다.
 
 ## 🤝 기여
 
-기여를 환영합니다! 기여 가이드는 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.
+이슈와 Pull Request 를 환영합니다.
 
 ## 📄 라이선스
 
@@ -273,5 +131,3 @@ Apache License 2.0 — [LICENSE](LICENSE) 참조.
 
 - JPark @ KETI
 - Ethicsense @ KETI
-
----

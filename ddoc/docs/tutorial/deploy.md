@@ -145,7 +145,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Install ddoc + the modality plugins your team uses. Trim as needed.
-RUN pip install --no-cache-dir 'ddoc[ingest,test]' \
+RUN pip install --no-cache-dir 'ddoc[test]' \
                               'ddoc-plugin-timeseries' \
                               'ddoc-plugin-audio'
 

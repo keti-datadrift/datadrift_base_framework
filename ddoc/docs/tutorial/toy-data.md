@@ -21,7 +21,7 @@ ddoc examples list
 | `audio` | mono WAV, 8 kHz, 1 초 | 440 Hz → 880 Hz (octave) |
 | `text` | CSV `id,text` (20 rows) | 짧은 단어 → 긴 문장 |
 | `vision` | 5 × 64×64 PNG | 빨간색 → 파란색 |
-| `categorical` | `distributions.json` — color/type/hourly counts + confidence stats | keti 차량 fingerprint shape, 4 분포 모두 shift |
+| `categorical` | `distributions.json` — color/type/hourly counts + confidence stats | 차량 통계 형태의 분포, 4 분포 모두 shift |
 
 각 modality 는 두 scenario 지원:
 - `shifted` (default): ref 와 cur 분포가 다름 → drift score > 0
@@ -33,7 +33,7 @@ ddoc examples list
 # 1. timeseries toy 데이터 생성 (drift 시나리오)
 ddoc examples generate timeseries --out /tmp/ex --scenario shifted
 
-# 2. drift 측정 (path mode — project / snapshot 불필요)
+# 2. drift 측정
 ddoc analyze drift \
     --data-path-ref /tmp/ex/ref \
     --data-path-cur /tmp/ex/cur \
@@ -181,7 +181,7 @@ ddoc analyze drift --data-path-ref /tmp/sane/ref --data-path-cur /tmp/sane/cur \
 
 ## 다음 단계
 
-- snapshot mode 워크플로 (Git + DVC 통합): [snapshots](../guides/snapshots.md)
+- 저수준 분석 옵션: [데이터 분석](../guides/analysis.md)
 - backend orchestrator 패턴 (`drift_studio` 가 ddoc CLI 를 subprocess
-  로 호출): `ddoc analyze drift --help` 의 path mode 설명
+  로 호출): `ddoc analyze drift --help`
 - modality 별 plugin contract: 각 plugin 의 `README.md`

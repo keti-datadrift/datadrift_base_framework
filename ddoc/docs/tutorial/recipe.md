@@ -10,7 +10,7 @@ chain ddoc 의 여러 명령어를 YAML 한 파일로 묶어 한 번에
 
 | recipe | 흐름 | 입력 |
 |---|---|---|
-| `recipes/timeseries_smoke.yaml` | toy 데이터 *생성* → drift → markdown report → keti-shaped JSON export | 없음 (자체 생성) |
+| `recipes/timeseries_smoke.yaml` | toy 데이터 *생성* → drift | 없음 (자체 생성) |
 | `recipes/csv_drift.yaml` | drift → markdown report | env: `DATA_PATH_REF`, `DATA_PATH_CUR`, `REPORT_OUT` (이미 disk 에 있는 데이터셋 분석) |
 | `recipes/fetch_then_analyze.yaml` | fetch (file/http/s3) → drift → markdown report | env: `SOURCE_REF`, `SOURCE_CUR`, `WORK_ROOT` (외부 source ingest 데모) |
 

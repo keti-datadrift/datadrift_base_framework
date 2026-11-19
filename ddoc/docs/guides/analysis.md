@@ -1,81 +1,55 @@
 # 데이터 분석
 
-ddoc는 EDA(탐색적 데이터 분석) 및 데이터 드리프트 감지 기능을 제공합니다.
+`ddoc diff` 가 한 줄 판정이라면, `ddoc analyze` 는 플러그인 결과를 그대로
+보여주는 저수준 명령입니다. 검출기 선택, 여러 modality 결과 합치기,
+진행 상황 스트리밍이 필요할 때 씁니다.
 
-## EDA (탐색적 데이터 분석)
-
-### `ddoc analyze eda`
-
-현재 워크스페이스의 데이터에 대한 탐색적 데이터 분석을 수행합니다.
+## Drift 감지 — `ddoc analyze drift`
 
 ```bash
-ddoc analyze eda
+ddoc analyze drift --data-path-ref data/ref --data-path-cur data/cur
+ddoc analyze drift --data-path-ref data/ref --data-path-cur data/cur --json --quiet
 ```
 
-**기능:**
-- 데이터 속성 분석
-- 임베딩 생성
-- 클러스터링
-- 시각화
+| 옵션 | 설명 |
+|---|---|
+| `--data-path-ref` / `--data-path-cur` | 기준 / 현재 데이터 경로 (둘 다 필수) |
+| `--detector` | 검출 전략. `ddoc plugin detectors` 로 목록 확인 ([cookbook](../tutorial/detectors.md)) |
+| `--with-embeddings` | 플러그인이 임베딩을 즉석 계산 (vision / text, CLIP 필요) |
+| `--fusion` / `--fusion-weights` | 여러 modality 점수를 하나로 합침 (`none` / `weighted` / `max` / `joint`) |
+| `--json` | 결과 envelope 를 stdout 에 JSON 한 객체로 |
+| `--ndjson-progress` | 진행 상황을 stderr 에 NDJSON 으로 (오케스트레이터용) |
+| `--quiet` | 플러그인 출력 숨김 |
 
-**캐시 시스템:**
-- 분석 결과는 자동으로 캐시됩니다
-- 데이터 변경 시 증분 분석을 수행합니다
-- 동일한 데이터 해시는 캐시를 재사용합니다
+두 경로 중 하나라도 빠지면 `path_mode_incomplete` 오류와 함께 exit code 2
+로 끝납니다.
 
-## Drift 감지
-
-### `ddoc analyze drift`
-
-두 스냅샷 간 데이터 드리프트를 분석합니다.
+## EDA — `ddoc analyze eda`
 
 ```bash
-ddoc analyze drift <version1> <version2>
+ddoc analyze eda --data-path data/cur
+ddoc analyze eda --data-path data/cur --json --quiet
 ```
 
-**예시:**
-```bash
-ddoc analyze drift baseline production
-ddoc analyze drift v01 v05
-```
+| 옵션 | 설명 |
+|---|---|
+| `--data-path` | 분석할 데이터 경로 (필수) |
+| `--invalidate-cache` | 기존 분석 캐시를 무시하고 다시 분석 |
+| `--json` / `--ndjson-progress` / `--quiet` | drift 와 동일 |
 
-**분석 항목:**
-- 속성 드리프트 (KL Divergence 기반)
-- 임베딩 드리프트 (MMD - Maximum Mean Discrepancy)
-- 파일 변경사항 (추가/삭제/수정)
+EDA 는 `eda_run` hook 을 구현한 플러그인이 있어야 동작합니다.
+(예: categorical 플러그인은 drift 만 제공합니다.)
 
-**출력:**
-- 드리프트 리포트 (JSON)
-- 시각화 차트 (8종류)
-- 통계 요약
-
-## 스냅샷 기반 분석
-
-특정 스냅샷에 대한 분석도 가능합니다:
+## 결과를 리포트로
 
 ```bash
-# 특정 스냅샷 분석
-ddoc analyze eda <snapshot_id>
-
-# 분석 후 자동 스냅샷 생성
-ddoc analyze eda --save-snapshot
-```
-
-## 캐시 활용
-
-ddoc는 분석 결과를 캐시하여 성능을 최적화합니다:
-
-```bash
-# 첫 분석 (전체 분석 수행)
-ddoc analyze eda
-
-# 데이터 일부 변경 후 재분석 (증분 분석)
-ddoc analyze eda  # 변경된 파일만 재분석
+ddoc analyze drift --data-path-ref data/ref --data-path-cur data/cur --json --quiet > drift.json
+ddoc report render -i drift.json -o drift.html
+ddoc report render -i drift.json -o drift.md --format md
 ```
 
 ## 다음 단계
 
-- [스냅샷 관리](snapshots.md) - 스냅샷 생성 및 관리
-- [실험 관리](experiments.md) - 실험 실행 및 추적
-- [고급 워크플로우](../advanced/workflows.md) - 고급 사용법
-
+- [detector cookbook](../tutorial/detectors.md)
+- [레시피](../tutorial/recipe.md) — analyze → report → export 를 한 파일로
+- [명령어 레퍼런스](../reference/commands.md)

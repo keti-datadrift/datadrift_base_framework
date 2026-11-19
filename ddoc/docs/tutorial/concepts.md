@@ -1,135 +1,83 @@
 # 핵심 개념
 
-ddoc를 효과적으로 사용하기 위해 알아야 할 핵심 개념들입니다.
+ddoc 를 이해하는 데 필요한 개념들을 정리합니다.
 
-## 1. Workspace (워크스페이스)
+## 1. 판정 (Verdict)
 
-워크스페이스는 ddoc 프로젝트의 전체 작업 공간입니다. 모든 데이터, 코드, 실험 결과가 워크스페이스 내에서 관리됩니다.
+`ddoc diff` 는 두 데이터셋을 비교해 세 가지 중 하나로 답합니다.
 
-### 워크스페이스 구조
+| 판정 | exit code | 의미 |
+|---|:---:|---|
+| `OK` | 0 | 의미 있는 분포 변화가 없음 |
+| `DRIFT` | 1 | 분포가 변했음 |
+| `BLIND` | 2 | 판정할 근거가 없음 (경로 없음, 처리할 엔진 없음, 비교 실패 등) |
 
-```
-project/
-├── data/                    # 데이터셋 (DVC로 관리)
-├── code/                    # 학습 코드 (Git으로 관리)
-│   └── trainers/           # Trainer 코드
-│       └── {trainer_name}/
-│           ├── train.py    # 학습 함수
-│           ├── eval.py     # 평가 함수
-│           └── config.yaml # 기본 설정
-├── models/                  # 사전학습 모델 저장소
-├── notebooks/               # EDA 노트북
-├── experiments/             # 실험 결과 (MLflow 구조)
-└── .ddoc/                   # ddoc 메타데이터
-    ├── snapshots/          # 스냅샷 YAML 파일
-    └── cache/              # 분석 캐시
-```
+`BLIND` 는 "괜찮다" 가 아니라 "모른다" 입니다. 확인할 수 없는 상황을
+`OK` 로 덮지 않기 위해 셋째 답을 둡니다.
 
-### 워크스페이스의 특징
+`DRIFT` 는 다음 중 하나일 때 내려집니다.
 
-- **통합 관리**: 데이터, 코드, 실험을 하나의 워크스페이스에서 관리
-- **자동 스캐폴딩**: `ddoc init`으로 완전한 프로젝트 구조 자동 생성
-- **Git/DVC 통합**: 코드는 Git, 데이터는 DVC로 자동 추적
+- 전체 점수 `overall_score` 가 `--threshold` (기본 0.15) 이상
+- 속성 하나의 점수가 `--attr-threshold` (기본 0.25) 이상 —
+  평균에 묻히는 강한 국소 변화를 놓치지 않기 위함
 
-## 2. Snapshot (스냅샷)
+severity 는 `high` / `medium` / `low` / `none` 으로 함께 표시됩니다.
 
-스냅샷은 특정 시점의 워크스페이스 전체 상태를 저장한 버전입니다.
+## 2. Modality 와 자동 감지
 
-### 스냅샷이 포함하는 것
+입력 경로를 보고 데이터 종류(modality)를 추정합니다.
+이미지 폴더는 `vision`, CSV 는 `csv`, ddoc categorical 레이아웃은
+`categorical` 하는 식입니다. 생 CSV 는 내장 비교기로 처리되어 플러그인이
+없어도 판정이 나옵니다.
 
-- **데이터 상태**: DVC hash로 데이터 버전 추적
-- **코드 상태**: Git commit hash로 코드 버전 추적
-- **실험 결과**: 메트릭, 아티팩트, 메타데이터
-- **설명 및 메타데이터**: 생성 시간, 설명, alias
+플러그인이 읽는 dataset layout 은 modality 별 `ddoc.yaml` + 데이터 파일
+입니다. 자세한 형식은 [toy 데이터 튜토리얼](toy-data.md) 의
+`ddoc.yaml 컨벤션` 참고.
 
-### 스냅샷의 특징
+## 3. 플러그인과 검출기
 
-- **완전한 재현성**: 스냅샷 하나로 전체 환경 복원 가능
-- **자동 버전 번호**: v01, v02, v03... 자동 생성
-- **Git-like 워크플로우**: commit, checkout, log, diff 명령 지원
+ddoc 코어는 가볍고, 실제 분석은 플러그인이 합니다. 플러그인은
+[pluggy](https://pluggy.readthedocs.io/) hookspec 을 구현하는 독립 pip
+패키지이며 `ddoc` entry-point group 으로 등록됩니다.
 
-### 스냅샷 사용 예시
+주요 hookspec:
 
-```bash
-# 스냅샷 생성
-ddoc snapshot create -m "baseline model" -a baseline
+| hook | 역할 |
+|---|---|
+| `drift_detect` | 두 데이터의 drift 점수 계산 |
+| `eda_run` | 한 데이터의 탐색적 분석 |
+| `ddoc_supported_detectors` | 플러그인이 제공하는 검출기 목록 광고 |
+| `report_render` | 결과를 리포트로 렌더 (없으면 내장 렌더러 사용) |
+| `export_drift_report` | 결과를 외부 시스템으로 전송 (없으면 내장 file / http 사용) |
+| `data_source_read` | 외부 데이터 소스 읽기 (없으면 내장 file 사용) |
 
-# 스냅샷 목록 확인
-ddoc snapshot
+`--detector` 로 검출 전략을 고릅니다 (`ddoc plugin detectors` 로 목록 확인).
+한 플러그인이 입력을 처리하지 못해 실패해도 다른 플러그인의 결과는
+그대로 사용됩니다.
 
-# 스냅샷 복원
-ddoc snapshot checkout baseline
+## 4. Envelope
 
-# 스냅샷 비교
-ddoc snapshot --diff baseline v02
-```
+`--json` 출력과 명령 사이의 주고받기는 JSON envelope 한 객체로 합니다.
+대표적인 필드는 `status`, `modality`, `overall_score`, `attribute_drifts`
+입니다. `ddoc report render` 와 `ddoc export drift-report` 가 이
+envelope 를 입력으로 받으므로, 단계별 결과를 파일로 남겨 다음 단계에
+넘길 수 있습니다.
 
-## 3. Alias (별칭)
+## 5. 분석 캐시
 
-Alias는 스냅샷에 의미있는 이름을 부여하는 기능입니다.
+플러그인은 같은 데이터를 다시 분석하지 않도록 분석 결과를 캐시에
+저장합니다. `ddoc analyze eda --invalidate-cache` 로 캐시를 무시하고
+다시 분석할 수 있습니다.
 
-### Alias 사용 예시
+## 6. 레시피
 
-```bash
-# Alias와 함께 스냅샷 생성
-ddoc snapshot create -m "baseline model" -a baseline
-ddoc snapshot create -m "best accuracy" -a best_model
-ddoc snapshot create -m "production ready" -a production
-
-# Alias로 스냅샷 참조
-ddoc snapshot checkout baseline
-ddoc snapshot --diff baseline production
-```
-
-### Alias의 장점
-
-- **의미있는 이름**: v01, v02 대신 baseline, production 같은 이름 사용
-- **쉬운 참조**: 버전 번호를 기억할 필요 없이 alias로 접근
-- **프로덕션 관리**: production alias로 배포 버전 관리
-
-## 4. Trainer (트레이너)
-
-Trainer는 표준화된 인터페이스로 모델 학습/평가를 수행하는 코드입니다.
-
-### Trainer 구조
-
-```
-code/trainers/{trainer_name}/
-├── train.py      # 필수: train(dataset_path, output_dir, **kwargs) 함수
-├── eval.py       # 필수: evaluate(model_path, dataset_path, output_dir, **kwargs) 함수
-└── config.yaml   # 선택: 기본 학습 파라미터
-```
-
-### Trainer의 특징
-
-- **표준화된 인터페이스**: 모든 Trainer가 동일한 함수 시그니처 사용
-- **유연한 확장**: 사용자 정의 Trainer 작성 가능
-- **자동 추적**: MLflow와 통합하여 실험 자동 추적
-
-## 5. 데이터 해시 (Data Hash)
-
-데이터 해시는 DVC를 통해 계산된 데이터의 고유 식별자입니다.
-
-### 데이터 해시의 역할
-
-- **데이터 버전 추적**: 데이터 변경 시 해시 변경
-- **캐시 관리**: 동일한 데이터 해시는 캐시 공유
-- **재현성 보장**: 데이터 해시로 정확한 데이터 버전 복원
-
-## 6. 캐시 시스템
-
-ddoc는 분석 결과를 캐시하여 성능을 최적화합니다.
-
-### 캐시의 특징
-
-- **증분 분석**: 변경된 파일만 재분석
-- **데이터 해시 기반**: 동일한 데이터 해시는 캐시 공유
-- **자동 동기화**: 데이터 변경 시 캐시 자동 동기화
+fetch → analyze → report → export 같은 여러 단계를 YAML 파일 하나에
+적고 `ddoc recipe run <file>` 로 실행합니다. 변수 치환을 지원하므로
+drift 점검 파이프라인 전체가 리뷰 가능한 텍스트가 됩니다.
+자세한 내용은 [레시피 튜토리얼](recipe.md).
 
 ## 다음 단계
 
-이제 핵심 개념을 이해했으니:
-- [워크스페이스 관리](../guides/workspace.md) - 프로젝트 관리 방법
-- [스냅샷 관리](../guides/snapshots.md) - 버전 관리 방법
-- [Trainer 시스템](../guides/trainer.md) - 실험 시스템 사용법
-
+- [빠른 시작](quick-start.md)
+- [데이터 분석](../guides/analysis.md)
+- [명령어 레퍼런스](../reference/commands.md)

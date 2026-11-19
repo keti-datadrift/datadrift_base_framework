@@ -171,7 +171,7 @@ ddoc serve         # http://127.0.0.1:8765
 | Tab | 호출 endpoint | 비고 |
 |---|---|---|
 | Analyze drift | `POST /analyze/drift` (또는 `…/stream`) | "Use streaming" 체크 시 SSE 진행 chip |
-| Analyze EDA | `POST /analyze/eda` | snapshot / path / workspace 모드 모두 |
+| Analyze EDA | `POST /analyze/eda` | `data_path` 기반 |
 | Examples | `POST /examples/generate` | 4 modality × 2 scenario, 즉시 toy 생성 |
 | Report | `POST /report/render` | HTML / PDF / Markdown |
 | Export | `POST /export/drift-report` | file / http / 플러그인 |

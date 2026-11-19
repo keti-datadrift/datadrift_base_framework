@@ -99,9 +99,8 @@ ddoc analyze drift \
 | 0.15 ~ 0.25 | **warning** — 원인 조사 시작 |
 | > 0.25 | **critical** — 재학습 / gate 차단 검토 |
 
-이 임계값은 alpr 의 post-train ddoc gate 의 default
-(`ALPR_DDOC_GATE_DRIFT_THRESHOLD=0.25`) 와 일치 — drift 가 critical
-구간에 들어가면 모델 deploy 차단.
+배포 gate 의 기본 차단 임계값으로는 critical 경계인 0.25 를 권장합니다 —
+drift 가 critical 구간에 들어가면 모델 배포를 막는 식입니다.
 
 ## plugin 추가 시 detector 등록
 
