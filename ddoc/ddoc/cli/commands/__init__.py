@@ -1,11 +1,10 @@
 """CLI commands module - modularized structure.
 
 *core import surface stays light*. Heavy
-deps (mlflow, ultralytics, etc.) live behind the ``experiment`` and
-``legacy`` command groups. Those are loaded **inside** ``register()``
-with try/except so ``pip install ddoc`` (core only) keeps working
-without those extras — only ``ddoc exp ...`` / ``ddoc dataset ...``
-disappear from the help when their imports fail. Aligns with the
+deps (mlflow, etc.) live behind the ``experiment`` command group, which
+is loaded **inside** ``register()`` with try/except so ``pip install
+ddoc`` (core only) keeps working without those extras — only
+``ddoc exp ...`` disappears from the help when its imports fail. Aligns with the
 PyPI distribution intent (lightweight core, opt-in extras).
 """
 from __future__ import annotations
@@ -19,14 +18,6 @@ logger = logging.getLogger(__name__)
 analyze_app = typer.Typer(help="Data analysis commands (eda, drift)")
 exp_app = typer.Typer(help="Experiment management commands (run, list, show, compare, status)")
 plugin_app = typer.Typer(help="Plugin management commands (list, info)")
-
-# Legacy apps (v1.x, will be removed in v2.1)
-dataset_app = typer.Typer(help="[DEPRECATED] Dataset management commands", hidden=True)
-tag_app = typer.Typer(help="[DEPRECATED] Dataset version tag management", hidden=True, invoke_without_command=False)
-lineage_app = typer.Typer(help="[DEPRECATED] Lineage tracking commands", hidden=True)
-
-# Register tag_app under dataset_app
-dataset_app.add_typer(tag_app, name="tag")
 
 # ── Core commands — light deps, always available ──────────────────────
 from .init import init
@@ -91,26 +82,6 @@ def register(app: typer.Typer) -> None:
             getattr(e, "name", e),
         )
 
-    # Legacy exp commands also depend on mlflow → bundle in same lazy block.
-    try:
-        from .legacy import (
-            exp_run_command,
-            exp_list_command,
-            exp_show_command,
-            exp_compare_command,
-            exp_status_command,
-        )
-        exp_app.command("run", help="[DEPRECATED] Use 'exp train' instead")(exp_run_command)
-        exp_app.command("list", help="[DEPRECATED] List experiments")(exp_list_command)
-        exp_app.command("show", help="[DEPRECATED] Show experiment details")(exp_show_command)
-        exp_app.command("compare", help="[DEPRECATED] Compare experiments")(exp_compare_command)
-        exp_app.command("status", help="[DEPRECATED] Show experiment status")(exp_status_command)
-    except ImportError as e:
-        logger.debug(
-            "[ddoc] legacy exp commands unavailable — missing dep: %s",
-            getattr(e, "name", e),
-        )
-
     app.add_typer(exp_app, name="exp")
     
     # ========================================================================
@@ -167,73 +138,6 @@ def register(app: typer.Typer) -> None:
     )(transform_command)
 
     app.command(name="vis", help="Run GUI app")(vis)
-    
-    # ========================================================================
-    # v1.x Legacy Commands (Hidden, for backwards compatibility)
-    # Heavy deps (mlflow, ultralytics, ...) — lazy try/except. Some of
-    # these legacy modules import the same heavy chain as ``experiment``,
-    # so silently skip if unavailable. Will be removed in v2.1.
-    # ========================================================================
-    try:
-        from .legacy import (
-            dataset_add_command,
-            dataset_list_command,
-            dataset_commit_command,
-            dataset_status_command,
-            dataset_unstage_command,
-            dataset_tag_list_command,
-            dataset_tag_rename_command,
-            dataset_timeline_command,
-            dataset_checkout_command,
-            lineage_show_command,
-            lineage_graph_command,
-            lineage_overview_command,
-            lineage_impact_command,
-            lineage_dependencies_command,
-            lineage_dependents_command,
-            commit,
-            checkout,
-            log,
-            status,
-            alias_cmd,
-            diff,
-        )
-
-        # Dataset commands
-        dataset_app.command("add")(dataset_add_command)
-        dataset_app.command("list")(dataset_list_command)
-        dataset_app.command("commit")(dataset_commit_command)
-        dataset_app.command("status")(dataset_status_command)
-        dataset_app.command("unstage")(dataset_unstage_command)
-        dataset_app.command("timeline")(dataset_timeline_command)
-        dataset_app.command("checkout")(dataset_checkout_command)
-        tag_app.command("list")(dataset_tag_list_command)
-        tag_app.command("rename")(dataset_tag_rename_command)
-        app.add_typer(dataset_app, name="dataset")
-
-        # Lineage commands
-        lineage_app.command("show")(lineage_show_command)
-        lineage_app.command("graph")(lineage_graph_command)
-        lineage_app.command("overview")(lineage_overview_command)
-        lineage_app.command("impact")(lineage_impact_command)
-        lineage_app.command("dependencies")(lineage_dependencies_command)
-        lineage_app.command("dependents")(lineage_dependents_command)
-        app.add_typer(lineage_app, name="lineage")
-
-        # Top-level deprecated commands (hidden)
-        app.command(name="commit", hidden=True, deprecated=True)(commit)
-        app.command(name="checkout", hidden=True, deprecated=True)(checkout)
-        app.command(name="log", hidden=True, deprecated=True)(log)
-        app.command(name="status", hidden=True, deprecated=True)(status)
-        app.command(name="alias", hidden=True, deprecated=True)(alias_cmd)
-        # NOTE: the deprecated `diff` alias (→ snapshot --diff) has been
-        # retired; `ddoc diff` is now the dataset drift verdict command.
-        # Snapshot diffing remains available as `ddoc snapshot diff`.
-    except ImportError as e:
-        logger.debug(
-            "[ddoc] legacy commands unavailable — missing dep: %s",
-            getattr(e, "name", e),
-        )
 
 
 # Export main components

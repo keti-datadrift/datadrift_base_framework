@@ -4,20 +4,6 @@ from typing import Optional, Any, Tuple
 from pathlib import Path
 
 
-def load_params_yaml():
-    """Load params.yaml file"""
-    from rich import print
-    try:
-        import yaml
-        with open("params.yaml", 'r') as f:
-            return yaml.safe_load(f) or {}
-    except FileNotFoundError:
-        return {}
-    except Exception as e:
-        print(f"Warning: Could not load params.yaml: {e}")
-        return {}
-
-
 def get_dataset_path(dataset_name: str) -> Optional[str]:
     """Get dataset path using new mapping system with params.yaml fallback"""
     # Check if it's a direct path
@@ -59,49 +45,6 @@ def get_pmgr():
         from ddoc.core.plugins import get_plugin_manager
         _pmgr = get_plugin_manager()
     return _pmgr
-
-
-# Service instances (lazy initialization)
-_core_ops = None
-_metadata_service = None
-_dataset_service = None
-_experiment_service = None
-
-
-def get_core_ops():
-    """Get core_ops instance (lazy initialization)"""
-    global _core_ops
-    if _core_ops is None:
-        from ddoc.ops.core_ops import CoreOpsPlugin
-        _core_ops = CoreOpsPlugin()
-    return _core_ops
-
-
-def get_metadata_service_instance():
-    """Get metadata service instance (lazy initialization)"""
-    global _metadata_service
-    if _metadata_service is None:
-        from ddoc.core.metadata_service import get_metadata_service
-        _metadata_service = get_metadata_service()
-    return _metadata_service
-
-
-def get_dataset_service_instance():
-    """Get dataset service instance (lazy initialization)"""
-    global _dataset_service
-    if _dataset_service is None:
-        from ddoc.core.dataset_service import get_dataset_service
-        _dataset_service = get_dataset_service()
-    return _dataset_service
-
-
-def get_experiment_service_instance():
-    """Get experiment service instance (lazy initialization)"""
-    global _experiment_service
-    if _experiment_service is None:
-        from ddoc.core.experiment_service import get_experiment_service
-        _experiment_service = get_experiment_service()
-    return _experiment_service
 
 
 def _pretty(x: Any) -> str:
