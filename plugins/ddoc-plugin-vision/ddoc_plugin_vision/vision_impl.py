@@ -42,37 +42,6 @@ class DDOCVisionPlugin:
         self.attr_analyzer = None
         self.emb_analyzer = None
     
-    def _get_dataset_name_from_path(self, dataset_path: str) -> str:
-        """
-        Get dataset name from path by querying metadata service.
-        Falls back to basename if mapping not found.
-        
-        Args:
-            dataset_path: Path to dataset directory
-            
-        Returns:
-            Dataset name
-        """
-        try:
-            from ddoc.core.metadata_service import get_metadata_service
-            metadata_service = get_metadata_service()
-            
-            mappings = metadata_service.get_all_dataset_mappings()
-            dataset_path_normalized = str(Path(dataset_path).resolve())
-            
-            for name, info in mappings.get('datasets', {}).items():
-                mapped_path = str(Path(info['dataset_path']).resolve())
-                if mapped_path == dataset_path_normalized:
-                    return name
-            
-            # Fallback to basename for backward compatibility
-            return os.path.basename(dataset_path)
-            
-        except Exception as e:
-            # If metadata service unavailable, use basename
-            print(f"⚠️ Could not query metadata service: {e}")
-            return os.path.basename(dataset_path)
-    
     def _compute_embeddings_from_path(self, data_path) -> Dict[str, Any]:
         """Companion to ``_compute_attributes_from_path``.
 

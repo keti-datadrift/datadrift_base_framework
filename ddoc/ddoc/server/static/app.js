@@ -290,16 +290,14 @@
   const SCHEMAS = {
     drift: {
       title: 'Analyze drift',
-      help: 'Compare two datasets (path mode or snapshot mode). Path mode is the orchestrator-friendly form — pass concrete directories.',
+      help: 'Compare two datasets — pass concrete directories.',
       fields: [
-        { name: 'data_path_ref', label: 'data-path-ref', type: 'text', help: 'Baseline directory (path mode)' },
-        { name: 'data_path_cur', label: 'data-path-cur', type: 'text', help: 'Current directory (path mode)' },
-        { name: 'baseline', label: 'baseline', type: 'text', help: 'Baseline snapshot ID/alias (snapshot mode — leave paths blank)' },
-        { name: 'current', label: 'current', type: 'text', help: 'Current snapshot ID/alias (snapshot mode)' },
+        { name: 'data_path_ref', label: 'data-path-ref', type: 'text', help: 'Baseline directory' },
+        { name: 'data_path_cur', label: 'data-path-cur', type: 'text', help: 'Current directory' },
         { name: 'detector', label: 'detector', type: 'select', opts: () => detectorOptions(), default: 'default' },
         { name: 'fusion', label: 'fusion', type: 'select', opts: ['none', 'weighted', 'max', 'joint'], default: 'none' },
         { name: 'fusion_weights', label: 'fusion-weights', type: 'text', help: 'e.g. image=0.6,text=0.4 (only used when fusion ≠ none)' },
-        { name: 'with_embeddings', label: 'with-embeddings', type: 'check', default: false, help: 'Path mode: load CLIP inline (vision/text)' },
+        { name: 'with_embeddings', label: 'with-embeddings', type: 'check', default: false, help: 'Load CLIP inline (vision/text)' },
         { name: 'quiet', label: 'quiet', type: 'check', default: true },
         { name: 'use_streaming', label: 'Use streaming (SSE)', type: 'check', default: false, help: 'Show NDJSON progress events live (uses /analyze/drift/stream)' },
         { name: 'timeout_sec', label: 'timeout-sec', type: 'text', default: '600' },
@@ -307,13 +305,10 @@
     },
     eda: {
       title: 'Analyze EDA',
-      help: 'Run exploratory data analysis on a snapshot, the workspace, or an arbitrary path.',
+      help: 'Run exploratory data analysis on a data path.',
       fields: [
-        { name: 'snapshot', label: 'snapshot', type: 'text', help: 'Snapshot ID or alias (omit for path/workspace mode)' },
-        { name: 'data_path', label: 'data-path', type: 'text', help: 'Path-mode input directory' },
+        { name: 'data_path', label: 'data-path', type: 'text', help: 'Input directory' },
         { name: 'invalidate_cache', label: 'invalidate-cache', type: 'check', default: false },
-        { name: 'save_snapshot', label: 'save-snapshot', type: 'check', default: false },
-        { name: 'strict_hash', label: 'strict-hash', type: 'check', default: false },
         { name: 'quiet', label: 'quiet', type: 'check', default: true },
         { name: 'timeout_sec', label: 'timeout-sec', type: 'text', default: '600' },
       ],
@@ -745,8 +740,6 @@
 
     if (tab === 'drift') {
       args.push('analyze', 'drift');
-      if (state.baseline) args.push(state.baseline);
-      if (state.current) args.push(state.current);
       pushOpt('--data-path-ref', state.data_path_ref);
       pushOpt('--data-path-cur', state.data_path_cur);
       if (state.detector && state.detector !== 'default') pushOpt('--detector', state.detector);
@@ -758,11 +751,8 @@
       if (state.use_streaming) args.push('--ndjson-progress');
     } else if (tab === 'eda') {
       args.push('analyze', 'eda');
-      if (state.snapshot) args.push(state.snapshot);
       pushOpt('--data-path', state.data_path);
       pushFlag('--invalidate-cache', state.invalidate_cache);
-      pushFlag('--save-snapshot', state.save_snapshot);
-      pushFlag('--strict-hash', state.strict_hash);
       args.push('--json');
       pushFlag('--quiet', state.quiet);
     } else if (tab === 'examples') {

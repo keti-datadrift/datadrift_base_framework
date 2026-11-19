@@ -25,16 +25,10 @@ router = APIRouter(tags=["analyze"], dependencies=[Depends(require_api_key)])
 
 def _eda_argv(req: AnalyzeEdaRequest) -> List[str]:
     args: List[str] = ["analyze", "eda"]
-    if req.snapshot:
-        args.append(req.snapshot)
     if req.data_path:
         args += ["--data-path", req.data_path]
     if req.invalidate_cache:
         args.append("--invalidate-cache")
-    if req.save_snapshot:
-        args.append("--save-snapshot")
-    if req.strict_hash:
-        args.append("--strict-hash")
     args.append("--json")
     if req.quiet:
         args.append("--quiet")
@@ -43,10 +37,6 @@ def _eda_argv(req: AnalyzeEdaRequest) -> List[str]:
 
 def _drift_argv(req: AnalyzeDriftRequest, *, include_progress_flag: bool = False) -> List[str]:
     args: List[str] = ["analyze", "drift"]
-    if req.baseline:
-        args.append(req.baseline)
-    if req.current:
-        args.append(req.current)
     if req.data_path_ref:
         args += ["--data-path-ref", req.data_path_ref]
     if req.data_path_cur:

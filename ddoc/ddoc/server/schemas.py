@@ -27,22 +27,15 @@ class ExamplesGenerateRequest(BaseModel):
 
 
 class AnalyzeEdaRequest(BaseModel):
-    snapshot: Optional[str] = None
     data_path: Optional[str] = None
     invalidate_cache: bool = False
-    save_snapshot: bool = False
-    strict_hash: bool = False
     quiet: bool = True
     timeout_sec: float = 600.0
 
 
 class AnalyzeDriftRequest(BaseModel):
-    # path mode
     data_path_ref: Optional[str] = None
     data_path_cur: Optional[str] = None
-    # snapshot mode
-    baseline: Optional[str] = None
-    current: Optional[str] = None
     # Inline cfg mode. When set, the server
     # materializes the cfg into temp `distributions[_series].json`
     # files under a scratch dir and runs CLI path-mode on top. Moves

@@ -11,13 +11,6 @@ hookimpl = pluggy.HookimplMarker("ddoc")
 # Bump this if you change HookSpec signatures in a breaking way.
 HOOKSPEC_VERSION = "1.0.0"
 
-# --- MLOps Core Operations (Implemented by ddoc/core/ops.py) ---
-
-@hookspec
-def data_add(name: str, config: str) -> Optional[Dict[str, Any]]:
-    """Registers a new dataset version (dvc add, git branch/commit, params update)."""
-    
-
 # --- Analytical Operations (Implemented by external plugins) ---
 
 @hookspec

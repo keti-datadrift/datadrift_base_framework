@@ -71,19 +71,15 @@ _STEP_KINDS: Dict[str, Dict[str, Any]] = {
     },
     "analyze.eda": {
         "argv": ["analyze", "eda"],
-        "positional_optional": ["snapshot"],
         "options": {
             "data_path": "--data-path",
             "invalidate_cache": "--invalidate-cache",
-            "save_snapshot": "--save-snapshot",
-            "strict_hash": "--strict-hash",
             "quiet": "--quiet",
         },
         "json_flag": True,
     },
     "analyze.drift": {
         "argv": ["analyze", "drift"],
-        "positional_optional": ["baseline", "current"],
         "options": {
             "data_path_ref": "--data-path-ref",
             "data_path_cur": "--data-path-cur",

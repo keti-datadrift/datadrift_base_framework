@@ -22,11 +22,11 @@ authors = [
 # Heavier deps live in optional-dependencies extras (see below).
 #
 # What `pip install ddoc` (no extras) gives you:
-#   - init / add / snapshot — workspace + DVC integration
-#   - analyze drift / eda (path mode + --json) — orchestrator-friendly
-#     subprocess interface; the actual analysis still requires a domain
-#     plugin (e.g. ddoc-plugin-vision) installed separately
-#   - plugin list / info, snapshot management
+#   - diff — one-line drift verdict with a built-in CSV fallback
+#   - analyze drift / eda (--json) — orchestrator-friendly subprocess
+#     interface; the actual analysis still requires a domain plugin
+#     (e.g. ddoc-plugin-vision) installed separately
+#   - report / export / fetch / recipe / serve, plugin list / info
 #
 # What it does NOT give you (deliberate):
 #   - vision plugin deps               → install [vision]
@@ -44,7 +44,6 @@ dependencies = [
   "typer>=0.12",
   "rich>=13.7",
   "pydantic>=2.7",
-  "networkx",
   "dotenv",
 ]
 

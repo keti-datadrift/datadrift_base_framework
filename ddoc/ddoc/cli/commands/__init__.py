@@ -13,9 +13,6 @@ analyze_app = typer.Typer(help="Data analysis commands (eda, drift)")
 plugin_app = typer.Typer(help="Plugin management commands (list, info)")
 
 # ── Core commands — light deps, always available ──────────────────────
-from .init import init
-from .add import add
-from .snapshot import snapshot_app
 from .analyze import analyze_eda_command, analyze_drift_command
 from .plugin import plugin_list_command, plugin_info_command, plugin_install_command, plugin_detectors_command
 
@@ -26,13 +23,6 @@ def register(app: typer.Typer) -> None:
     
     This is the central registration point called from main.py.
     """
-    # ========================================================================
-    # v2.0 Core Commands (Top-level, most important)
-    # ========================================================================
-    app.command(name="init", help="Initialize a new ddoc workspace with scaffolding")(init)
-    app.command(name="add", help="Add files to the ddoc workspace (data/code/notebook)")(add)
-    app.add_typer(snapshot_app, name="snapshot", help="Snapshot management - create, list, inspect, and checkout snapshots")
-    
     # ========================================================================
     # Analysis Commands
     # ========================================================================
@@ -99,9 +89,6 @@ def register(app: typer.Typer) -> None:
 # Export main components
 __all__ = [
     'register',
-    'init',
-    'add',
-    'snapshot',
     'analyze_app',
     'plugin_app',
 ]

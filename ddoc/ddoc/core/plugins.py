@@ -14,8 +14,6 @@ from ddoc.plugins.hookspecs import HOOKSPEC_VERSION
 log = logging.getLogger(__name__)
 GROUP = "ddoc" # U+00A0 제거됨
 
-# ddoc/ops/core_ops.py에서 구현한 CoreOpsPlugin 임포트
-from ddoc.ops.core_ops import CoreOpsPlugin # CoreOpsPlugin을 임포트합니다.
 
 
 # PluginManager 인스턴스를 저장하는 전역 변수 (싱글톤 패턴)
@@ -56,16 +54,6 @@ class PluginManager:
     def _is_version_compatible(self, current: str, min_v: Optional[str], max_v: Optional[str]) -> bool:
         """버전 호환성 확인 로직 (실제 구현 생략)"""
         return True
-
-    def register_core_ops(self) -> None:
-        """핵심 DVC/Git MLOps 로직을 구현한 플러그인을 등록합니다."""
-        try:
-            # CoreOpsPlugin 인스턴스를 생성하여 등록 (지연 초기화)
-            # 실제 사용 시점에만 초기화되도록 함
-            self._check_and_register(CoreOpsPlugin, name="ddoc_core_ops")
-            log.debug("Registered core ops plugin: ddoc_core_ops")
-        except Exception as e:
-            log.exception("Failed to register CoreOpsPlugin: %s", e)
 
     def register_builtin(self) -> None:
         """내장 플러그인을 로드하고 등록합니다."""
@@ -184,7 +172,6 @@ def get_plugin_manager() -> PluginManager:
     if _PLUGIN_MANAGER is None:
         _PLUGIN_MANAGER = PluginManager()
         # 초기화 시점에 핵심 및 내장 플러그인 로드
-        _PLUGIN_MANAGER.register_core_ops()
         _PLUGIN_MANAGER.register_builtin()
         # 이후 엔트리 포인트를 통해 외부 플러그인 로드 (수정된 로직 적용)
         _PLUGIN_MANAGER.load_entrypoints()

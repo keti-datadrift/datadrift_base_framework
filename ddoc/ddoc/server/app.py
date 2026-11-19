@@ -19,11 +19,7 @@ _HTTP_STATUS_BY_ERROR_CODE: Dict[str, int] = {
     "unsupported_detector": 400,
     "no_adapter_for_scheme": 400,
     "incompatible_options": 400,
-    "snapshot_mode_incomplete": 400,
     "path_mode_incomplete": 400,
-    "snapshot_not_found": 404,
-    "snapshot_load_failed": 500,
-    "cache_missing": 409,
     "no_plugin": 503,
     "empty_result": 502,
     "plugin_error": 500,
@@ -31,7 +27,6 @@ _HTTP_STATUS_BY_ERROR_CODE: Dict[str, int] = {
     "adapter_failed": 502,
     "unsupported_target": 400,
     "fetch_failed": 500,
-    "hash_mismatch": 409,
 }
 
 _HTTP_STATUS_BY_RUN_ERROR_TYPE: Dict[str, int] = {
