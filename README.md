@@ -1,7 +1,7 @@
 # datadrift_base_framework
 
-**Drift Studio / ddoc** — a plugin-based framework for detecting, diagnosing,
-and acting on data drift in ML systems.
+**ddoc** (data doctor) — a plugin-based tool for detecting and
+diagnosing data drift in ML systems, and leaving the evidence behind.
 
 ![ddoc diff demo](docs/imgs/ddoc_diff_demo.svg)
 
@@ -13,13 +13,9 @@ ddoc diff baseline_data/ todays_data/     # OK / DRIFT / BLIND — exit code = v
 ## What is in this repository
 
 ```
-ddoc/              # Core: the `ddoc` CLI / REST / GUI (pluggy hookspecs + YAML recipe DSL)
-plugins/           # Plugins, each an independent pip package (vision, text, timeseries, ...)
-drift_studio/
-├── backend/       # Drift Studio server (FastAPI) — orchestrates ddoc runs, model registry,
-│                  # training dispatch, promotion gates
-├── frontend/      # Drift Studio web UI (React 18 + Vite + Tailwind)
-└── sample_dataset/
+ddoc/        # Core: the `ddoc` CLI, REST API and browser GUI (pluggy hookspecs + YAML recipes)
+plugins/     # Plugins, each an independent pip package (vision, text, timeseries, ...)
+examples/    # Runnable examples: Docker deployment, CI gate, application integration
 ```
 
 Three ways to use it:
@@ -27,15 +23,17 @@ Three ways to use it:
 | Surface | Entry point | Use case |
 |---|---|---|
 | **CLI** | `ddoc <command>` | scripting, CI, remote/batch execution |
-| **REST** | `ddoc serve` or the Drift Studio backend | integrate with your own services |
-| **GUI** | Drift Studio frontend / `ddoc serve` static UI | interactive exploration |
+| **REST** | `ddoc serve` | integrate with your own services |
+| **GUI** | `ddoc serve`, then open it in a browser | interactive exploration |
 
 ## Core ideas
 
 - **The framework is light; plugins carry the weight.** `ddoc` core defines
   [pluggy hookspecs](ddoc/ddoc/plugins/hookspecs.py)
-  (`eda_run`, `drift_detect`, `retrain_run`, `report_render`, ...).
-  Adding a new detector or trainer means writing a plugin — zero framework changes.
+  (`drift_detect`, `eda_run`, `report_render`, `export_drift_report`, ...).
+  Adding a new detector means writing a plugin — zero framework changes.
+- **An honest verdict.** `ddoc diff` answers `OK`, `DRIFT` or `BLIND` —
+  "cannot judge" is a first-class answer rather than a silent OK.
 - **Recipes.** A YAML DSL (`ddoc recipe run <file>`) chains fetch → analyze →
   report → export steps with variable substitution, so an entire drift-check
   pipeline is a reviewable text file.
@@ -46,20 +44,16 @@ Three ways to use it:
 ## Quick start
 
 ```bash
-pip install -e ddoc                        # core CLI
-pip install -e plugins/ddoc-plugin-vision   # add a domain plugin
+pip install -e ddoc                              # core CLI
+pip install -e plugins/ddoc-plugin-categorical   # add a domain plugin
 
-ddoc init
-ddoc plugin list
-ddoc analyze drift --help
+ddoc examples generate categorical --out /tmp/d --scenario shifted
+ddoc diff /tmp/d/ref /tmp/d/cur                  # DRIFT, exit code 1
+ddoc diff /tmp/d/ref /tmp/d/cur --report note.html
+ddoc serve                                       # REST API + GUI on http://127.0.0.1:8765
 ```
 
-Run the full Drift Studio stack (backend + frontend + workers):
-
-```bash
-cd drift_studio
-docker-compose up -d
-```
+More in the [ddoc README](ddoc/README.md) and its [docs](ddoc/docs/).
 
 ## In-tree plugins
 
@@ -68,7 +62,8 @@ docker-compose up -d
 (third-party integration)
 
 Each plugin is an independent pip package registered through the
-`ddoc` entry-point group.
+`ddoc` entry-point group. `plugins/ddoc-full` is a meta-package that
+installs the common set.
 
 ## Use it as a CI data gate
 
@@ -76,7 +71,7 @@ Each plugin is an independent pip package registered through the
 2 = BLIND), so it drops straight into CI — a linter for data:
 
 ```yaml
-- uses: againeureka/datadrift_base_framework@main
+- uses: keti-datadrift/datadrift_base_framework@main
   with:
     ref: data/baseline
     cur: data/incoming
@@ -86,18 +81,21 @@ Each plugin is an independent pip package registered through the
   with: { name: drift-note, path: drift_note.html }
 ```
 
+The action installs the ddoc core, which judges CSV files and folders
+on its own; see [examples/ci-gate](examples/ci-gate/) for other data
+and for CI systems other than GitHub Actions.
+
 Our own [CI](.github/workflows/ci.yml) dogfoods this on the
 [Drift Zoo](ddoc/zoo/) — a gallery of classic drift
 patterns (regime shift, creeping degradation, and a rhythm-not-drift
 trap case that must stay **OK**), each reproducible in one command and
 pinned as a regression test.
 
-## Screenshots
+## Examples
 
-| | |
-|---|---|
-| ![Upload](docs/imgs/st02_upload.png) | ![EDA](docs/imgs/st04_eda01.png) |
-| ![Drift](docs/imgs/st06_drift01.png) | ![Datasets](docs/imgs/st10_multipledata.png) |
+- [`examples/serve`](examples/serve/) — `ddoc serve` in Docker Compose
+- [`examples/ci-gate`](examples/ci-gate/) — drift gate for GitHub Actions or any CI
+- [`examples/app-integration`](examples/app-integration/) — `fetch` → `diff` → `export` to an application endpoint
 
 ## License
 
