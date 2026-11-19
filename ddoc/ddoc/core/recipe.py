@@ -114,24 +114,11 @@ _STEP_KINDS: Dict[str, Dict[str, Any]] = {
         },
         "json_flag": True,
     },
-    "train": {
-        # Model training as a
-        # recipe step. Dispatches to whatever plugin owns the named
-        # ``trainer`` via the ``retrain_run`` hookspec.
-        "argv": ["train"],
-        "options": {
-            "train_path": "--train-path",
-            "trainer": "--trainer",
-            "model_out": "--model-out",
-            "params": "--params-json",  # dict → JSON string
-        },
-        "json_flag": True,
-    },
     "transform": {
         # Generic transform
         # step. Dispatches to whatever plugin owns the named
         # ``transform`` via the ``transform_apply`` hookspec
-        # (ddoc-plugin-pii-eda → ``pii_blur``, etc.). Mirrors ``train``.
+        # (ddoc-plugin-pii-eda → ``pii_blur``, etc.).
         "argv": ["transform"],
         "options": {
             "input_path": "--input-path",

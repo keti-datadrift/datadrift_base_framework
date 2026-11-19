@@ -17,13 +17,6 @@ HOOKSPEC_VERSION = "1.0.0"
 def data_add(name: str, config: str) -> Optional[Dict[str, Any]]:
     """Registers a new dataset version (dvc add, git branch/commit, params update)."""
     
-@hookspec
-def exp_run(name: str, params: str, dry_run: bool) -> Optional[Dict[str, Any]]:
-    """Updates params.yaml and executes dvc exp run."""
-    
-@hookspec
-def exp_show(name: Optional[str], baseline: Optional[str]) -> Optional[Dict[str, Any]]:
-    """Shows DVC experiment results, optionally comparing two versions."""
 
 # --- Analytical Operations (Implemented by external plugins) ---
 
@@ -86,10 +79,6 @@ def drift_detect(
 @hookspec
 def reconstruct_apply(input_path: str, method: str, args: Dict[str, Any], output_path: str) -> Optional[Dict[str, Any]]:
     """Reconstruct/Impute/Resample data and write result."""
-
-@hookspec
-def retrain_run(train_path: str, trainer: str, params: Dict[str, Any], model_out: str) -> Optional[Dict[str, Any]]:
-    """Retrain model and write model artifact."""
 
 @hookspec
 def monitor_run(source: str, mode: str, schedule: Optional[str]) -> Optional[Dict[str, Any]]:

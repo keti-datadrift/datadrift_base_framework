@@ -4,7 +4,7 @@ Builtin implementations with optional hookspec version range and priorities.
 import time
 import pluggy
 from typing import Any, Dict, Optional
-from ddoc.core.io import read_text, write_text, write_json
+from ddoc.core.io import read_text, write_text
 
 hookimpl = pluggy.HookimplMarker("ddoc")
 
@@ -39,16 +39,6 @@ def reconstruct_apply(input_path: str, method: str, args: Dict[str, Any], output
         lines = [ln for ln in read_text(input_path).splitlines() if ln.strip()]
         write_text(output_path, "\n".join(lines))
         return {"ok": True, "written": output_path, "method": method}
-    except Exception as e:
-        return {"ok": False, "error": str(e)}
-
-@hookimpl
-def retrain_run(train_path: str, trainer: str, params: Dict[str, Any], model_out: str):
-    try:
-        content = read_text(train_path)
-        meta = {"trainer": trainer, "params": params, "train_size": len(content), "artifact": model_out}
-        write_json(model_out, meta)
-        return {"ok": True, "model": model_out}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 

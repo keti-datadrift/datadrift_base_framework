@@ -1,7 +1,7 @@
-"""Unit tests for the `ddoc transform` CLI (alpr-paired).
+"""Unit tests for the `ddoc transform` CLI.
 
 Exercises argv parsing, --args-json validation, plugin fan-out (via a
-fake plugin), and JSON envelope emission. Mirrors test_train_command.
+fake plugin), and JSON envelope emission.
 """
 from __future__ import annotations
 
@@ -132,7 +132,7 @@ def test_transform_command_passes_through_error_envelope_with_code_1():
 
 def test_recipe_step_kind_transform_registered():
     """The recipe runner must know about ``run: transform`` so that
-    YAML recipes can use it. The new entry mirrors ``train``."""
+    YAML recipes can use it."""
     from ddoc.core.recipe import _STEP_KINDS
     assert "transform" in _STEP_KINDS
     spec = _STEP_KINDS["transform"]

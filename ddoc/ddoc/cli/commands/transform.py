@@ -1,8 +1,7 @@
 """``ddoc transform`` — invoke a plugin's ``transform_apply`` hook.
 
 Thin CLI wrapper around the ``transform_apply`` hookspec declared in
-``ddoc.plugins.hookspecs``. Mirrors the ``ddoc train`` pattern:
-plugins responding to ``transform=<name>`` perform the actual work
+``ddoc.plugins.hookspecs``. Plugins responding to ``transform=<name>`` perform the actual work
 (e.g. ``ddoc-plugin-pii-eda`` claims ``transform=pii_blur``), and
 this command captures the first non-None envelope and emits it as
 JSON.

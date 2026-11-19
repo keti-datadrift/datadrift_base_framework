@@ -1,22 +1,15 @@
 """CLI commands module - modularized structure.
 
 *core import surface stays light*. Heavy
-deps (mlflow, etc.) live behind the ``experiment`` command group, which
-is loaded **inside** ``register()`` with try/except so ``pip install
-ddoc`` (core only) keeps working without those extras — only
-``ddoc exp ...`` disappears from the help when its imports fail. Aligns with the
-PyPI distribution intent (lightweight core, opt-in extras).
+analysis deps live in plugins, which are installed separately, so
+``pip install ddoc`` stays a lightweight core.
 """
 from __future__ import annotations
-import logging
 import typer
 from typing import Optional
 
-logger = logging.getLogger(__name__)
-
 # Create Typer sub-apps
 analyze_app = typer.Typer(help="Data analysis commands (eda, drift)")
-exp_app = typer.Typer(help="Experiment management commands (run, list, show, compare, status)")
 plugin_app = typer.Typer(help="Plugin management commands (list, info)")
 
 # ── Core commands — light deps, always available ──────────────────────
@@ -64,27 +57,6 @@ def register(app: typer.Typer) -> None:
     app.command(name="ingest", help="Ingest application feedback-envelope JSON files into the workspace inbox")(ingest_command)
     
     # ========================================================================
-    # Experiment Commands (heavy deps — mlflow et al; lazy)
-    # ========================================================================
-    try:
-        from .experiment import (
-            exp_train_command,
-            exp_eval_command,
-            exp_best_command as exp_best_command_new,
-        )
-        exp_app.command("train", help="Train a model using a trainer from code/trainers/")(exp_train_command)
-        exp_app.command("eval", help="Evaluate a model using an evaluator from code/trainers/")(exp_eval_command)
-        exp_app.command("best", help="Find best experiment for a dataset based on a metric")(exp_best_command_new)
-    except ImportError as e:
-        logger.warning(
-            "[ddoc] 'exp train/eval/best' unavailable — missing dep: %s. "
-            "Install with: pip install ddoc[exp]",
-            getattr(e, "name", e),
-        )
-
-    app.add_typer(exp_app, name="exp")
-    
-    # ========================================================================
     # System Commands
     # ========================================================================
     plugin_app.command("list")(plugin_list_command)
@@ -121,14 +93,6 @@ def register(app: typer.Typer) -> None:
     from .recipe import recipe_app
     app.add_typer(recipe_app, name="recipe", help="Run a multi-step workflow described in YAML")
 
-    # `ddoc train` invokes the `retrain_run` hookspec implemented by
-    # training plugins (ddoc-plugin-yolo, ...).
-    from .train import train_command
-    app.command(
-        name="train",
-        help="Train a model via a plugin's `retrain_run` hook implementation",
-    )(train_command)
-
     # `ddoc transform` invokes the `transform_apply` hookspec
     # implemented by transform plugins.
     from .transform import transform_command
@@ -147,7 +111,6 @@ __all__ = [
     'add',
     'snapshot',
     'analyze_app',
-    'exp_app',
     'plugin_app',
     'vis',
 ]
