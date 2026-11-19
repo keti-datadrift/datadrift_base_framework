@@ -1,9 +1,8 @@
-"""Evidently-backed drift detector plugin (R32).
+"""Evidently-backed drift detector plugin.
 
 Implements the standard `drift_detect` hookspec but only engages when
 the operator explicitly requests `detector="evidently:..."`. Native
-ddoc plugins remain the default for keti production workflows
-(R29 decision).
+ddoc plugins remain the default.
 
 ## Detector keys
 
@@ -17,12 +16,12 @@ ddoc plugins remain the default for keti production workflows
 ## Input shapes
 
 Accepts both shapes that ddoc native plugins use:
-1. **dict-of-counts cfg** (matches keti / ddoc-plugin-categorical):
+1. **dict-of-counts cfg** (matches ddoc-plugin-categorical):
    ``cfg = {"baseline_categorical": {"col": {"a": 30, "b": 10}}, ...}``
 2. **path-mode CSV** (matches ddoc-plugin-tabular): two CSV file paths.
 
 When dict-of-counts is given, expansion to DataFrame happens once
-(this is the cost noted in R29 decision doc).
+(see the cost note on the expansion helper below).
 
 ## Output envelope
 
@@ -177,7 +176,7 @@ def _load_inputs(
 def _build_df_from_cfg(cat_cfg: Dict[str, Dict[str, int]],
                        num_cfg: Dict[str, Iterable[float]]):
     """Expand dict-of-counts to a long DataFrame (one row per sample).
-    R29 noted cost: expansion turns {a:1000, b:500} into 1500 rows."""
+    Cost: expansion turns {a:1000, b:500} into 1500 rows."""
     import pandas as pd
 
     rows: Dict[str, list] = {}

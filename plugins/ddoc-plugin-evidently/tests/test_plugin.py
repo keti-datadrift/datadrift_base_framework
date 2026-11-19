@@ -1,4 +1,4 @@
-"""R32 — tests for ddoc-plugin-evidently."""
+"""Tests for ddoc-plugin-evidently."""
 from __future__ import annotations
 
 import sys
