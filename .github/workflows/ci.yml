@@ -25,13 +25,12 @@ jobs:
           pip install -q -e plugins/ddoc-plugin-categorical
           pip install -q -e plugins/ddoc-plugin-tabular
           pip install -q pytest httpx2  # starlette TestClient dependency
-      - name: Core test set (diff / zoo / ingest / categorical / recipes)
+      - name: Core test set (diff / zoo / categorical / recipes)
         working-directory: ddoc
         run: |
           pytest -q \
             tests/test_diff_cli.py \
             tests/test_zoo.py \
-            tests/test_ingest.py \
             tests/test_plugin_categorical.py \
             tests/test_examples_generate.py \
             tests/test_recipe_catalog.py

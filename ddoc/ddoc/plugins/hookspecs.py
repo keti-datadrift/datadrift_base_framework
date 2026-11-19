@@ -207,10 +207,8 @@ def export_drift_report(
 ) -> Optional[Dict[str, Any]]:
     """Ship a drift report to an external system.
 
-    The reverse of ``ddoc ingest`` (which consumes application
-    feedback-envelope JSON). This hook lets ddoc emit the
-    drift_result back to a monitored application, a file system,
-    S3, etc., using plugin adapters.
+    This hook lets ddoc emit the drift_result to a monitored
+    application, a file system, S3, etc., using plugin adapters.
 
     Parameters
     ----------

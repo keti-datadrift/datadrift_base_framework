@@ -39,9 +39,9 @@ Three ways to use it:
 - **Recipes.** A YAML DSL (`ddoc recipe run <file>`) chains fetch → analyze →
   report → export steps with variable substitution, so an entire drift-check
   pipeline is a reviewable text file.
-- **Loose coupling to applications.** Monitored applications exchange
-  JSON "feedback envelopes" with ddoc over files or HTTP — no shared Python
-  dependency in either direction.
+- **Loose coupling to applications.** ddoc reads data through `ddoc fetch`
+  and ships drift reports as a stable JSON envelope through `ddoc export`
+  (file or HTTP) — no shared Python dependency in either direction.
 
 ## Quick start
 

@@ -17,7 +17,6 @@ from .init import init
 from .add import add
 from .snapshot import snapshot_app
 from .analyze import analyze_eda_command, analyze_drift_command
-from .ingest import ingest_command
 from .plugin import plugin_list_command, plugin_info_command, plugin_install_command, plugin_detectors_command
 
 
@@ -50,11 +49,6 @@ def register(app: typer.Typer) -> None:
         help="One-line drift verdict between two datasets (exit 0=OK, 1=DRIFT, 2=BLIND)",
     )(diff_command)
 
-    # ========================================================================
-    # Ingest Command (application envelope bridge)
-    # ========================================================================
-    app.command(name="ingest", help="Ingest application feedback-envelope JSON files into the workspace inbox")(ingest_command)
-    
     # ========================================================================
     # System Commands
     # ========================================================================
