@@ -1,21 +1,15 @@
 """``ddoc examples`` — generate ready-to-analyze toy datasets.
 
-Exposes the ``tests/fixtures/factories.py``
+Exposes the :mod:`ddoc.examples.factories`
 toy-data generators as a user-facing CLI so people learning ddoc can
 get a first drift result in 5 minutes without producing real data:
 
     ddoc examples list
     ddoc examples generate timeseries --out /tmp/ts --scenario shifted
     ddoc analyze drift --data-path-ref /tmp/ts/ref --data-path-cur /tmp/ts/cur --json
-
-The factories live in ``tests/fixtures/`` because they're also pytest
-fixtures' source. We add ``tests/`` to ``sys.path`` once at import
-time; this is fine for a developer-tooling CLI and avoids duplicating
-the generators inside ``ddoc/``.
 """
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Optional
 
@@ -24,23 +18,9 @@ from rich import print as rprint
 
 
 def _import_factories():
-    """Resolve and import ``tests.fixtures.factories``. We try the
-    repo-relative path first (editable install / monorepo dev) and
-    raise a helpful error if the toy data generators aren't reachable.
-    """
-    # Walk up from this file to the repo root (drift_studio/ddoc/),
-    # which contains tests/.
-    here = Path(__file__).resolve()
-    for parent in here.parents:
-        candidate = parent / "tests" / "fixtures" / "factories.py"
-        if candidate.exists():
-            sys.path.insert(0, str(parent / "tests"))
-            from fixtures import factories  # type: ignore[import-not-found]
-            return factories
-    raise ImportError(
-        "could not locate tests/fixtures/factories.py — install ddoc in editable mode "
-        "(`pip install -e .`) from the repo so the toy-data generators are reachable."
-    )
+    """Return the toy-data factories module shipped with ddoc."""
+    from ddoc.examples import factories
+    return factories
 
 
 examples_app = typer.Typer(help="Generate ready-to-analyze toy datasets for tutorials and quick smoke tests.")
