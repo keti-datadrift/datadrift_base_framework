@@ -84,9 +84,6 @@ def reconstruct_apply(input_path: str, method: str, args: Dict[str, Any], output
 def monitor_run(source: str, mode: str, schedule: Optional[str]) -> Optional[Dict[str, Any]]:
     """Run monitors once or on schedule."""
 
-@hookspec
-def vis_run() -> Optional[Dict[str, Any]]:
-    """Run monitors once or on schedule."""
 
 
 # --- Detector Preset Registry ---

@@ -27,11 +27,11 @@ authors = [
 #   - analyze drift / eda (path mode + --json) — orchestrator-friendly
 #     subprocess interface; the actual analysis still requires a domain
 #     plugin (e.g. ddoc-plugin-vision) installed separately
-#   - plugin list / info, vis, snapshot management
+#   - plugin list / info, snapshot management
 #
 # What it does NOT give you (deliberate):
 #   - parquet writer in inbox/         → install with [ingest]
-#   - vision / vis plugins             → install [vision] / [vis]
+#   - vision plugin deps               → install [vision]
 dependencies = [
   "fastapi",
   "uvicorn",
@@ -79,12 +79,6 @@ vision = [
   "scipy>=1.7.0",
   "yellowbrick>=1.5",
 ]
-nlp = [
-  # NLP dependencies will be added when needed
-]
-vis = [
-  "streamlit>=1.28.0",
-]
 # 2026-05-08 — ``all`` rebuilt from the named extras instead
 # of duplicating their content. The previous incarnation also bundled
 # three plugin packages via ``file://`` paths bound to a
@@ -93,7 +87,7 @@ vis = [
 # expected to be installed separately (PyPI when published, or
 # ``pip install -e plugins/<name>`` in this monorepo).
 all = [
-  "ddoc[ingest,vision,vis]",
+  "ddoc[ingest,vision]",
 ]
 
 [project.scripts]

@@ -43,14 +43,14 @@ class AnalyzeDriftRequest(BaseModel):
     # snapshot mode
     baseline: Optional[str] = None
     current: Optional[str] = None
-    # R-D4 (2026-05-19) — inline cfg mode. When set, the server
+    # Inline cfg mode. When set, the server
     # materializes the cfg into temp `distributions[_series].json`
     # files under a scratch dir and runs CLI path-mode on top. Moves
     # what HTTP clients used to do client-side into the server, so
     # cross-container HTTP works without shared volumes. Recognized
     # keys (delegated to whichever plugin claims `detector`):
     #   baseline_categorical / current_categorical                (categorical plugin)
-    #   baseline_categorical_series / current_categorical_series   (temporal plugin)
+    #   baseline_categorical_series / current_categorical_series   (series-reading detectors)
     cfg: Optional[Dict[str, Any]] = None
     # common
     detector: str = "default"

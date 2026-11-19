@@ -80,7 +80,7 @@ def _materialize_cfg(cfg: Dict[str, Any]) -> Iterator[Tuple[str, str]]:
       - dict-of-counts: ``baseline_categorical / current_categorical``
         (`ddoc-plugin-categorical`)
       - series-of-dists: ``baseline_categorical_series / current_categorical_series``
-        (`ddoc-plugin-keti-temporal`)
+        (for detectors that read distribution series)
     """
     base_cat = cfg.get("baseline_categorical")
     cur_cat = cfg.get("current_categorical")

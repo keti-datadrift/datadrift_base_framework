@@ -19,7 +19,6 @@ from .snapshot import snapshot_app
 from .analyze import analyze_eda_command, analyze_drift_command
 from .ingest import ingest_command
 from .plugin import plugin_list_command, plugin_info_command, plugin_install_command, plugin_detectors_command
-from .vis import vis
 
 
 def register(app: typer.Typer) -> None:
@@ -101,7 +100,6 @@ def register(app: typer.Typer) -> None:
         help="Apply a transform via a plugin's `transform_apply` hook implementation",
     )(transform_command)
 
-    app.command(name="vis", help="Run GUI app")(vis)
 
 
 # Export main components
@@ -112,6 +110,5 @@ __all__ = [
     'snapshot',
     'analyze_app',
     'plugin_app',
-    'vis',
 ]
 

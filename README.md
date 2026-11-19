@@ -64,11 +64,8 @@ docker-compose up -d
 ## In-tree plugins
 
 `vision` (image EDA/drift/XAI) · `text` · `timeseries` · `audio` ·
-`categorical` (JS-divergence on count dicts) · `keti-temporal`
-(temporal categorical drift patterns) · `reference-engine`
-(baseline-selection maturity ladder + event ontology) · `evidently`
-(third-party integration) · `yolo` (retraining) · `tabular` · `nlp` ·
-`vis` (Streamlit GUI)
+`categorical` (JS-divergence on count dicts) · `tabular` · `evidently`
+(third-party integration)
 
 Each plugin is an independent pip package registered through the
 `ddoc` entry-point group.
