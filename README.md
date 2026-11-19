@@ -63,7 +63,7 @@ docker-compose up -d
 
 ## In-tree plugins
 
-`vision` (image EDA/drift/XAI) · `text` · `timeseries` · `audio` ·
+`vision` (image EDA / embedding drift) · `text` · `timeseries` · `audio` ·
 `categorical` (JS-divergence on count dicts) · `tabular` · `evidently`
 (third-party integration)
 
