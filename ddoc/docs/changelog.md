@@ -1,6 +1,22 @@
-# Changelog - ddoc v2.x
+# Changelog - ddoc
 
 > **참고**: 각 버전의 상세 릴리스 노트는 [releases/](releases/) 디렉토리에서 확인할 수 있습니다.
+
+## [3.0.0] - Unreleased
+
+### 🩺 판정 도구로 집중 — 하위 호환이 깨지는 릴리스
+
+**주요 변경사항:**
+- ✨ `ddoc diff` 한 줄 판정 (OK / DRIFT / BLIND), `--report` HTML 소견서, Drift Zoo, GitHub Action
+- ✨ `ddoc serve` (REST + GUI), `recipe`, `report`, `export`, `fetch`, `examples` 명령
+- 🗑️ `init` / `add` / `snapshot`, 스냅샷 모드, `exp` / `train`, `ingest`, `vis`, v1 legacy 명령 제거
+- 🗑️ yolo / vis / nlp / reference-engine / keti-temporal 플러그인, 관련 hookspec 과 extras 제거 (hookspec 2.0.0)
+- 🐛 플러그인 하나의 실패가 다른 플러그인 결과를 지우던 문제, 일반 설치에서 `examples generate` 가 실패하던 문제 수정
+- 🔄 `ddoc/`, `plugins/` 를 저장소 최상위로 이동
+
+> 📖 **상세 내역**: [v3.0.0 릴리스 노트](releases/v3.0.0.md)
+
+---
 
 ## [2.1.0] - 2025-12-30
 

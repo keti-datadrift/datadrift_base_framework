@@ -9,7 +9,7 @@ hookspec = pluggy.HookspecMarker("ddoc")
 hookimpl = pluggy.HookimplMarker("ddoc") 
 
 # Bump this if you change HookSpec signatures in a breaking way.
-HOOKSPEC_VERSION = "1.0.0"
+HOOKSPEC_VERSION = "2.0.0"
 
 # --- Analytical Operations (Implemented by external plugins) ---
 
