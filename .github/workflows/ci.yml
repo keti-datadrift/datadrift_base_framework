@@ -6,6 +6,21 @@ on:
   pull_request:
 
 jobs:
+  # Keep internal tags, unpublished-document references, field-application
+  # names and tooling traces out of the public tree (and PR commit messages).
+  public-terms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check tracked files
+        if: github.event_name != 'pull_request'
+        run: .github/scripts/check-public-terms.sh
+      - name: Check tracked files and PR commit messages
+        if: github.event_name == 'pull_request'
+        run: .github/scripts/check-public-terms.sh "origin/${{ github.base_ref }}..HEAD"
+
   test:
     runs-on: ubuntu-latest
     steps:
