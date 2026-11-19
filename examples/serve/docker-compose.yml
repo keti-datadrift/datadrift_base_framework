@@ -1,0 +1,20 @@
+services:
+  ddoc:
+    build:
+      context: ../..
+      dockerfile: packages/ddoc/Dockerfile
+    image: ddoc-serve:latest
+    environment:
+      # Required whenever the port is reachable from other machines.
+      DDOC_API_KEY: ${DDOC_API_KEY:?set DDOC_API_KEY, e.g. in examples/serve/.env}
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      # Datasets to analyze, visible to the server as /data.
+      - ./data:/data:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/healthz', timeout=2)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

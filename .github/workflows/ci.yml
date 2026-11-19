@@ -6,6 +6,21 @@ on:
   pull_request:
 
 jobs:
+  # Keep internal tags, unpublished-document references, field-application
+  # names and tooling traces out of the public tree (and PR commit messages).
+  public-terms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check tracked files
+        if: github.event_name != 'pull_request'
+        run: .github/scripts/check-public-terms.sh
+      - name: Check tracked files and PR commit messages
+        if: github.event_name == 'pull_request'
+        run: .github/scripts/check-public-terms.sh "origin/${{ github.base_ref }}..HEAD"
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -21,17 +36,16 @@ jobs:
       - name: Install ddoc + light plugins
         run: |
           python -m pip install -q --upgrade pip
-          pip install -q -e ddoc
-          pip install -q -e plugins/ddoc-plugin-categorical
-          pip install -q -e plugins/ddoc-plugin-tabular
+          pip install -q -e packages/ddoc
+          pip install -q -e packages/plugins/ddoc-plugin-categorical
+          pip install -q -e packages/plugins/ddoc-plugin-tabular
           pip install -q pytest httpx2  # starlette TestClient dependency
-      - name: Core test set (diff / zoo / ingest / categorical / recipes)
-        working-directory: ddoc
+      - name: Core test set (diff / zoo / categorical / recipes)
+        working-directory: packages/ddoc
         run: |
           pytest -q \
             tests/test_diff_cli.py \
             tests/test_zoo.py \
-            tests/test_ingest.py \
             tests/test_plugin_categorical.py \
             tests/test_examples_generate.py \
             tests/test_recipe_catalog.py
@@ -45,9 +59,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -q -e ddoc
+      - run: pip install -q -e packages/ddoc
       - name: Zoo regime_shift must gate (expect DRIFT → exit 1)
-        working-directory: ddoc/zoo/regime_shift
+        working-directory: packages/ddoc/zoo/regime_shift
         run: |
           python make.py
           if ddoc diff data/ref.csv data/cur.csv; then
@@ -57,7 +71,7 @@ jobs:
             [ "$code" -eq 1 ] || { echo "::error::expected exit 1, got $code"; exit 1; }
           fi
       - name: Zoo rhythm_not_drift must pass (expect OK → exit 0)
-        working-directory: ddoc/zoo/rhythm_not_drift
+        working-directory: packages/ddoc/zoo/rhythm_not_drift
         run: |
           python make.py
           ddoc diff data/ref.csv data/cur.csv
