@@ -67,7 +67,7 @@ def _drift_argv(req: AnalyzeDriftRequest, *, include_progress_flag: bool = False
     return args
 
 
-# ── R-D4: inline cfg → tempdir path-mode adapter ────────────────────
+# ── Inline cfg → tempdir path-mode adapter ──────────────────────────
 
 
 @contextmanager
@@ -123,7 +123,7 @@ def analyze_eda(req: AnalyzeEdaRequest):
 def analyze_drift(req: AnalyzeDriftRequest):
     """Wrap ``ddoc analyze drift --json``.
 
-    R-D4: when ``req.cfg`` is set, the server materializes the inline
+    When ``req.cfg`` is set, the server materializes the inline
     cfg into temp dist files and invokes path-mode internally. This
     lets cross-container HTTP callers send dict-of-counts /
     series without a shared volume.
