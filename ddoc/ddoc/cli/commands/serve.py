@@ -20,7 +20,7 @@ def serve_command(
     ),
     port: int = typer.Option(
         8765, "--port",
-        help="Bind port. Default 8765 to coexist with drift_studio backend (8000).",
+        help="Bind port. Default 8765 to avoid common application ports such as 8000.",
     ),
     api_key: Optional[str] = typer.Option(
         None, "--api-key",

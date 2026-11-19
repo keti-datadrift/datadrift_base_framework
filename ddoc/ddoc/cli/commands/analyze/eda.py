@@ -1,8 +1,8 @@
 """EDA analysis command.
 
 ``ddoc analyze eda --data-path <p>`` runs the installed plugins'
-``eda_run`` hooks directly on a path. The drift_studio backend uses this
-when it subprocess-invokes ddoc.
+``eda_run`` hooks directly on a path. Orchestrating backends can
+subprocess-invoke this instead of importing ddoc as a library.
 
 ``--json`` emits the merged plugin result to stdout as a single JSON
 object (no rich formatting).

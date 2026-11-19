@@ -1,8 +1,8 @@
 """Drift analysis command.
 
 Pass ``--data-path-ref`` and ``--data-path-cur``; plugins receive the
-paths directly. The drift_studio backend uses this when it
-subprocess-invokes ddoc instead of importing it as a library.
+paths directly. Orchestrating backends can subprocess-invoke this
+instead of importing ddoc as a library.
 
 When ``--json`` is set the merged plugin result is printed to stdout as
 a single JSON object (no rich formatting). Errors also use stdout JSON

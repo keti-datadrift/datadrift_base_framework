@@ -159,9 +159,7 @@ def report_render(
 ) -> Optional[Dict[str, Any]]:
     """Render a drift / EDA result to a report file.
 
-    Track C — lifts report generation from backend-internal
-    (pdfkit + Jinja in ``drift_studio/backend/app/routers/report.py``)
-    to a ddoc-CLI plugin-extensible hookspec. The CLI subcommand
+    Makes report generation plugin-extensible. The CLI subcommand
     ``ddoc report render`` invokes this hook; if no plugin returns a
     non-None result, ``ddoc/cli/commands/report.py`` falls back to a
     built-in Jinja+weasyprint implementation.

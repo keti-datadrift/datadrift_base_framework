@@ -87,7 +87,7 @@ def create_app(*, bind_info: str = "127.0.0.1:8765") -> FastAPI:
         description=(
             "REST facade for the ddoc CLI — every analyze / report / "
             "export / examples / fetch / plugin command, exposed as "
-            "HTTP. Coexists with `drift_studio/backend` (port 8000)."
+            "HTTP."
         ),
         version="0.1.0",
     )

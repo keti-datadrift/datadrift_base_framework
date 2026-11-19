@@ -1,8 +1,8 @@
 """Tabular EDA report renderer.
 
 The plugin's only job is to *render reports* for envelopes shaped
-like ``drift_studio/backend``'s tabular EDA output (``{name, rows,
-cols, missing, summary, ...}``). It taps the ``report_render``
+like a tabular EDA output (``{name, rows, cols, missing, summary,
+...}``). It taps the ``report_render``
 hookspec (firstresult=True) and intercepts only when the envelope
 looks tabular; for any other shape it returns ``None`` so the
 built-in Jinja renderer or other plugins handle it.
@@ -166,7 +166,6 @@ class TabularReportPlugin:
             "description": (
                 "Tabular EDA report renderer. Recognizes envelopes with "
                 "modality='tabular' or rows/cols+summary shape and emits "
-                "an HTML/PDF report mirroring drift_studio/backend's "
-                "EDA layout."
+                "an HTML/PDF report with per-column summaries."
             ),
         }

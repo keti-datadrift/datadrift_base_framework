@@ -114,10 +114,10 @@ ddoc 는 모니터링 대상 애플리케이션과 Python 의존성을 공유하
 데이터는 `ddoc fetch` 로 들여오고, drift 결과는 안정된 JSON envelope 로
 `ddoc export` 가 file 또는 HTTP 로 내보냅니다.
 
-`drift_studio/backend/` 도 ddoc 를 *Python library* 로 import 하는 대신
-**subprocess 로 호출** 합니다. 환경변수 `BACKEND_USE_DDOC_CLI=true` 일 때
-backend 의 `/drift`, `/eda` 엔드포인트가 `ddoc analyze drift|eda --json` 을
-실행합니다.
+다른 서비스에서는 ddoc 를 *Python library* 로 import 하는 대신
+`ddoc analyze drift|eda --json` 을 **subprocess 로 호출** 하거나
+`ddoc serve` 의 REST API 를 쓰면 됩니다. 저장소 루트의
+[examples/](../examples/) 에 연동 예제가 있습니다.
 
 ## 🤝 기여
 

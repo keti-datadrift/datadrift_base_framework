@@ -101,7 +101,7 @@ ddoc analyze drift --data-path-ref /tmp/cat/ref --data-path-cur /tmp/cat/cur \
 
 `ddoc-plugin-tabular` 는 *drift 검출* 이 아니라 *EDA
 envelope 의 PDF/HTML 렌더* 를 담당합니다. 이미 만들어진 envelope
-JSON (예: `drift_studio/backend` 가 emit 하는 EDA dict) 을 받아
+JSON (`{name, rows, cols, missing, summary}` 형태의 EDA dict) 을 받아
 컬럼별 summary / missing-rate 표를 포함한 보고서로 출력합니다.
 
 ```bash
@@ -182,6 +182,5 @@ ddoc analyze drift --data-path-ref /tmp/sane/ref --data-path-cur /tmp/sane/cur \
 ## 다음 단계
 
 - 저수준 분석 옵션: [데이터 분석](../guides/analysis.md)
-- backend orchestrator 패턴 (`drift_studio` 가 ddoc CLI 를 subprocess
-  로 호출): `ddoc analyze drift --help`
+- 다른 서비스에서 호출하기: [REST / GUI](serve.md)
 - modality 별 plugin contract: 각 plugin 의 `README.md`

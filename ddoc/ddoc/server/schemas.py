@@ -70,7 +70,7 @@ class ReportRenderRequest(BaseModel):
       ``out`` unset → server writes the envelope to a temp file,
       runs the CLI, and streams the rendered file back as the HTTP
       response body (Content-Type matching ``format``). For HTTP-only
-      consumers like ``drift_studio/backend``.
+      consumers without a shared filesystem.
     """
     input: Optional[str] = Field(
         None, description="Path to a drift / EDA envelope JSON (path mode).",

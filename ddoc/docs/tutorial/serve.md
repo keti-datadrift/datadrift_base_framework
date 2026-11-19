@@ -143,18 +143,6 @@ curl -H 'X-API-Key: mysecret' http://server.local:8765/plugins
 
 `/healthz` 와 `/` 는 auth 우회 (모니터링 용).
 
-## drift_studio backend 와의 차이
-
-| | `ddoc serve` | `drift_studio/backend` |
-|---|---|---|
-| 기본 포트 | 8765 | 8000 |
-| 범위 | ddoc CLI 의 thin facade | dataset / training / field-agent monolith |
-| 의존성 | ddoc + uvicorn | + redis, celery, sqlalchemy, evidently, ... |
-| 사용 사례 | curl-only / 외부 시스템 / scripted automation | 기존 frontend (React) + 사이트별 운영 |
-
-같은 머신에서 둘 다 실행 가능 (다른 포트). 같은 ddoc CLI 를 공유하므로
-결과는 byte-for-byte 동일.
-
 ## Browser GUI
 
 `ddoc serve` 가 띄운 그 서버의 루트(`/`) 에 vanilla HTML/JS GUI 가

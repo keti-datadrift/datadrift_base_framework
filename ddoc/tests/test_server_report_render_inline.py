@@ -3,7 +3,7 @@
 The original path-mode renderer required the caller to write the
 envelope JSON to a filesystem path that ddoc could read, and the
 output was likewise written to disk. That assumes shared FS — a
-non-starter for HTTP consumers (e.g., ``drift_studio/backend``).
+non-starter for HTTP consumers in another container.
 
 The inline mode added later lets callers POST the envelope as a dict
 and get the rendered file back as response bytes. This test file
