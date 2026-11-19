@@ -62,7 +62,7 @@ def test_image_detector_set_documented():
 def test_renderer_run_categorical_produces_a_table(tmp_path):
     """Full e2e: invoke `run()`, which shells out to the real CLI.
     Skipped if `ddoc` isn't on PATH (system pytest invocation without
-    venv activation — bash 12_pytest.sh self-activates so CI is fine)."""
+    venv activation)."""
     if shutil.which("ddoc") is None:
         pytest.skip("ddoc CLI not on PATH")
     body = run(["categorical"])

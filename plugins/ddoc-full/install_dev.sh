@@ -12,7 +12,7 @@ echo "Project root: $PROJECT_ROOT"
 
 # Install core
 echo "📦 Installing ddoc core..."
-pip install -e "$PROJECT_ROOT"
+pip install -e "$PROJECT_ROOT/ddoc"
 
 # Install plugins
 echo "📦 Installing plugins..."
@@ -20,6 +20,8 @@ pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-vision"
 pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-text"
 pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-timeseries"
 pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-audio"
+pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-categorical"
+pip install -e "$PROJECT_ROOT/plugins/ddoc-plugin-tabular"
 
 echo "✅ ddoc-full development installation complete!"
 echo ""
