@@ -33,7 +33,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import typer
 from rich import print as rprint
 
-from .utils import get_pmgr
+from .utils import call_hook_isolated, get_pmgr
 
 EXIT_OK = 0
 EXIT_DRIFT = 1
@@ -330,33 +330,6 @@ def _collect_evidence(kind: str, ref: Path, cur: Path,
 # ── Command ───────────────────────────────────────────────────────────
 
 
-def _drift_detect_isolated(pm, *, verbose: bool, **kwargs) -> List[Dict[str, Any]]:
-    """Call each ``drift_detect`` implementation separately.
-
-    pluggy propagates the first exception out of the whole fan-out, so a
-    single plugin that chokes on an input shape it does not recognize
-    silences every other plugin's answer too. That is how a model file
-    passed as ``ref`` ended up as "no engine responded": one plugin
-    assumed the path was a directory, raised, and took the rest down
-    with it.
-
-    Isolating the calls lets plugins decline an unfamiliar input
-    (returning None, or raising) without hiding the one that does
-    handle it.
-    """
-    results: List[Dict[str, Any]] = []
-    for impl in pm.hook.drift_detect.get_hookimpls():
-        try:
-            out = impl.function(**kwargs)
-        except Exception as e:  # noqa: BLE001 — one plugin must not sink the rest
-            if verbose:
-                rprint(f"[yellow]plugin {impl.plugin_name} failed: {e}[/yellow]")
-            continue
-        if out is not None:
-            results.append(out)
-    return results
-
-
 def diff_command(
     ref: Path = typer.Argument(..., help="Baseline dataset (directory or file)."),
     cur: Path = typer.Argument(..., help="Current dataset (directory or file)."),
@@ -411,8 +384,8 @@ def diff_command(
     engine: Optional[str] = None
     try:
         with _SilencePluginIO(json_out=True, quiet=not verbose):
-            hook_results = _drift_detect_isolated(
-                get_pmgr(), verbose=verbose,
+            hook_results, hook_errors = call_hook_isolated(
+                get_pmgr(), "drift_detect",
                 snapshot_id_ref="__path__", snapshot_id_cur="__path__",
                 data_path_ref=ref_s, data_path_cur=cur_s,
                 data_hash_ref="", data_hash_cur="",
@@ -422,6 +395,9 @@ def diff_command(
                      "with_embeddings": False},
                 output_path="analysis/diff",
             )
+        if verbose:
+            for plugin_name, err in hook_errors:
+                rprint(f"[yellow]plugin {plugin_name} failed: {err}[/yellow]")
         valid = [r for r in (hook_results or []) if r is not None
                  and r.get("status") not in ("error", "unsupported")]
         if valid:

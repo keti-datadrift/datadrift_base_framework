@@ -14,7 +14,7 @@ import typer
 from rich import print as rprint
 from typing import Optional
 
-from ..utils import get_pmgr, _pretty
+from ..utils import call_hook_isolated, get_pmgr, _pretty
 
 
 def _emit(res: dict, json_out: bool) -> None:
@@ -425,7 +425,8 @@ def analyze_drift_command(
                   enabled=ndjson_progress)
     try:
         with _SilencePluginIO(json_out=json_out, quiet=quiet):
-            hook_results = get_pmgr().hook.drift_detect(
+            hook_results, hook_errors = call_hook_isolated(
+                get_pmgr(), "drift_detect",
                 snapshot_id_ref="__path__",
                 snapshot_id_cur="__path__",
                 data_path_ref=data_path_ref,
@@ -439,6 +440,12 @@ def analyze_drift_command(
     except Exception as e:
         _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
         raise typer.Exit(code=1)
+    if hook_errors and not hook_results:
+        detail = "; ".join(f"{name}: {err}" for name, err in hook_errors)
+        _emit_error(f"plugin invocation failed: {detail}", code="plugin_error", json_out=json_out)
+        raise typer.Exit(code=1)
+    for name, err in hook_errors:
+        rprint(f"[yellow]plugin {name} failed and was skipped: {err}[/yellow]", file=sys.stderr)
     emit_progress(0.9, "merge", "merging plugin results",
                   enabled=ndjson_progress)
     result = _finish_drift(

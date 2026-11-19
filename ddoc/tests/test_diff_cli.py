@@ -225,13 +225,32 @@ def test_build_consultation_html_minimal():
 # ── plugin isolation ──────────────────────────────────────────────────
 
 
+def _pm_with(*plugins):
+    import pluggy
+
+    from ddoc.plugins import hookspecs
+
+    pm = pluggy.PluginManager("ddoc")
+    pm.add_hookspecs(hookspecs)
+    for plugin in plugins:
+        pm.register(plugin)
+    return pm
+
+
+_DRIFT_KWARGS = dict(
+    snapshot_id_ref="__path__", snapshot_id_cur="__path__",
+    data_path_ref="model.pth", data_path_cur="cur",
+    data_hash_ref="", data_hash_cur="",
+    detector="default", cfg={}, output_path="analysis/diff",
+)
+
+
 def test_failing_plugin_does_not_silence_the_others():
     """One plugin raising on an input it does not understand must not
     hide the answer of another plugin that handled it."""
     import pluggy
 
-    from ddoc.cli.commands.diff import _drift_detect_isolated
-    from ddoc.plugins import hookspecs
+    from ddoc.cli.commands.utils import call_hook_isolated
 
     hookimpl = pluggy.HookimplMarker("ddoc")
 
@@ -250,16 +269,36 @@ def test_failing_plugin_does_not_silence_the_others():
         def drift_detect(self, **_):
             return {"modality": "csv", "overall_score": 0.4}
 
-    pm = pluggy.PluginManager("ddoc")
-    pm.add_hookspecs(hookspecs)
-    for plugin in (Broken(), Declines(), Works()):
-        pm.register(plugin)
-
-    results = _drift_detect_isolated(
-        pm, verbose=False,
-        snapshot_id_ref="__path__", snapshot_id_cur="__path__",
-        data_path_ref="model.pth", data_path_cur="cur",
-        data_hash_ref="", data_hash_cur="",
-        detector="default", cfg={}, output_path="analysis/diff",
-    )
+    pm = _pm_with(Broken(), Declines(), Works())
+    results, errors = call_hook_isolated(pm, "drift_detect", **_DRIFT_KWARGS)
     assert results == [{"modality": "csv", "overall_score": 0.4}]
+    assert [name for name, _ in errors] == [pm.get_name(p) for p in pm.get_plugins()
+                                           if type(p).__name__ == "Broken"]
+
+
+def test_isolated_call_matches_pluggy_convention():
+    """Plugins may declare only the hook arguments they use, and results
+    come back in the same order as a normal pluggy fan-out."""
+    import pluggy
+
+    from ddoc.cli.commands.utils import call_hook_isolated
+
+    hookimpl = pluggy.HookimplMarker("ddoc")
+
+    class Narrow:
+        @hookimpl
+        def drift_detect(self, data_path_ref, detector):
+            return {"modality": "narrow", "seen": [data_path_ref, detector]}
+
+    class Full:
+        @hookimpl
+        def drift_detect(self, snapshot_id_ref, snapshot_id_cur, data_path_ref,
+                         data_path_cur, data_hash_ref, data_hash_cur, detector,
+                         cfg, output_path):
+            return {"modality": "full"}
+
+    pm = _pm_with(Narrow(), Full())
+    results, errors = call_hook_isolated(pm, "drift_detect", **_DRIFT_KWARGS)
+    assert errors == []
+    assert results == pm.hook.drift_detect(**_DRIFT_KWARGS)
+    assert {"modality": "narrow", "seen": ["model.pth", "default"]} in results

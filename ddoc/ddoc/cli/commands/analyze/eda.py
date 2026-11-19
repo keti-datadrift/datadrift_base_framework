@@ -7,12 +7,14 @@ subprocess-invoke this instead of importing ddoc as a library.
 ``--json`` emits the merged plugin result to stdout as a single JSON
 object (no rich formatting).
 """
+import sys
+
 import typer
 from rich import print as rprint
 from pathlib import Path
 from typing import Optional
 
-from ..utils import get_pmgr
+from ..utils import call_hook_isolated, get_pmgr
 from .drift import _emit, _emit_error, _merge_plugin_results, emit_progress, _SilencePluginIO
 
 
@@ -57,7 +59,8 @@ def analyze_eda_command(
                   enabled=ndjson_progress)
     try:
         with _SilencePluginIO(json_out=json_out, quiet=quiet):
-            hook_results = get_pmgr().hook.eda_run(
+            hook_results, hook_errors = call_hook_isolated(
+                get_pmgr(), "eda_run",
                 snapshot_id="__path__",
                 data_path=data_path,
                 data_hash="",
@@ -67,6 +70,12 @@ def analyze_eda_command(
     except Exception as e:
         _emit_error(f"plugin invocation failed: {e}", code="plugin_error", json_out=json_out)
         raise typer.Exit(code=1)
+    if hook_errors and not hook_results:
+        detail = "; ".join(f"{name}: {err}" for name, err in hook_errors)
+        _emit_error(f"plugin invocation failed: {detail}", code="plugin_error", json_out=json_out)
+        raise typer.Exit(code=1)
+    for name, err in hook_errors:
+        rprint(f"[yellow]plugin {name} failed and was skipped: {err}[/yellow]", file=sys.stderr)
     emit_progress(0.9, "merge", "merging plugin results",
                   enabled=ndjson_progress)
     result = _finish_eda(hook_results, json_out=json_out)
