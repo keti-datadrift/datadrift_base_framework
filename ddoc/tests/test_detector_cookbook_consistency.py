@@ -121,12 +121,10 @@ def test_overlap_score_at_least_as_high_as_jensen_shannon():
         )
 
 
-def test_severity_thresholds_match_alpr_gate_default():
-    """Cookbook says critical = >0.25, matching alpr's
-    `ALPR_DDOC_GATE_DRIFT_THRESHOLD` default. If alpr's default
-    changes, this test catches the doc drift."""
-    # We can't import alpr from ddoc tests (separate project), so we
-    # pin the default value the cookbook references.
+def test_severity_thresholds_documented():
+    """Cookbook says critical = >0.25 and recommends it as the default
+    deployment-gate threshold. Pin the value so the prose and the
+    documented constant cannot drift apart."""
     DOCUMENTED_CRITICAL = 0.25
 
     cookbook_path = (
@@ -134,7 +132,6 @@ def test_severity_thresholds_match_alpr_gate_default():
         / "docs" / "tutorial" / "detectors.md"
     )
     body = cookbook_path.read_text(encoding="utf-8")
-    # Sanity: the threshold value appears in the cookbook prose AND in
-    # the alpr default constant referenced.
+    # Sanity: the threshold value appears in the cookbook prose.
     assert "0.25" in body
     assert str(DOCUMENTED_CRITICAL) in body

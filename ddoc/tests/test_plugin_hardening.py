@@ -71,7 +71,7 @@ def test_recipe_parses_required_plugins(tmp_path):
         name: needs-vision
         required_plugins:
           - ddoc_vision
-          - ddoc_alpr
+          - ddoc_example
         steps:
           - id: dummy
             run: fetch
@@ -80,7 +80,7 @@ def test_recipe_parses_required_plugins(tmp_path):
               dest: /tmp/y
     """)
     r = Recipe.load(p)
-    assert r.required_plugins == ["ddoc_vision", "ddoc_alpr"]
+    assert r.required_plugins == ["ddoc_vision", "ddoc_example"]
 
 
 def test_recipe_defaults_required_plugins_to_empty(tmp_path):
