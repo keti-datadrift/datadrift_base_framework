@@ -15,7 +15,7 @@ two points:
 ## Run the demo
 
 ```bash
-pip install -e ddoc
+pip install -e packages/ddoc
 examples/app-integration/run.sh
 ```
 
@@ -60,4 +60,4 @@ needs.
   or call the REST API of [`ddoc serve`](../serve/).
 - In a pipeline, chain the same steps in a YAML recipe
   (`ddoc recipe run`); see the
-  [recipe tutorial](../../ddoc/docs/tutorial/recipe.md).
+  [recipe tutorial](../../packages/ddoc/docs/tutorial/recipe.md).

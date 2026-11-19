@@ -1,7 +1,7 @@
 # `ddoc serve` with Docker Compose
 
 Runs ddoc's REST API and browser GUI in a container built from
-[`ddoc/Dockerfile`](../../ddoc/Dockerfile) (ddoc core plus the
+[`packages/ddoc/Dockerfile`](../../packages/ddoc/Dockerfile) (ddoc core plus the
 categorical and tabular plugins).
 
 ## Run
@@ -36,16 +36,16 @@ curl -s -X POST http://127.0.0.1:8765/analyze/drift \
 Toy data to try it with:
 
 ```bash
-pip install -e ddoc    # from the repository root
+pip install -e packages/ddoc    # from the repository root
 ddoc examples generate categorical --out examples/serve/data --scenario shifted
 ```
 
 The port is bound to `127.0.0.1` only. To expose it, put a TLS reverse
-proxy in front; see [the deploy tutorial](../../ddoc/docs/tutorial/deploy.md).
+proxy in front; see [the deploy tutorial](../../packages/ddoc/docs/tutorial/deploy.md).
 
 ## Add plugins
 
-Edit the install line in `ddoc/Dockerfile` to add more plugins, for
+Edit the install line in `packages/ddoc/Dockerfile` to add more plugins, for
 example `./plugins/ddoc-plugin-timeseries` (copy its directory in the
 `COPY` lines as well). The vision plugin needs torch, which makes the
 image much larger.

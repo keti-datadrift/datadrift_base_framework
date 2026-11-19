@@ -16,15 +16,17 @@ pip install ddoc-full
 
 ```bash
 # 방법 1: 설치 스크립트 사용 (권장)
-cd plugins/ddoc-full
+cd packages/plugins/ddoc-full
 ./install_dev.sh
 
 # 방법 2: 수동 설치
-pip install -e ../..  # ddoc core
+pip install -e ../../ddoc  # ddoc core
 pip install -e ../ddoc-plugin-vision
 pip install -e ../ddoc-plugin-text
 pip install -e ../ddoc-plugin-timeseries
 pip install -e ../ddoc-plugin-audio
+pip install -e ../ddoc-plugin-categorical
+pip install -e ../ddoc-plugin-tabular
 ```
 
 ### 설치 확인

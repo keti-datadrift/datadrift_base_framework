@@ -4,7 +4,7 @@
 #   examples/ci-gate/gate.sh <baseline> <incoming> [report.html]
 #
 # Exit code is ddoc's verdict: 0 OK, 1 DRIFT, 2 BLIND (cannot judge).
-# Requires ddoc on PATH (pip install -e ddoc, or pip install ./ddoc).
+# Requires ddoc on PATH (pip install -e packages/ddoc, or pip install ./packages/ddoc).
 set -u
 
 ref="${1:?usage: gate.sh <baseline> <incoming> [report.html]}"

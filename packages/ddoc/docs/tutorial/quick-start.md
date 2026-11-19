@@ -7,8 +7,8 @@
 저장소 루트에서:
 
 ```bash
-pip install -e ddoc
-pip install -e plugins/ddoc-plugin-categorical
+pip install -e packages/ddoc
+pip install -e packages/plugins/ddoc-plugin-categorical
 ```
 
 자세한 내용은 [설치 가이드](installation.md) 참고.

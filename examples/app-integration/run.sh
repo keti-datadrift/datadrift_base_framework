@@ -4,7 +4,7 @@
 #
 #   examples/app-integration/run.sh
 #
-# Requires ddoc on PATH (pip install -e ddoc). Uses only the ddoc core.
+# Requires ddoc on PATH (pip install -e packages/ddoc). Uses only the ddoc core.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

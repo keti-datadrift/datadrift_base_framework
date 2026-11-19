@@ -6,7 +6,7 @@
 # below if you need them.
 #
 # Build (from the repository root):
-#   docker build -f ddoc/Dockerfile -t ddoc-serve .
+#   docker build -f packages/ddoc/Dockerfile -t ddoc-serve .
 # Run:
 #   docker run --rm -p 8765:8765 -e DDOC_API_KEY=<secret> ddoc-serve
 # Probe:
@@ -23,9 +23,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
-COPY ddoc ./ddoc
-COPY plugins/ddoc-plugin-categorical ./plugins/ddoc-plugin-categorical
-COPY plugins/ddoc-plugin-tabular ./plugins/ddoc-plugin-tabular
+COPY packages/ddoc ./ddoc
+COPY packages/plugins/ddoc-plugin-categorical ./plugins/ddoc-plugin-categorical
+COPY packages/plugins/ddoc-plugin-tabular ./plugins/ddoc-plugin-tabular
 
 RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir \

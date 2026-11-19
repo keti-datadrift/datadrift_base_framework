@@ -34,7 +34,7 @@ Unsupported `--detector` values return an error envelope with
 ## Install
 
 ```bash
-pip install -e plugins/ddoc-plugin-vision   # editable, monorepo dev
+pip install -e packages/plugins/ddoc-plugin-vision   # editable, monorepo dev
 # or once published:
 pip install ddoc-plugin-vision torch torchvision pillow
 pip install 'git+https://github.com/openai/CLIP.git'

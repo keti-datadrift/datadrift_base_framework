@@ -33,7 +33,7 @@ runs:
   steps:
     - name: Install ddoc
       shell: bash
-      run: python -m pip install -q "${{ github.action_path }}/ddoc"
+      run: python -m pip install -q "${{ github.action_path }}/packages/ddoc"
     - name: ddoc diff
       shell: bash
       run: |

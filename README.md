@@ -6,16 +6,17 @@ diagnosing data drift in ML systems, and leaving the evidence behind.
 ![ddoc diff demo](docs/imgs/ddoc_diff_demo.svg)
 
 ```bash
-pip install -e ddoc
+pip install -e packages/ddoc
 ddoc diff baseline_data/ todays_data/     # OK / DRIFT / BLIND — exit code = verdict
 ```
 
 ## What is in this repository
 
 ```
-ddoc/        # Core: the `ddoc` CLI, REST API and browser GUI (pluggy hookspecs + YAML recipes)
-plugins/     # Plugins, each an independent pip package (vision, text, timeseries, ...)
-examples/    # Runnable examples: Docker deployment, CI gate, application integration
+packages/
+├── ddoc/      # Core: the `ddoc` CLI, REST API and browser GUI (pluggy hookspecs + YAML recipes)
+└── plugins/   # Plugins, each an independent pip package (vision, text, timeseries, ...)
+examples/      # Runnable examples: Docker deployment, CI gate, application integration
 ```
 
 Three ways to use it:
@@ -29,7 +30,7 @@ Three ways to use it:
 ## Core ideas
 
 - **The framework is light; plugins carry the weight.** `ddoc` core defines
-  [pluggy hookspecs](ddoc/ddoc/plugins/hookspecs.py)
+  [pluggy hookspecs](packages/ddoc/ddoc/plugins/hookspecs.py)
   (`drift_detect`, `eda_run`, `report_render`, `export_drift_report`, ...).
   Adding a new detector means writing a plugin — zero framework changes.
 - **An honest verdict.** `ddoc diff` answers `OK`, `DRIFT` or `BLIND` —
@@ -44,16 +45,16 @@ Three ways to use it:
 ## Quick start
 
 ```bash
-pip install -e ddoc                              # core CLI
-pip install -e plugins/ddoc-plugin-categorical   # add a domain plugin
+pip install -e packages/ddoc                              # core CLI
+pip install -e packages/plugins/ddoc-plugin-categorical   # add a domain plugin
 
 ddoc examples generate categorical --out /tmp/d --scenario shifted
-ddoc diff /tmp/d/ref /tmp/d/cur                  # DRIFT, exit code 1
+ddoc diff /tmp/d/ref /tmp/d/cur                           # DRIFT, exit code 1
 ddoc diff /tmp/d/ref /tmp/d/cur --report note.html
-ddoc serve                                       # REST API + GUI on http://127.0.0.1:8765
+ddoc serve                                                # REST API + GUI on http://127.0.0.1:8765
 ```
 
-More in the [ddoc README](ddoc/README.md) and its [docs](ddoc/docs/).
+More in the [ddoc README](packages/ddoc/README.md) and its [docs](packages/ddoc/docs/).
 
 ## In-tree plugins
 
@@ -62,7 +63,7 @@ More in the [ddoc README](ddoc/README.md) and its [docs](ddoc/docs/).
 (third-party integration)
 
 Each plugin is an independent pip package registered through the
-`ddoc` entry-point group. `plugins/ddoc-full` is a meta-package that
+`ddoc` entry-point group. `packages/plugins/ddoc-full` is a meta-package that
 installs the common set.
 
 ## Use it as a CI data gate
@@ -86,7 +87,7 @@ on its own; see [examples/ci-gate](examples/ci-gate/) for other data
 and for CI systems other than GitHub Actions.
 
 Our own [CI](.github/workflows/ci.yml) dogfoods this on the
-[Drift Zoo](ddoc/zoo/) — a gallery of classic drift
+[Drift Zoo](packages/ddoc/zoo/) — a gallery of classic drift
 patterns (regime shift, creeping degradation, and a rhythm-not-drift
 trap case that must stay **OK**), each reproducible in one command and
 pinned as a regression test.
@@ -102,4 +103,4 @@ pinned as a regression test.
 Apache License 2.0 — see [LICENSE](LICENSE).
 Vendored third-party code retains its original license
 (e.g. OpenAI CLIP under MIT, see
-`plugins/ddoc-plugin-vision/ddoc_plugin_vision/clip/LICENSE`).
+`packages/plugins/ddoc-plugin-vision/ddoc_plugin_vision/clip/LICENSE`).

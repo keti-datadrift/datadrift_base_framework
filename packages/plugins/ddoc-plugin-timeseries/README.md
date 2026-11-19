@@ -25,6 +25,6 @@ unsupported_detector`.
 ## Install
 
 ```bash
-pip install -e plugins/ddoc-plugin-timeseries
+pip install -e packages/plugins/ddoc-plugin-timeseries
 # Already in plugin's deps: pandas, numpy, scipy, scikit-learn, statsmodels
 ```

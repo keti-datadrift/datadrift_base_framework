@@ -108,7 +108,7 @@ def plugin_install_command(
 
     Examples:
         ddoc plugin install ddoc-plugin-text
-        ddoc plugin install -e plugins/ddoc-plugin-vision
+        ddoc plugin install -e packages/plugins/ddoc-plugin-vision
         ddoc plugin install -U ddoc-plugin-vision
     """
     import sys

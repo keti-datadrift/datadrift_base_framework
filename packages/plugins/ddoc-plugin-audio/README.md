@@ -25,6 +25,6 @@ HuBERT / wav2vec2) is not in scope for this plugin.
 ## Install
 
 ```bash
-pip install -e plugins/ddoc-plugin-audio
+pip install -e packages/plugins/ddoc-plugin-audio
 pip install librosa soundfile  # both already in plugin's deps
 ```

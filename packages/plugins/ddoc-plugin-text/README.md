@@ -37,7 +37,7 @@ too — slower (~5 s + 600 MB RAM) but full cosine signal.
 ## Install
 
 ```bash
-pip install -e plugins/ddoc-plugin-text   # editable, monorepo dev
+pip install -e packages/plugins/ddoc-plugin-text   # editable, monorepo dev
 pip install nltk
 python -c "import nltk; [nltk.download(p) for p in ('punkt_tab','stopwords','averaged_perceptron_tagger')]"
 # CLIP only needed when --with-embeddings or snapshot-mode embedding cache:

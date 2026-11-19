@@ -2,7 +2,7 @@ services:
   ddoc:
     build:
       context: ../..
-      dockerfile: ddoc/Dockerfile
+      dockerfile: packages/ddoc/Dockerfile
     image: ddoc-serve:latest
     environment:
       # Required whenever the port is reachable from other machines.

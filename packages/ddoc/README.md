@@ -23,14 +23,14 @@ vanilla HTML GUI 로 묶어 ML 모델이 보는 데이터의 상태를 일관되
 이 저장소에서 설치 (저장소 루트 기준):
 
 ```bash
-pip install -e ddoc                              # 가벼운 코어 — CSV 는 플러그인 없이 판정
-pip install -e plugins/ddoc-plugin-categorical   # 필요한 modality 플러그인을 추가
+pip install -e packages/ddoc                              # 가벼운 코어 — CSV 는 플러그인 없이 판정
+pip install -e packages/plugins/ddoc-plugin-categorical   # 필요한 modality 플러그인을 추가
 ```
 
-플러그인은 각각 독립 패키지입니다 (`plugins/ddoc-plugin-*`).
-`plugins/ddoc-full` 은 기본 플러그인 묶음을 한 번에 설치하는 메타 패키지입니다.
+플러그인은 각각 독립 패키지입니다 (`packages/plugins/ddoc-plugin-*`).
+`packages/plugins/ddoc-full` 은 기본 플러그인 묶음을 한 번에 설치하는 메타 패키지입니다.
 
-![ddoc diff demo](../docs/imgs/ddoc_diff_demo.svg)
+![ddoc diff demo](../../docs/imgs/ddoc_diff_demo.svg)
 
 ### 10 초 quick start — `ddoc diff`
 
@@ -117,7 +117,7 @@ ddoc 는 모니터링 대상 애플리케이션과 Python 의존성을 공유하
 다른 서비스에서는 ddoc 를 *Python library* 로 import 하는 대신
 `ddoc analyze drift|eda --json` 을 **subprocess 로 호출** 하거나
 `ddoc serve` 의 REST API 를 쓰면 됩니다. 저장소 루트의
-[examples/](../examples/) 에 연동 예제가 있습니다.
+[examples/](../../examples/) 에 연동 예제가 있습니다.
 
 ## 🤝 기여
 

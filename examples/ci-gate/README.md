@@ -24,20 +24,20 @@ runner where you installed it.
 [`gate.sh`](gate.sh) does the same with ddoc installed on the runner:
 
 ```bash
-pip install ./ddoc
+pip install ./packages/ddoc
 examples/ci-gate/gate.sh data/baseline data/incoming drift_note.html
 ```
 
 ## Try it locally
 
-With the core only, using two cases from the [Drift Zoo](../../ddoc/zoo/):
+With the core only, using two cases from the [Drift Zoo](../../packages/ddoc/zoo/):
 
 ```bash
-pip install -e ddoc
-(cd ddoc/zoo/regime_shift && python make.py)
-examples/ci-gate/gate.sh ddoc/zoo/regime_shift/data/ref.csv ddoc/zoo/regime_shift/data/cur.csv
+pip install -e packages/ddoc
+(cd packages/ddoc/zoo/regime_shift && python make.py)
+examples/ci-gate/gate.sh packages/ddoc/zoo/regime_shift/data/ref.csv packages/ddoc/zoo/regime_shift/data/cur.csv
 # → DRIFT, exit 1
-(cd ddoc/zoo/rhythm_not_drift && python make.py)
-examples/ci-gate/gate.sh ddoc/zoo/rhythm_not_drift/data/ref.csv ddoc/zoo/rhythm_not_drift/data/cur.csv
+(cd packages/ddoc/zoo/rhythm_not_drift && python make.py)
+examples/ci-gate/gate.sh packages/ddoc/zoo/rhythm_not_drift/data/ref.csv packages/ddoc/zoo/rhythm_not_drift/data/cur.csv
 # → OK, exit 0
 ```

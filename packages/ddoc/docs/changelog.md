@@ -12,7 +12,7 @@
 - 🗑️ `init` / `add` / `snapshot`, 스냅샷 모드, `exp` / `train`, `ingest`, `vis`, v1 legacy 명령 제거
 - 🗑️ yolo / vis / nlp / reference-engine / keti-temporal 플러그인, 관련 hookspec 과 extras 제거 (hookspec 2.0.0)
 - 🐛 플러그인 하나의 실패가 다른 플러그인 결과를 지우던 문제, 일반 설치에서 `examples generate` 가 실패하던 문제 수정
-- 🔄 `ddoc/`, `plugins/` 를 저장소 최상위로 이동
+- 🔄 코어와 플러그인을 `packages/ddoc/`, `packages/plugins/` 로 이동
 
 > 📖 **상세 내역**: [v3.0.0 릴리스 노트](releases/v3.0.0.md)
 
